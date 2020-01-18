@@ -4,6 +4,7 @@ Macros :
 
 cond -> Expr | !Expr | Expr && Expr | Expr || Expr | Expr relop Exps | true | false 
 relop -> > | < | >= | <= | == | !=
+binop -> + | - | * | /
 unary -> --Expr | ++Expr | Expr++ | Expr--
 Expr -> id + id | id - id | id * id | id/id | id
 id -> var | Num
@@ -46,6 +47,6 @@ if else Ladder
 
 CFG : 
 
-stt 
+statement : 
 
 *******************************************************************************************************************************
