@@ -29,25 +29,34 @@ bitwise_op ->       &
                 |   |
                 |   !
 
-Assignment ->     	id Name '=' expr ';'
+Assignment ->     	id [{Name','}]Name ';'
+                |  id Name '=' expr ';'
+                |  Name '=' expr ';' 
 
 expr       ->       '~' expr
  	              | 	'!' expr
                 |   unary expr
+                |   expr unary
                 |   expr Logic_op expr
  	              | 	 expr binop expr
  	              | 	 expr relop expr
  	              | 	 expr bitwise_op expr
  	              | 	 '(' expr ')'
                 |   Name
+                |   Numeric_Constants
+                |   String_Constants
 
 stmt        ->   	 if '(' expr ')' stmt [else if '(' expr ')' stmt ][ else stmt ]
                 | 	while '(' expr ')' stmt
                 |  for '(' [ assg ] ';' [ expr ] ';' [ assg ] ')' stmt
  	              | 	return [ expr ] ';'
- 	              | 	Assignment ';'
+ 	              | 	Assignment
  	              | 	Name'(' [expr { ',' expr } ] ')' ';'
  	              | 	'{' { stmt } '}'
- 	              | 	';'   
+ 	              | 	';'  
+                |   expr ';'
+                |   NULL
+                |   cout {{'<<' expr} [<< endl]}';'
                 
 id          ->  int | short | byte | long | double | float | string | bool | char
+
