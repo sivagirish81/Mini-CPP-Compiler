@@ -29,8 +29,8 @@ bitwise_op ->       &
                 |   |
                 |   !
 
-Assignment ->     	id [{Name','}]Name ';'
-                |  id Name '=' expr ';'
+Assignment ->     	dt [{Name','}]Name ';'
+                |  dt Name '=' expr ';'
                 |  Name '=' expr ';' 
 
 expr       ->       '~' expr
@@ -58,5 +58,5 @@ stmt        ->   	 if '(' expr ')' stmt [else if '(' expr ')' stmt ][ else stmt 
                 |   NULL
                 |   cout {{'<<' expr} [<< endl]}';'
                 
-id          ->  int | short | byte | long | double | float | string | bool | char
+dt          ->  int | short | byte | long | double | float | string | bool | char
 
