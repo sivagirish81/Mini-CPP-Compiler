@@ -3,44 +3,51 @@ Notes
 + Square brackets indicate optionality.
 + Curly brackets indicate *
 
-binop ->  	        +
+Start ->      int main'('')' stmt 
+
+binop ->  	     +
  	            |	–
  	            |	*
  	            |	/
+              | %
 
-unary ->            --
-                |   ++
+unary ->          --
+              |   ++
 
-Relop ->  	        ==
+Relop ->  	     ==
  	            |	!=
  	            |	<=
  	            |	<
  	            |	>=
  	            |	>
 
-Logic_op->          &&
-                |   ||
-                |   ^
+Logic_op->        &&
+              |   ||
+              |   ^
 
 bitwise_op ->       &
                 |   |
                 |   !
 
-Assignment ->     	id [ '[' expr ']' ] = expr
+Assignment ->     	id Name '=' expr ';'
 
-expr       ->       '–' expr
- 	            | 	'!' expr
+expr       ->       '~' expr
+ 	              | 	'!' expr
                 |   unary expr
                 |   expr Logic_op expr
- 	            | 	expr binop expr
- 	            | 	expr relop expr
- 	            | 	expr logical_op expr
- 	            | 	id [ '(' [expr { ',' expr } ] ')' | '[' expr ']' ]
- 	            | 	'(' expr ')'
+ 	              | 	 expr binop expr
+ 	              | 	 expr relop expr
+ 	              | 	 expr bitwise_op expr
+ 	              | 	 '(' expr ')'
+                |   Name
 
-stmt        ->   	if '(' expr ')' stmt [else if '(' expr ')' stmt ][ else stmt ]
+stmt        ->   	 if '(' expr ')' stmt [else if '(' expr ')' stmt ][ else stmt ]
                 | 	while '(' expr ')' stmt
- 	            | 	Assignment ';'
- 	            | 	id '(' [expr { ',' expr } ] ')' ';'
- 	            | 	'{' { stmt } '}'
- 	            | 	';'
+                |  for '(' [ assg ] ';' [ expr ] ';' [ assg ] ')' stmt
+ 	              | 	return [ expr ] ';'
+ 	              | 	Assignment ';'
+ 	              | 	Name'(' [expr { ',' expr } ] ')' ';'
+ 	              | 	'{' { stmt } '}'
+ 	              | 	';'   
+                
+id          ->  int | short | byte | long | double | float | string | bool | char
