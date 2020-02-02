@@ -6,7 +6,6 @@ letter [A-Za-z_]
 %{
 	#include <stdio.h>
 	int yyerror(char*);
-	int count;
 %}
 
 %%
