@@ -1,4 +1,4 @@
-#Points to ponder
+# Points to ponder
 
 + Add arguments for int main 
 + A block is anthing which can come inside a block with flower brckets included
