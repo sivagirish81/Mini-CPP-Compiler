@@ -5,22 +5,28 @@ block :  T_openFlowerBracket block T_closedFlowerBracket
 	    | stmt block
 	    | stmt
 
-stmt  : T_while T_openParenthesis expr T_closedParanthesis block
+If_Stmt : 	If_Stmt T_else block
+		|	If_Stmt	T_else If_Stmt
+		|	T_if  T_openParenthesis expr T_closedParanthesis block
 
-
-		|	if  expr ')' stmt [else if '(' expr ')' stmt ][ else stmt ]
-        |  while '(' expr ')' stmt
-     |  for '(' [ assg ] ';' [ expr ] ';' [ assg ] ')' stmt
-	    |  return [ expr ] ';'
-	    |  Assignment
-	    |  Name'(' [expr { ',' expr } ] ')' ';'
+For_Stmt : T_for T_openParenthesis Assignment expr ';' expr T_closedParanthesis block
+		 | T_for T_openParenthesis ';' ';' T_closedParanthesis block
+			
+stmt  : 	If_Stmt
+     	|   For_Stmt
+	    |   return expr ';'
+		|	return ';'
+	    |   Assignment
 	    |  ';'  
-        |   expr ';'
-        |   NULL
-        |   cout {{'<<' expr} [<< endl]}';
+        |   cout Multi_Print ';'
 
-expr : '~' expr
-	    |     '!' expr
+Multi_Print : Multi_Print '<<' Printing_Types 
+			| '<<' Printing_Types
+
+Printing_Types : expr | T_string_Constants
+
+expr : 		'~' expr
+	    |   '!' expr
         |   unary expr
         |   expr unary
         |   expr Logic_op expr
@@ -29,7 +35,8 @@ expr : '~' expr
 	    |   expr bitwise_op expr
 	    |   T_openParenthesis expr T_closedParanthesis
         |   T_identifier
-        |   Numeric_Constants
+        |   T_numeric_Constants
+
 binop :   +
 	    | –
 	    | *
@@ -53,8 +60,14 @@ bitwise_op :   &
             |  |
             |  ^
 
-Assignment : dt [{Name','}]Name ';'
-            |  dt Name '=' expr ';'
+Declaration : dt T_identifier ';'
+
+Assignment :   dt Multi_Assign ';'	
+            |  dt T_identifier '=' expr ';'
             |  Name '=' expr ';'
 
-dt : int | short | byte | long | double | float | string | bool | char
+Multi_Assign : Multi_Assign ',' Assignment 
+			  | Assignment
+
+
+dt : T_type | T_int
