@@ -53,28 +53,15 @@ expr : 		'~' expr
         |   T_identifier
         |   T_numeric_Constants
 
-binop :   +
-	    | –
-	    | *
-	    | /
-        | %
+binop :   T_ArithmeticOperator
 
-unary :     --
-        |   ++
+unary :    T_UnaryOperator
 
-relop :   	 ==
-	    |    !=
-	    |    <=
-	    |    <
-	    |    >=
-	    |    >
+relop :   	T_RelationalOperator
 
-Logic_op :  &&
-          | ||
+Logic_op :  T_LogicalOperator
 
-bitwise_op :   &
-            |  |
-            |  ^
+bitwise_op :   T_BitwiseOperator
 
 Declaration : dt T_identifier ';'
 
