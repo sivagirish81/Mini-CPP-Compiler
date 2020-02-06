@@ -6,3 +6,7 @@
 + An epression is anything which ca come within a while
 + Work on string constants
 + expr returns only numbers
+
++ Fix more errors.
++ Figure out how to compile yacc programs.
++ Do Line By Line Testing.

@@ -4,10 +4,10 @@
     #include <stdlib.h>
 %}
 
-%token T_keyword T_int T_main T_type T_return T_for T_while T_InputStream T_OutputStream 
+%token T_keyword T_int T_main T_type T_return T_for T_if T_else T_while T_InputStream T_OutputStream 
 %token T_openParenthesis T_closedParanthesis T_openFlowerBracket T_closedFlowerBracket 
 %token T_RelationalOperator T_LogicalOperator T_UnaryOperator T_ArithmeticOperator 
-%token T_AssignmentOperator T_BitwiseOperator T_Semicolon T_identifier T_NumericConstants T_StringLiteral
+%token T_AssignmentOperator T_BitwiseOperator T_Semicolon T_identifier T_numeric_Constants T_string_Constants
 %left '~' '^' '&' '|'
 %left '+' '-'
 %left '*' '/'
@@ -30,14 +30,14 @@ For_Stmt : T_for T_openParenthesis Assignment expr ';' expr T_closedParanthesis 
 			
 stmt  : 	If_Stmt
      	|   For_Stmt
-	    |   return expr ';'
-		|	return ';'
+	    |   T_return expr ';'
+		|	T_return ';'
 	    |   Assignment
 	    |  ';'  
-        |   cout Multi_Print ';'
+        |   T_keyword Multi_Print ';'
 
-Multi_Print : Multi_Print '<<' Printing_Types 
-			| '<<' Printing_Types
+Multi_Print : Multi_Print '<''<' Printing_Types 
+			| '<''<' Printing_Types
 
 Printing_Types : expr | T_string_Constants
 
@@ -67,7 +67,7 @@ Declaration : dt T_identifier ';'
 
 Assignment :   dt Multi_Assign ';'	
             |  dt T_identifier '=' expr ';'
-            |  Name '=' expr ';'
+            |  T_identifier '=' expr ';'
 
 Multi_Assign : Multi_Assign ',' Assignment 
 			  | Assignment
