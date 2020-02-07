@@ -1,0 +1,271 @@
+Terminals unused in grammar
+
+   T_keyword
+   T_type
+   T_return
+   T_for
+   T_if
+   T_else
+   T_while
+   T_InputStream
+   T_OutputStream
+   T_RelationalOperator
+   T_LogicalOperator
+   T_UnaryOperator
+   T_ArithmeticOperator
+   T_AssignmentOperator
+   T_BitwiseOperator
+   T_Semicolon
+   T_identifier
+   T_numericConstants
+   T_stringLiteral
+   T_whiteSpace
+   '~'
+   '^'
+   '&'
+   '|'
+   '+'
+   '-'
+   '*'
+   '/'
+   AND
+   OR
+   NOT
+   EQ
+   NOTEQ
+   GTE
+   LTE
+   GT
+   LT
+   INC
+   DEC
+
+
+Grammar
+
+    0 $accept: Start $end
+
+    1 Start: T_int T_main T_openParenthesis T_closedParanthesis T_openFlowerBracket block
+
+    2 block: T_openFlowerBracket block
+    3      | stmt Multiple_stmts T_closedFlowerBracket
+    4      | T_closedFlowerBracket
+
+    5 Multiple_stmts: stmt Multiple_stmts
+    6               | %empty
+
+    7 stmt: T_character
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'&' (38)
+'*' (42)
+'+' (43)
+'-' (45)
+'/' (47)
+'^' (94)
+'|' (124)
+'~' (126)
+error (256)
+T_keyword (258)
+T_int (259) 1
+T_main (260) 1
+T_type (261)
+T_return (262)
+T_for (263)
+T_if (264)
+T_else (265)
+T_while (266)
+T_InputStream (267)
+T_OutputStream (268)
+T_openParenthesis (269) 1
+T_closedParanthesis (270) 1
+T_openFlowerBracket (271) 1 2
+T_closedFlowerBracket (272) 3 4
+T_RelationalOperator (273)
+T_LogicalOperator (274)
+T_UnaryOperator (275)
+T_ArithmeticOperator (276)
+T_AssignmentOperator (277)
+T_BitwiseOperator (278)
+T_Semicolon (279)
+T_identifier (280)
+T_numericConstants (281)
+T_stringLiteral (282)
+T_character (283) 7
+T_whiteSpace (284)
+AND (285)
+OR (286)
+NOT (287)
+EQ (288)
+NOTEQ (289)
+GTE (290)
+LTE (291)
+GT (292)
+LT (293)
+INC (294)
+DEC (295)
+
+
+Nonterminals, with rules where they appear
+
+$accept (49)
+    on left: 0
+Start (50)
+    on left: 1, on right: 0
+block (51)
+    on left: 2 3 4, on right: 1 2
+Multiple_stmts (52)
+    on left: 5 6, on right: 3 5
+stmt (53)
+    on left: 7, on right: 3 5
+
+
+State 0
+
+    0 $accept: . Start $end
+
+    T_int  shift, and go to state 1
+
+    Start  go to state 2
+
+
+State 1
+
+    1 Start: T_int . T_main T_openParenthesis T_closedParanthesis T_openFlowerBracket block
+
+    T_main  shift, and go to state 3
+
+
+State 2
+
+    0 $accept: Start . $end
+
+    $end  shift, and go to state 4
+
+
+State 3
+
+    1 Start: T_int T_main . T_openParenthesis T_closedParanthesis T_openFlowerBracket block
+
+    T_openParenthesis  shift, and go to state 5
+
+
+State 4
+
+    0 $accept: Start $end .
+
+    $default  accept
+
+
+State 5
+
+    1 Start: T_int T_main T_openParenthesis . T_closedParanthesis T_openFlowerBracket block
+
+    T_closedParanthesis  shift, and go to state 6
+
+
+State 6
+
+    1 Start: T_int T_main T_openParenthesis T_closedParanthesis . T_openFlowerBracket block
+
+    T_openFlowerBracket  shift, and go to state 7
+
+
+State 7
+
+    1 Start: T_int T_main T_openParenthesis T_closedParanthesis T_openFlowerBracket . block
+
+    T_openFlowerBracket    shift, and go to state 8
+    T_closedFlowerBracket  shift, and go to state 9
+    T_character            shift, and go to state 10
+
+    block  go to state 11
+    stmt   go to state 12
+
+
+State 8
+
+    2 block: T_openFlowerBracket . block
+
+    T_openFlowerBracket    shift, and go to state 8
+    T_closedFlowerBracket  shift, and go to state 9
+    T_character            shift, and go to state 10
+
+    block  go to state 13
+    stmt   go to state 12
+
+
+State 9
+
+    4 block: T_closedFlowerBracket .
+
+    $default  reduce using rule 4 (block)
+
+
+State 10
+
+    7 stmt: T_character .
+
+    $default  reduce using rule 7 (stmt)
+
+
+State 11
+
+    1 Start: T_int T_main T_openParenthesis T_closedParanthesis T_openFlowerBracket block .
+
+    $default  reduce using rule 1 (Start)
+
+
+State 12
+
+    3 block: stmt . Multiple_stmts T_closedFlowerBracket
+
+    T_character  shift, and go to state 10
+
+    $default  reduce using rule 6 (Multiple_stmts)
+
+    Multiple_stmts  go to state 14
+    stmt            go to state 15
+
+
+State 13
+
+    2 block: T_openFlowerBracket block .
+
+    $default  reduce using rule 2 (block)
+
+
+State 14
+
+    3 block: stmt Multiple_stmts . T_closedFlowerBracket
+
+    T_closedFlowerBracket  shift, and go to state 16
+
+
+State 15
+
+    5 Multiple_stmts: stmt . Multiple_stmts
+
+    T_character  shift, and go to state 10
+
+    $default  reduce using rule 6 (Multiple_stmts)
+
+    Multiple_stmts  go to state 17
+    stmt            go to state 15
+
+
+State 16
+
+    3 block: stmt Multiple_stmts T_closedFlowerBracket .
+
+    $default  reduce using rule 3 (block)
+
+
+State 17
+
+    5 Multiple_stmts: stmt Multiple_stmts .
+
+    $default  reduce using rule 5 (Multiple_stmts)
