@@ -35,14 +35,19 @@ Multiple_stmts : stmt Multiple_stmts
 stmt : T_character	T_Semicolon					{/*Statement cannot be empty, block takes care of empty string*/}
 		| if_stmt
 		| while_stmt
+		| for_stmt
 		;
+
+for_stmt : T_for T_openParenthesis expr T_Semicolon expr T_Semicolon expr T_closedParanthesis block
 
 while_stmt : T_while T_openParenthesis expr T_closedParanthesis block
 
 if_stmt : T_if T_openParenthesis expr T_closedParanthesis block
 
 
-expr: T_character;						/*If cannot be empty*/
+expr: 	T_character
+		|
+		;						/*If cannot be empty*/
 
 %%
 
