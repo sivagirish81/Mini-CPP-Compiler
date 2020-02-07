@@ -23,14 +23,23 @@ Start : T_int T_main T_openParenthesis T_closedParanthesis T_openFlowerBracket b
 block :  T_openFlowerBracket block
 	    | stmt Multiple_stmts T_closedFlowerBracket
 	    | T_closedFlowerBracket
+		|
 		;
+
+/*Block is {}, Multiple statements, {block}, {Multiple statements}, Empty*/
 
 Multiple_stmts : stmt Multiple_stmts
 		|
 		;
 
-stmt : T_character
+stmt : T_character	T_Semicolon					{/*Statement cannot be nothing, block takes care of empty string*/}
+		| if_stmt
 		;
+
+if_stmt : T_if T_openParenthesis expr T_closedParanthesis block
+
+
+expr: T_character;						/*If cannot be empty*/
 
 %%
 
