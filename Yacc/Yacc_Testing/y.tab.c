@@ -62,7 +62,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 2 "Yacc.y" /* yacc.c:339  */
+#line 2 "bare_yac.y" /* yacc.c:339  */
 
     #include <stdio.h>
     #include <stdlib.h>
@@ -495,7 +495,7 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    18,    18,    21
+       0,    19,    19,    22
 };
 #endif
 
@@ -1272,7 +1272,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 18 "Yacc.y" /* yacc.c:1646  */
+#line 19 "bare_yac.y" /* yacc.c:1646  */
     {printf("Works!\n"); return 0;}
 #line 1278 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -1506,7 +1506,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 25 "Yacc.y" /* yacc.c:1906  */
+#line 25 "bare_yac.y" /* yacc.c:1906  */
 
 
 int yyerror() 
