@@ -5,6 +5,21 @@ int main()
         'c';
         'b';
     }
+    else if('c')
+    {
+
+    }
+    else
+    {
+        if('c')
+        {
+            'c';
+        }
+        else if('c');
+        else;
+
+    }
+    
 
     while('c')
     {
