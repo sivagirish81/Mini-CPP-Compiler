@@ -76,7 +76,7 @@ stmt_without_if : T_character T_Semicolon
 
 Assignment: T_identifier T_AssignmentOperator Assignment
 	| T_identifier T_AssignmentOperator FunctionCall
-	| T_identifier T_AssignmentOperator ArrayUsage
+	// | T_identifier T_AssignmentOperator ArrayUsage
 	| ArrayUsage T_AssignmentOperator Assignment
 	| T_identifier ',' Assignment
 	| T_numericConstants ',' Assignment
