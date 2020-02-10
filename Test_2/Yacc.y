@@ -18,24 +18,33 @@
 
 %%
 
+/*Flower brackets are mandatory for main*/
+
 Start : T_int T_main T_openParenthesis T_closedParanthesis T_openFlowerBracket block_end_flower  	{printf("Works!\n");}
 
-block_end_flower : T_openFlowerBracket block_end_flower
-				| stmt Multiple_stmts T_closedFlowerBracket
+
+/* This production assumes flower bracket has been opened*/
+block_end_flower : stmt Multiple_stmts 
 				| T_closedFlowerBracket
 
+/*This takes care of statements like if(...);. Note that to include multiple statements, a block has to open with a flower bracket*/
 block :  T_openFlowerBracket block_end_flower
-	    | stmt Multiple_stmts
+	    | stmt
 	    | T_Semicolon
 		;
 
-/*Block is {}, Multiple statements, {block}, {Multiple statements}, ;*/
+/* block would cover anything following statement. consider the for statement for example. All possiblities are:
+for(expr;expr;expr);													(block -> ;)
+for(...) stmt          , where stmt contains T_Semicolon				(block -> stmt)
+for(...){}																(block -> {block_end_flower -> {})
+for(...){stmt, stmt, stmt, ...}											(block -> {block_end_flower -> {smt Multiple_stmts})
+for(...){stmt, if/while/for{stmt, stmt.}} , this is achieved implicity because stmt in previous can in turn be if or for while
+*/
+
 
 Multiple_stmts : stmt Multiple_stmts
-		|
+		|T_closedFlowerBracket
 		;
-
-/*Multiple states can be empty, while writing make sure you write stmt multiple_stmts*/
 
 stmt : T_character	T_Semicolon					{/*Statement cannot be empty, block takes care of empty string*/}
 		| if_stmt
