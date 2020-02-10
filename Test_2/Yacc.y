@@ -7,14 +7,16 @@
 
 %token T_keyword T_int T_main T_type T_return T_for T_if T_else T_while T_InputStream T_OutputStream 
 %token T_openParenthesis T_closedParanthesis T_openFlowerBracket T_closedFlowerBracket 
-%token T_RelationalOperator T_LogicalOperator T_UnaryOperator T_ArithmeticOperator 
-%token T_AssignmentOperator T_BitwiseOperator T_Semicolon T_identifier T_numericConstants T_stringLiteral
-%token T_character
-%token T_whiteSpace
-%left '~' '^' '&' '|'
-%left '+' '-'
-%left '*' '/'
-%left AND OR NOT EQ NOTEQ GTE LTE GT LT INC DEC
+%token T_RelationalOperator T_LogicalOperator T_UnaryOperator 
+%token T_AssignmentOperator  T_Semicolon T_identifier T_numericConstants T_stringLiteral
+%token T_character T_plus T_minus T_mod T_divide T_multiply
+%token T_whiteSpace T_shortHand
+
+%left T_LogicalOperator 
+%left T_RelationalOperator
+%left T_plus T_minus
+%left T_multiply T_divide
+%left T_UnaryOperator
 
 %%
 
@@ -46,14 +48,15 @@ Multiple_stmts : stmt Multiple_stmts
 		|T_closedFlowerBracket
 		;
 
-stmt : T_character	T_Semicolon					{/*Statement cannot be empty, block takes care of empty string*/}
+stmt : expr_with_semicolon					{/*Statement cannot be empty, block takes care of empty string*/}
 		| if_stmt
 		| while_stmt
 		| for_stmt
+		| Assignment_stmt T_Semicolon
 		;
 
 
-for_stmt : T_for T_openParenthesis expr T_Semicolon expr T_Semicolon expr T_closedParanthesis block
+for_stmt : T_for T_openParenthesis expr_with_semicolon expr_with_semicolon expr_or_empty T_closedParanthesis block
 
 while_stmt : T_while T_openParenthesis expr T_closedParanthesis block
 
@@ -69,14 +72,43 @@ Multiple_stmts_not_if : stmt_without_if Multiple_stmts
 					|T_Semicolon
 					;
 
-stmt_without_if : T_character T_Semicolon
+stmt_without_if : expr_with_semicolon
+					| Assignment_stmt T_Semicolon
 					| while_stmt
 					|for_stmt
 					;
 
-expr: T_character
-	  | 
+Assignment_stmt: T_identifier T_AssignmentOperator expr
+				;
+
+expr: T_numericConstants BinaryOperator T_numericConstants
+		| T_identifier BinaryOperator T_numericConstants
+		| T_identifier BinaryOperator T_identifier
+		| T_UnaryOperator T_identifier
+		| T_identifier T_UnaryOperator
+		| T_numericConstants
+		| T_stringLiteral
+		| T_identifier
+
+expr_or_empty: expr
+				| 
+				;
+
+expr_with_semicolon:
+		 T_numericConstants BinaryOperator T_numericConstants T_Semicolon
+		| T_identifier BinaryOperator T_numericConstants T_Semicolon
+		| T_identifier BinaryOperator T_identifier T_Semicolon
+		| T_UnaryOperator T_identifier T_Semicolon 
+	 	| T_identifier T_UnaryOperator T_Semicolon 
+		| T_numericConstants T_Semicolon
+		| T_stringLiteral T_Semicolon
+		| T_identifier T_Semicolon
 	  ;
+
+
+ArithmeticOperator: T_plus | T_minus | T_multiply | T_divide | T_mod
+
+BinaryOperator : ArithmeticOperator | T_LogicalOperator | T_RelationalOperator
 
 %%
 

@@ -36,6 +36,8 @@ alignas|alignof|and|and_eq|asm|atomic_cancel|atomic_commit|atomic_noexcept|bitan
 "{"								{printf("T_openFlowerBracket ");}
 "}"								{printf("T_closedFlowerBracket ");}
 
+"+="|"-="|"*="|"/="|"%="		{printf("T_shortHand ");}
+
 ">"|"<"|">="|"<="|"=="|"!="   	{printf("T_RelationalOperator ");}
 "&&"|"[|][|]"					{printf("T_LogicalOperator ");}
 "++"|"--"						{printf("T_UnaryOperator  ");}
