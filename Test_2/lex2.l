@@ -41,9 +41,15 @@ alignas|alignof|and|and_eq|asm|atomic_cancel|atomic_commit|atomic_noexcept|bitan
 ">"|"<"|">="|"<="|"=="|"!="   	{return T_RelationalOperator ;}
 "&&"|"[|][|]"					{return T_LogicalOperator ;}
 "++"|"--"						{return T_UnaryOperator ;}
-[+/%*-]							{return T_ArithmeticOperator ;}
+
+"+="|"-="|"*="|"/="|"%="		{return T_shortHand;}
+
+"+"								{return T_plus;}
+"-"								{return T_minus;}
+"/"								{return T_divide;}
+"*"								{return T_multiply;}
+"%"								{return T_mod;}
 "="								{return T_AssignmentOperator ;}
-[&|^]							{return T_BitwiseOperator ;}
 
 ";"								{return T_Semicolon ;}
 

@@ -63,26 +63,19 @@ extern int yydebug;
     T_RelationalOperator = 273,
     T_LogicalOperator = 274,
     T_UnaryOperator = 275,
-    T_ArithmeticOperator = 276,
-    T_AssignmentOperator = 277,
-    T_BitwiseOperator = 278,
-    T_Semicolon = 279,
-    T_identifier = 280,
-    T_numericConstants = 281,
-    T_stringLiteral = 282,
-    T_character = 283,
-    T_whiteSpace = 284,
-    AND = 285,
-    OR = 286,
-    NOT = 287,
-    EQ = 288,
-    NOTEQ = 289,
-    GTE = 290,
-    LTE = 291,
-    GT = 292,
-    LT = 293,
-    INC = 294,
-    DEC = 295
+    T_AssignmentOperator = 276,
+    T_Semicolon = 277,
+    T_identifier = 278,
+    T_numericConstants = 279,
+    T_stringLiteral = 280,
+    T_character = 281,
+    T_plus = 282,
+    T_minus = 283,
+    T_mod = 284,
+    T_divide = 285,
+    T_multiply = 286,
+    T_whiteSpace = 287,
+    T_shortHand = 288
   };
 #endif
 /* Tokens.  */
@@ -104,26 +97,19 @@ extern int yydebug;
 #define T_RelationalOperator 273
 #define T_LogicalOperator 274
 #define T_UnaryOperator 275
-#define T_ArithmeticOperator 276
-#define T_AssignmentOperator 277
-#define T_BitwiseOperator 278
-#define T_Semicolon 279
-#define T_identifier 280
-#define T_numericConstants 281
-#define T_stringLiteral 282
-#define T_character 283
-#define T_whiteSpace 284
-#define AND 285
-#define OR 286
-#define NOT 287
-#define EQ 288
-#define NOTEQ 289
-#define GTE 290
-#define LTE 291
-#define GT 292
-#define LT 293
-#define INC 294
-#define DEC 295
+#define T_AssignmentOperator 276
+#define T_Semicolon 277
+#define T_identifier 278
+#define T_numericConstants 279
+#define T_stringLiteral 280
+#define T_character 281
+#define T_plus 282
+#define T_minus 283
+#define T_mod 284
+#define T_divide 285
+#define T_multiply 286
+#define T_whiteSpace 287
+#define T_shortHand 288
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

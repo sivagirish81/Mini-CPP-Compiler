@@ -1,21 +1,8 @@
 int main()
 {
-    if('c')
+    if(a < b)
     {
-        'c';
-        'b';
-    }
-
-    while('c')
-    {
-        'c';
-        if('c')
-        {
-            while('d')
-            {
-                'c';
-                'd';
-            }
-        }
+        a = b;
+        a += c;
     }
 }
