@@ -1,0 +1,751 @@
+Terminals unused in grammar
+
+   T_keyword
+   T_type
+   T_return
+   T_InputStream
+   T_OutputStream
+   T_RelationalOperator
+   T_LogicalOperator
+   T_UnaryOperator
+   T_ArithmeticOperator
+   T_AssignmentOperator
+   T_BitwiseOperator
+   T_identifier
+   T_numericConstants
+   T_stringLiteral
+   T_whiteSpace
+   '~'
+   '^'
+   '&'
+   '|'
+   '+'
+   '-'
+   '*'
+   '/'
+   AND
+   OR
+   NOT
+   EQ
+   NOTEQ
+   GTE
+   LTE
+   GT
+   LT
+   INC
+   DEC
+
+
+State 36 conflicts: 1 shift/reduce
+State 60 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: Start $end
+
+    1 Start: T_int T_main T_openParenthesis T_closedParanthesis T_openFlowerBracket block_end_flower
+
+    2 block_end_flower: stmt Multiple_stmts
+    3                 | T_closedFlowerBracket
+
+    4 block: T_openFlowerBracket block_end_flower
+    5      | stmt
+    6      | T_Semicolon
+
+    7 Multiple_stmts: stmt Multiple_stmts
+    8               | T_closedFlowerBracket
+
+    9 stmt: T_character T_Semicolon
+   10     | if_stmt
+   11     | while_stmt
+   12     | for_stmt
+
+   13 for_stmt: T_for T_openParenthesis expr T_Semicolon expr T_Semicolon expr T_closedParanthesis block
+
+   14 while_stmt: T_while T_openParenthesis expr T_closedParanthesis block
+
+   15 if_stmt: T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty
+
+   16 elseif_else_empty: T_else T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty
+   17                  | T_else Multiple_stmts_not_if
+   18                  | T_else T_openFlowerBracket block_end_flower
+   19                  | %empty
+
+   20 Multiple_stmts_not_if: stmt_without_if Multiple_stmts
+   21                      | T_Semicolon
+
+   22 stmt_without_if: T_character T_Semicolon
+   23                | while_stmt
+   24                | for_stmt
+
+   25 expr: T_character
+   26     | %empty
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'&' (38)
+'*' (42)
+'+' (43)
+'-' (45)
+'/' (47)
+'^' (94)
+'|' (124)
+'~' (126)
+error (256)
+T_keyword (258)
+T_int (259) 1
+T_main (260) 1
+T_type (261)
+T_return (262)
+T_for (263) 13
+T_if (264) 15 16
+T_else (265) 16 17 18
+T_while (266) 14
+T_InputStream (267)
+T_OutputStream (268)
+T_openParenthesis (269) 1 13 14 15 16
+T_closedParanthesis (270) 1 13 14 15 16
+T_openFlowerBracket (271) 1 4 18
+T_closedFlowerBracket (272) 3 8
+T_RelationalOperator (273)
+T_LogicalOperator (274)
+T_UnaryOperator (275)
+T_ArithmeticOperator (276)
+T_AssignmentOperator (277)
+T_BitwiseOperator (278)
+T_Semicolon (279) 6 9 13 21 22
+T_identifier (280)
+T_numericConstants (281)
+T_stringLiteral (282)
+T_character (283) 9 22 25
+T_whiteSpace (284)
+AND (285)
+OR (286)
+NOT (287)
+EQ (288)
+NOTEQ (289)
+GTE (290)
+LTE (291)
+GT (292)
+LT (293)
+INC (294)
+DEC (295)
+
+
+Nonterminals, with rules where they appear
+
+$accept (49)
+    on left: 0
+Start (50)
+    on left: 1, on right: 0
+block_end_flower (51)
+    on left: 2 3, on right: 1 4 18
+block (52)
+    on left: 4 5 6, on right: 13 14 15 16
+Multiple_stmts (53)
+    on left: 7 8, on right: 2 7 20
+stmt (54)
+    on left: 9 10 11 12, on right: 2 5 7
+for_stmt (55)
+    on left: 13, on right: 12 24
+while_stmt (56)
+    on left: 14, on right: 11 23
+if_stmt (57)
+    on left: 15, on right: 10
+elseif_else_empty (58)
+    on left: 16 17 18 19, on right: 15 16
+Multiple_stmts_not_if (59)
+    on left: 20 21, on right: 17
+stmt_without_if (60)
+    on left: 22 23 24, on right: 20
+expr (61)
+    on left: 25 26, on right: 13 14 15 16
+
+
+State 0
+
+    0 $accept: . Start $end
+
+    T_int  shift, and go to state 1
+
+    Start  go to state 2
+
+
+State 1
+
+    1 Start: T_int . T_main T_openParenthesis T_closedParanthesis T_openFlowerBracket block_end_flower
+
+    T_main  shift, and go to state 3
+
+
+State 2
+
+    0 $accept: Start . $end
+
+    $end  shift, and go to state 4
+
+
+State 3
+
+    1 Start: T_int T_main . T_openParenthesis T_closedParanthesis T_openFlowerBracket block_end_flower
+
+    T_openParenthesis  shift, and go to state 5
+
+
+State 4
+
+    0 $accept: Start $end .
+
+    $default  accept
+
+
+State 5
+
+    1 Start: T_int T_main T_openParenthesis . T_closedParanthesis T_openFlowerBracket block_end_flower
+
+    T_closedParanthesis  shift, and go to state 6
+
+
+State 6
+
+    1 Start: T_int T_main T_openParenthesis T_closedParanthesis . T_openFlowerBracket block_end_flower
+
+    T_openFlowerBracket  shift, and go to state 7
+
+
+State 7
+
+    1 Start: T_int T_main T_openParenthesis T_closedParanthesis T_openFlowerBracket . block_end_flower
+
+    T_for                  shift, and go to state 8
+    T_if                   shift, and go to state 9
+    T_while                shift, and go to state 10
+    T_closedFlowerBracket  shift, and go to state 11
+    T_character            shift, and go to state 12
+
+    block_end_flower  go to state 13
+    stmt              go to state 14
+    for_stmt          go to state 15
+    while_stmt        go to state 16
+    if_stmt           go to state 17
+
+
+State 8
+
+   13 for_stmt: T_for . T_openParenthesis expr T_Semicolon expr T_Semicolon expr T_closedParanthesis block
+
+    T_openParenthesis  shift, and go to state 18
+
+
+State 9
+
+   15 if_stmt: T_if . T_openParenthesis expr T_closedParanthesis block elseif_else_empty
+
+    T_openParenthesis  shift, and go to state 19
+
+
+State 10
+
+   14 while_stmt: T_while . T_openParenthesis expr T_closedParanthesis block
+
+    T_openParenthesis  shift, and go to state 20
+
+
+State 11
+
+    3 block_end_flower: T_closedFlowerBracket .
+
+    $default  reduce using rule 3 (block_end_flower)
+
+
+State 12
+
+    9 stmt: T_character . T_Semicolon
+
+    T_Semicolon  shift, and go to state 21
+
+
+State 13
+
+    1 Start: T_int T_main T_openParenthesis T_closedParanthesis T_openFlowerBracket block_end_flower .
+
+    $default  reduce using rule 1 (Start)
+
+
+State 14
+
+    2 block_end_flower: stmt . Multiple_stmts
+
+    T_for                  shift, and go to state 8
+    T_if                   shift, and go to state 9
+    T_while                shift, and go to state 10
+    T_closedFlowerBracket  shift, and go to state 22
+    T_character            shift, and go to state 12
+
+    Multiple_stmts  go to state 23
+    stmt            go to state 24
+    for_stmt        go to state 15
+    while_stmt      go to state 16
+    if_stmt         go to state 17
+
+
+State 15
+
+   12 stmt: for_stmt .
+
+    $default  reduce using rule 12 (stmt)
+
+
+State 16
+
+   11 stmt: while_stmt .
+
+    $default  reduce using rule 11 (stmt)
+
+
+State 17
+
+   10 stmt: if_stmt .
+
+    $default  reduce using rule 10 (stmt)
+
+
+State 18
+
+   13 for_stmt: T_for T_openParenthesis . expr T_Semicolon expr T_Semicolon expr T_closedParanthesis block
+
+    T_character  shift, and go to state 25
+
+    $default  reduce using rule 26 (expr)
+
+    expr  go to state 26
+
+
+State 19
+
+   15 if_stmt: T_if T_openParenthesis . expr T_closedParanthesis block elseif_else_empty
+
+    T_character  shift, and go to state 25
+
+    $default  reduce using rule 26 (expr)
+
+    expr  go to state 27
+
+
+State 20
+
+   14 while_stmt: T_while T_openParenthesis . expr T_closedParanthesis block
+
+    T_character  shift, and go to state 25
+
+    $default  reduce using rule 26 (expr)
+
+    expr  go to state 28
+
+
+State 21
+
+    9 stmt: T_character T_Semicolon .
+
+    $default  reduce using rule 9 (stmt)
+
+
+State 22
+
+    8 Multiple_stmts: T_closedFlowerBracket .
+
+    $default  reduce using rule 8 (Multiple_stmts)
+
+
+State 23
+
+    2 block_end_flower: stmt Multiple_stmts .
+
+    $default  reduce using rule 2 (block_end_flower)
+
+
+State 24
+
+    7 Multiple_stmts: stmt . Multiple_stmts
+
+    T_for                  shift, and go to state 8
+    T_if                   shift, and go to state 9
+    T_while                shift, and go to state 10
+    T_closedFlowerBracket  shift, and go to state 22
+    T_character            shift, and go to state 12
+
+    Multiple_stmts  go to state 29
+    stmt            go to state 24
+    for_stmt        go to state 15
+    while_stmt      go to state 16
+    if_stmt         go to state 17
+
+
+State 25
+
+   25 expr: T_character .
+
+    $default  reduce using rule 25 (expr)
+
+
+State 26
+
+   13 for_stmt: T_for T_openParenthesis expr . T_Semicolon expr T_Semicolon expr T_closedParanthesis block
+
+    T_Semicolon  shift, and go to state 30
+
+
+State 27
+
+   15 if_stmt: T_if T_openParenthesis expr . T_closedParanthesis block elseif_else_empty
+
+    T_closedParanthesis  shift, and go to state 31
+
+
+State 28
+
+   14 while_stmt: T_while T_openParenthesis expr . T_closedParanthesis block
+
+    T_closedParanthesis  shift, and go to state 32
+
+
+State 29
+
+    7 Multiple_stmts: stmt Multiple_stmts .
+
+    $default  reduce using rule 7 (Multiple_stmts)
+
+
+State 30
+
+   13 for_stmt: T_for T_openParenthesis expr T_Semicolon . expr T_Semicolon expr T_closedParanthesis block
+
+    T_character  shift, and go to state 25
+
+    $default  reduce using rule 26 (expr)
+
+    expr  go to state 33
+
+
+State 31
+
+   15 if_stmt: T_if T_openParenthesis expr T_closedParanthesis . block elseif_else_empty
+
+    T_for                shift, and go to state 8
+    T_if                 shift, and go to state 9
+    T_while              shift, and go to state 10
+    T_openFlowerBracket  shift, and go to state 34
+    T_Semicolon          shift, and go to state 35
+    T_character          shift, and go to state 12
+
+    block       go to state 36
+    stmt        go to state 37
+    for_stmt    go to state 15
+    while_stmt  go to state 16
+    if_stmt     go to state 17
+
+
+State 32
+
+   14 while_stmt: T_while T_openParenthesis expr T_closedParanthesis . block
+
+    T_for                shift, and go to state 8
+    T_if                 shift, and go to state 9
+    T_while              shift, and go to state 10
+    T_openFlowerBracket  shift, and go to state 34
+    T_Semicolon          shift, and go to state 35
+    T_character          shift, and go to state 12
+
+    block       go to state 38
+    stmt        go to state 37
+    for_stmt    go to state 15
+    while_stmt  go to state 16
+    if_stmt     go to state 17
+
+
+State 33
+
+   13 for_stmt: T_for T_openParenthesis expr T_Semicolon expr . T_Semicolon expr T_closedParanthesis block
+
+    T_Semicolon  shift, and go to state 39
+
+
+State 34
+
+    4 block: T_openFlowerBracket . block_end_flower
+
+    T_for                  shift, and go to state 8
+    T_if                   shift, and go to state 9
+    T_while                shift, and go to state 10
+    T_closedFlowerBracket  shift, and go to state 11
+    T_character            shift, and go to state 12
+
+    block_end_flower  go to state 40
+    stmt              go to state 14
+    for_stmt          go to state 15
+    while_stmt        go to state 16
+    if_stmt           go to state 17
+
+
+State 35
+
+    6 block: T_Semicolon .
+
+    $default  reduce using rule 6 (block)
+
+
+State 36
+
+   15 if_stmt: T_if T_openParenthesis expr T_closedParanthesis block . elseif_else_empty
+
+    T_else  shift, and go to state 41
+
+    T_else    [reduce using rule 19 (elseif_else_empty)]
+    $default  reduce using rule 19 (elseif_else_empty)
+
+    elseif_else_empty  go to state 42
+
+
+State 37
+
+    5 block: stmt .
+
+    $default  reduce using rule 5 (block)
+
+
+State 38
+
+   14 while_stmt: T_while T_openParenthesis expr T_closedParanthesis block .
+
+    $default  reduce using rule 14 (while_stmt)
+
+
+State 39
+
+   13 for_stmt: T_for T_openParenthesis expr T_Semicolon expr T_Semicolon . expr T_closedParanthesis block
+
+    T_character  shift, and go to state 25
+
+    $default  reduce using rule 26 (expr)
+
+    expr  go to state 43
+
+
+State 40
+
+    4 block: T_openFlowerBracket block_end_flower .
+
+    $default  reduce using rule 4 (block)
+
+
+State 41
+
+   16 elseif_else_empty: T_else . T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty
+   17                  | T_else . Multiple_stmts_not_if
+   18                  | T_else . T_openFlowerBracket block_end_flower
+
+    T_for                shift, and go to state 8
+    T_if                 shift, and go to state 44
+    T_while              shift, and go to state 10
+    T_openFlowerBracket  shift, and go to state 45
+    T_Semicolon          shift, and go to state 46
+    T_character          shift, and go to state 47
+
+    for_stmt               go to state 48
+    while_stmt             go to state 49
+    Multiple_stmts_not_if  go to state 50
+    stmt_without_if        go to state 51
+
+
+State 42
+
+   15 if_stmt: T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty .
+
+    $default  reduce using rule 15 (if_stmt)
+
+
+State 43
+
+   13 for_stmt: T_for T_openParenthesis expr T_Semicolon expr T_Semicolon expr . T_closedParanthesis block
+
+    T_closedParanthesis  shift, and go to state 52
+
+
+State 44
+
+   16 elseif_else_empty: T_else T_if . T_openParenthesis expr T_closedParanthesis block elseif_else_empty
+
+    T_openParenthesis  shift, and go to state 53
+
+
+State 45
+
+   18 elseif_else_empty: T_else T_openFlowerBracket . block_end_flower
+
+    T_for                  shift, and go to state 8
+    T_if                   shift, and go to state 9
+    T_while                shift, and go to state 10
+    T_closedFlowerBracket  shift, and go to state 11
+    T_character            shift, and go to state 12
+
+    block_end_flower  go to state 54
+    stmt              go to state 14
+    for_stmt          go to state 15
+    while_stmt        go to state 16
+    if_stmt           go to state 17
+
+
+State 46
+
+   21 Multiple_stmts_not_if: T_Semicolon .
+
+    $default  reduce using rule 21 (Multiple_stmts_not_if)
+
+
+State 47
+
+   22 stmt_without_if: T_character . T_Semicolon
+
+    T_Semicolon  shift, and go to state 55
+
+
+State 48
+
+   24 stmt_without_if: for_stmt .
+
+    $default  reduce using rule 24 (stmt_without_if)
+
+
+State 49
+
+   23 stmt_without_if: while_stmt .
+
+    $default  reduce using rule 23 (stmt_without_if)
+
+
+State 50
+
+   17 elseif_else_empty: T_else Multiple_stmts_not_if .
+
+    $default  reduce using rule 17 (elseif_else_empty)
+
+
+State 51
+
+   20 Multiple_stmts_not_if: stmt_without_if . Multiple_stmts
+
+    T_for                  shift, and go to state 8
+    T_if                   shift, and go to state 9
+    T_while                shift, and go to state 10
+    T_closedFlowerBracket  shift, and go to state 22
+    T_character            shift, and go to state 12
+
+    Multiple_stmts  go to state 56
+    stmt            go to state 24
+    for_stmt        go to state 15
+    while_stmt      go to state 16
+    if_stmt         go to state 17
+
+
+State 52
+
+   13 for_stmt: T_for T_openParenthesis expr T_Semicolon expr T_Semicolon expr T_closedParanthesis . block
+
+    T_for                shift, and go to state 8
+    T_if                 shift, and go to state 9
+    T_while              shift, and go to state 10
+    T_openFlowerBracket  shift, and go to state 34
+    T_Semicolon          shift, and go to state 35
+    T_character          shift, and go to state 12
+
+    block       go to state 57
+    stmt        go to state 37
+    for_stmt    go to state 15
+    while_stmt  go to state 16
+    if_stmt     go to state 17
+
+
+State 53
+
+   16 elseif_else_empty: T_else T_if T_openParenthesis . expr T_closedParanthesis block elseif_else_empty
+
+    T_character  shift, and go to state 25
+
+    $default  reduce using rule 26 (expr)
+
+    expr  go to state 58
+
+
+State 54
+
+   18 elseif_else_empty: T_else T_openFlowerBracket block_end_flower .
+
+    $default  reduce using rule 18 (elseif_else_empty)
+
+
+State 55
+
+   22 stmt_without_if: T_character T_Semicolon .
+
+    $default  reduce using rule 22 (stmt_without_if)
+
+
+State 56
+
+   20 Multiple_stmts_not_if: stmt_without_if Multiple_stmts .
+
+    $default  reduce using rule 20 (Multiple_stmts_not_if)
+
+
+State 57
+
+   13 for_stmt: T_for T_openParenthesis expr T_Semicolon expr T_Semicolon expr T_closedParanthesis block .
+
+    $default  reduce using rule 13 (for_stmt)
+
+
+State 58
+
+   16 elseif_else_empty: T_else T_if T_openParenthesis expr . T_closedParanthesis block elseif_else_empty
+
+    T_closedParanthesis  shift, and go to state 59
+
+
+State 59
+
+   16 elseif_else_empty: T_else T_if T_openParenthesis expr T_closedParanthesis . block elseif_else_empty
+
+    T_for                shift, and go to state 8
+    T_if                 shift, and go to state 9
+    T_while              shift, and go to state 10
+    T_openFlowerBracket  shift, and go to state 34
+    T_Semicolon          shift, and go to state 35
+    T_character          shift, and go to state 12
+
+    block       go to state 60
+    stmt        go to state 37
+    for_stmt    go to state 15
+    while_stmt  go to state 16
+    if_stmt     go to state 17
+
+
+State 60
+
+   16 elseif_else_empty: T_else T_if T_openParenthesis expr T_closedParanthesis block . elseif_else_empty
+
+    T_else  shift, and go to state 41
+
+    T_else    [reduce using rule 19 (elseif_else_empty)]
+    $default  reduce using rule 19 (elseif_else_empty)
+
+    elseif_else_empty  go to state 61
+
+
+State 61
+
+   16 elseif_else_empty: T_else T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty .
+
+    $default  reduce using rule 16 (elseif_else_empty)
