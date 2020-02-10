@@ -74,58 +74,10 @@ stmt_without_if : T_character T_Semicolon
 					|for_stmt
 					;
 
-Assignment: T_identifier T_AssignmentOperator Assignment
-	| T_identifier T_AssignmentOperator FunctionCall
-	// | T_identifier T_AssignmentOperator ArrayUsage
-	| ArrayUsage T_AssignmentOperator Assignment
-	| T_identifier ',' Assignment
-	| T_numericConstants ',' Assignment
-	//| T_identifier '+' Assignment
-	//| T_identifier '-' Assignment
-	//| T_identifier '*' Assignment
-	//| T_identifier '/' Assignment	
-	| T_identifier T_ArithmeticOperator Assignment
-	//| T_numericConstants '+' Assignment
-	//| T_numericConstants '-' Assignment
-	//| T_numericConstants '*' Assignment
-	//| T_numericConstants '/' Assignment
-	| T_numericConstants T_ArithmeticOperator Assignment
-	| '\'' Assignment '\''	
-	| '(' Assignment ')'
-	| '-' '(' Assignment ')'
-	| '-' T_numericConstants
-	| '-' T_identifier
-	|   T_numericConstants 
-	|   T_identifier
-	;
+expr: T_character
+	  | 
+	  ;
 
-/*
-expr: 		'~' expr
-	    |   '!' expr
-        |   T_UnaryOperator expr
-        |   expr T_UnaryOperator
-        |   expr T_LogicalOperator expr
-	    |   expr T_ArithmeticOperator expr
-	    |   expr T_RelationalOperator expr
-	    |   expr T_BitwiseOperator expr
-	    |   T_openParenthesis expr T_closedParanthesis
-        |   T_identifier
-        |   T_numericConstants
-*/
-ArrayUsage : T_identifier'['Assignment']'
-	;
-
-expr:	
-	//| expr LE Expr 
-	//| expr GE Expr
-	//| expr NE Expr
-	//| expr EQ Expr
-	//| Expr GT Expr
-	//| Expr LT Expr
-	| expr T_RelationalOperator expr
-	| Assignment
-	| ArrayUsage
-	;
 %%
 
 int yyerror() 
