@@ -74,9 +74,17 @@ stmt_without_if : T_character T_Semicolon
 					|for_stmt
 					;
 
-expr: 	T_character
-		|
-		;						
+expr: 		'~' expr
+	    |   '!' expr
+        |   unary expr
+        |   expr unary
+        |   expr Logic_op expr
+	    |   expr binop expr
+	    |   expr relop expr
+	    |   expr bitwise_op expr
+	    |   T_openParenthesis expr T_closedParanthesis
+        |   T_identifier
+        |   T_numericConstants
 
 %%
 
