@@ -49,15 +49,13 @@ alignas|alignof|and|and_eq|asm|atomic_cancel|atomic_commit|atomic_noexcept|bitan
 
 ";"								{return T_Semicolon ;}
 
-{letter}({letter}|{digit})* 	{return T_identifier ;}
+{letter}({letter}|{digit})* 	{Gen_Symbol_Table(yytext,yylineno,SymTab[TOP]);return T_identifier ;}
 
 {digit}+						{return T_numericConstants ;}
 \"([^\\\"]|\\.)*\"				{return T_stringLiteral; }	
 
 [ \n\t]                          {;}
 .								yyerror("Invalid character found, Abort!!!");
-
-\.[a-zA-Z_]([a-zA-Z0-9_.])*|[a-zA-Z]([a-zA-Z0-9_.])* {Gen_Symbol_Table(yytext,yylineno,SymTab[TOP]);return id;}
 
 %%
 
