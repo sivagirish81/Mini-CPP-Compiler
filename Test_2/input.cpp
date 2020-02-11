@@ -3,7 +3,7 @@ int main()
     int a = c;
     if(a < b)
     {
-        a = b + c + d;
+        a = b;
     }
     else if(1+3)
     {
