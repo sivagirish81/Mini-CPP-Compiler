@@ -1,46 +1,43 @@
 int main()
 {
-    if('c')
-    {
-        'c';
-        'b';
-    }
-    else if('c')
-    {
 
+    if(a < b)
+    {
+        a = b;
+    }
+    else if(1+3)
+    {
+        2 + 3;
     }
     else
     {
-        if('c')
+        if(a && b)
         {
-            'c';
+            2+4;
         }
-        else if('c');
+        else if(a + b);
         else;
 
     }
     
 
-    while('c')
+    while(a <= b)
     {
-        'c';
-        if('c')
+
+        if(a >= c)
         {
-            while('d')
+            while(1)
             {
-                'c';
-                'd';
+
             }
         }
-        'c';
-    }
-
-    for('c';'c';'c')
-    {
-        'c';
-    }
-    for(;;)
-    {
 
     }
+
+    for(1;1;1)
+    {
+        1;
+    }
+    
+
 }
