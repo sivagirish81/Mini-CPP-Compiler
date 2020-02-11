@@ -1,9 +1,9 @@
 int main()
 {
-
+    int a = c;
     if(a < b)
     {
-        a = b;
+        a = b + c + d;
     }
     else if(1+3)
     {
@@ -39,5 +39,7 @@ int main()
         1;
     }
     
+    for(;;);
+
 
 }

@@ -38,9 +38,17 @@ alignas|alignof|and|and_eq|asm|atomic_cancel|atomic_commit|atomic_noexcept|bitan
 "{"								{return T_openFlowerBracket ;}
 "}"								{return T_closedFlowerBracket ;}
 
-">"|"<"|">="|"<="|"=="|"!="   	{return T_RelationalOperator ;}
-"&&"|"[|][|]"					{return T_LogicalOperator ;}
-"++"|"--"						{return T_UnaryOperator ;}
+">"								{return T_greater;}
+">="							{return T_greater_equal;}
+"<"								{return T_less;}
+"<="							{return T_less_equal;}
+"=="							{return T_equal_equal;}
+"!="							{return T_not_equal;}
+
+"&&"							{return T_LogicalAnd;}
+"[|][|]"						{return T_LogicalOr;}
+
+
 
 "+="|"-="|"*="|"/="|"%="		{return T_shortHand;}
 

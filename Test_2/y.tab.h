@@ -75,7 +75,15 @@ extern int yydebug;
     T_divide = 285,
     T_multiply = 286,
     T_whiteSpace = 287,
-    T_shortHand = 288
+    T_shortHand = 288,
+    T_LogicalAnd = 289,
+    T_LogicalOr = 290,
+    T_less = 291,
+    T_less_equal = 292,
+    T_greater = 293,
+    T_greater_equal = 294,
+    T_equal_equal = 295,
+    T_not_equal = 296
   };
 #endif
 /* Tokens.  */
@@ -110,6 +118,14 @@ extern int yydebug;
 #define T_multiply 286
 #define T_whiteSpace 287
 #define T_shortHand 288
+#define T_LogicalAnd 289
+#define T_LogicalOr 290
+#define T_less 291
+#define T_less_equal 292
+#define T_greater 293
+#define T_greater_equal 294
+#define T_equal_equal 295
+#define T_not_equal 296
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
