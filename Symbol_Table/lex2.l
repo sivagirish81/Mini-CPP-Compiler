@@ -9,6 +9,7 @@ letter [A-Za-z_]
 	int count;
 	void insertIntoSym(char *text,int nm,int scp);
 	void display();
+	// char Global_Type_Array[100];
 
 %}
 
@@ -71,13 +72,16 @@ present
 
 
 %%
-
+// Variable structure that consists of - :
+// + Variable name
+// + Line number to assosciate particual variable with - Line_T
+// + scope - Each opened block is assosciated with a scope number
 struct var
 {
-	char c[20];
-	char l[100];
+	char var_name[20];
+	char Line_t[100];
+	// char type[100];
 	int scope;
-	int y;
 };
 struct scope
 {
@@ -85,22 +89,22 @@ struct scope
 	int up;
 };
 
-struct scope symtab[100];
+struct scope Symbol_Table[100];
 
 
 void insertIntoSym(char *text,int nm,int scp)
 {
 	int flag=0;
-	for(int i=0;i<=symtab[scp].up;i++)
+	for(int i=0;i<=Symbol_Table[scp].up;i++)
 	{
-		if(strcmp(symtab[scp].arr[i].c,text)==0)
+		if(strcmp(Symbol_Table[scp].arr[i].var_name,text)==0)
 		{
 			char buffer[20];
 			sprintf(buffer,"%d",nm);
 			flag=1;
-			strcat(symtab[scp].arr[i].l,",");
-			strcat(symtab[scp].arr[i].l,buffer);	
-			symtab[scp].arr[i].scope=scp;		
+			strcat(Symbol_Table[scp].arr[i].Line_t,",");
+			strcat(Symbol_Table[scp].arr[i].Line_t,buffer);	
+			Symbol_Table[scp].arr[i].scope=scp;		
 			break;
 		}
 	}
@@ -108,12 +112,12 @@ void insertIntoSym(char *text,int nm,int scp)
 	{
 		char buffer[20];
 		sprintf(buffer,"%d",nm);
-		symtab[scp].up++;
-		int p=symtab[scp].up;
-		strcpy(symtab[scp].arr[p].c,text);
-		strcpy(symtab[scp].arr[p].l,"");
-		strcat(symtab[scp].arr[p].l,buffer);
-		symtab[scp].arr[p].scope=scp;
+		Symbol_Table[scp].up++;
+		int p=Symbol_Table[scp].up;
+		strcpy(Symbol_Table[scp].arr[p].var_name,text);
+		strcpy(Symbol_Table[scp].arr[p].Line_t,"");
+		strcat(Symbol_Table[scp].arr[p].Line_t,buffer);
+		Symbol_Table[scp].arr[p].scope=scp;
 	}
 	
 }
@@ -122,10 +126,10 @@ void display()
 {
 	for(int i=0;i<=count;i++)
 	{
-		int h=symtab[i].up;
+		int h=Symbol_Table[i].up;
 		for (int j=1;j<=h;j++)
 		{
-			printf("Symbol:%s \t Scope:%d \t Line number: %s\n",symtab[i].arr[j].c,symtab[i].arr[j].scope,symtab[i].arr[j].l);
+			printf("Symbol:%s \t Scope:%d \t Line number: %s\n",Symbol_Table[i].arr[j].var_name,Symbol_Table[i].arr[j].scope,Symbol_Table[i].arr[j].Line_t);
 		}
 	}	
 }

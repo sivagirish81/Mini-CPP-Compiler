@@ -778,8 +778,9 @@ char *yytext;
 	int count;
 	void insertIntoSym(char *text,int nm,int scp);
 	void display();
+	// char Global_Type_Array[100];
 
-#line 783 "lex.yy.c"
+#line 784 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -997,11 +998,11 @@ YY_DECL
 		}
 
 	{
-#line 15 "lex2.l"
+#line 16 "lex2.l"
 
 
 
-#line 1005 "lex.yy.c"
+#line 1006 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1071,193 +1072,193 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 18 "lex2.l"
+#line 19 "lex2.l"
 {return T_stringLiteral;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 19 "lex2.l"
+#line 20 "lex2.l"
 {return T_character;}
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 20 "lex2.l"
+#line 21 "lex2.l"
 {;}
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 21 "lex2.l"
+#line 22 "lex2.l"
 {;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 24 "lex2.l"
+#line 25 "lex2.l"
 {return T_keyword;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 26 "lex2.l"
+#line 27 "lex2.l"
 {return T_if ;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 27 "lex2.l"
+#line 28 "lex2.l"
 {return T_else ;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 29 "lex2.l"
+#line 30 "lex2.l"
 {return T_int ; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 30 "lex2.l"
+#line 31 "lex2.l"
 {return T_main ; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 31 "lex2.l"
+#line 32 "lex2.l"
 {return T_type;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 32 "lex2.l"
+#line 33 "lex2.l"
 {return T_return;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 34 "lex2.l"
+#line 35 "lex2.l"
 {return T_for;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 35 "lex2.l"
+#line 36 "lex2.l"
 {return T_while;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 36 "lex2.l"
+#line 37 "lex2.l"
 
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 38 "lex2.l"
+#line 39 "lex2.l"
 {return T_InputStream ;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 39 "lex2.l"
+#line 40 "lex2.l"
 {return T_OutputStream ;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 42 "lex2.l"
+#line 43 "lex2.l"
 {return T_openParenthesis ;}		  
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 43 "lex2.l"
+#line 44 "lex2.l"
 {return T_closedParanthesis ;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 44 "lex2.l"
+#line 45 "lex2.l"
 {count=count+1;top=top+1;st[top]=count;return T_openFlowerBracket ;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 45 "lex2.l"
+#line 46 "lex2.l"
 {top=top-1;return T_closedFlowerBracket ;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 47 "lex2.l"
+#line 48 "lex2.l"
 {return T_RelationalOperator ;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 48 "lex2.l"
+#line 49 "lex2.l"
 {return T_LogicalOperator ;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 49 "lex2.l"
+#line 50 "lex2.l"
 {return T_UnaryOperator ;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 51 "lex2.l"
+#line 52 "lex2.l"
 {return T_shortHand;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 53 "lex2.l"
+#line 54 "lex2.l"
 {return T_plus;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 54 "lex2.l"
+#line 55 "lex2.l"
 {return T_minus;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 55 "lex2.l"
+#line 56 "lex2.l"
 {return T_divide;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 56 "lex2.l"
+#line 57 "lex2.l"
 {return T_multiply;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 57 "lex2.l"
+#line 58 "lex2.l"
 {return T_mod;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 58 "lex2.l"
+#line 59 "lex2.l"
 {return T_AssignmentOperator ;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 60 "lex2.l"
+#line 61 "lex2.l"
 {return T_Semicolon ;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 62 "lex2.l"
+#line 63 "lex2.l"
 {insertIntoSym(yytext,yylineno,st[top]);return T_identifier ;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 64 "lex2.l"
+#line 65 "lex2.l"
 {return T_numericConstants ;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 68 "lex2.l"
+#line 69 "lex2.l"
 {/*printf("T_whiteSpace ");*/}
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 69 "lex2.l"
+#line 70 "lex2.l"
 {;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 70 "lex2.l"
+#line 71 "lex2.l"
 yyerror("Invalid character found, Abort!!!");
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 73 "lex2.l"
+#line 74 "lex2.l"
 ECHO;
 	YY_BREAK
-#line 1261 "lex.yy.c"
+#line 1262 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2270,16 +2271,19 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 73 "lex2.l"
+#line 74 "lex2.l"
 
 
-
+// Variable structure that consists of - :
+// + Variable name
+// + Line number to assosciate particual variable with - Line_T
+// + scope - Each opened block is assosciated with a scope number
 struct var
 {
-	char c[20];
-	char l[100];
+	char var_name[20];
+	char Line_t[100];
+	// char type[100];
 	int scope;
-	int y;
 };
 struct scope
 {
@@ -2287,22 +2291,22 @@ struct scope
 	int up;
 };
 
-struct scope symtab[100];
+struct scope Symbol_Table[100];
 
 
 void insertIntoSym(char *text,int nm,int scp)
 {
 	int flag=0;
-	for(int i=0;i<=symtab[scp].up;i++)
+	for(int i=0;i<=Symbol_Table[scp].up;i++)
 	{
-		if(strcmp(symtab[scp].arr[i].c,text)==0)
+		if(strcmp(Symbol_Table[scp].arr[i].var_name,text)==0)
 		{
 			char buffer[20];
 			sprintf(buffer,"%d",nm);
 			flag=1;
-			strcat(symtab[scp].arr[i].l,",");
-			strcat(symtab[scp].arr[i].l,buffer);	
-			symtab[scp].arr[i].scope=scp;		
+			strcat(Symbol_Table[scp].arr[i].Line_t,",");
+			strcat(Symbol_Table[scp].arr[i].Line_t,buffer);	
+			Symbol_Table[scp].arr[i].scope=scp;		
 			break;
 		}
 	}
@@ -2310,12 +2314,12 @@ void insertIntoSym(char *text,int nm,int scp)
 	{
 		char buffer[20];
 		sprintf(buffer,"%d",nm);
-		symtab[scp].up++;
-		int p=symtab[scp].up;
-		strcpy(symtab[scp].arr[p].c,text);
-		strcpy(symtab[scp].arr[p].l,"");
-		strcat(symtab[scp].arr[p].l,buffer);
-		symtab[scp].arr[p].scope=scp;
+		Symbol_Table[scp].up++;
+		int p=Symbol_Table[scp].up;
+		strcpy(Symbol_Table[scp].arr[p].var_name,text);
+		strcpy(Symbol_Table[scp].arr[p].Line_t,"");
+		strcat(Symbol_Table[scp].arr[p].Line_t,buffer);
+		Symbol_Table[scp].arr[p].scope=scp;
 	}
 	
 }
@@ -2324,10 +2328,10 @@ void display()
 {
 	for(int i=0;i<=count;i++)
 	{
-		int h=symtab[i].up;
+		int h=Symbol_Table[i].up;
 		for (int j=1;j<=h;j++)
 		{
-			printf("Symbol:%s \t Scope:%d \t Line number: %s\n",symtab[i].arr[j].c,symtab[i].arr[j].scope,symtab[i].arr[j].l);
+			printf("Symbol:%s \t Scope:%d \t Line number: %s\n",Symbol_Table[i].arr[j].var_name,Symbol_Table[i].arr[j].scope,Symbol_Table[i].arr[j].Line_t);
 		}
 	}	
 }

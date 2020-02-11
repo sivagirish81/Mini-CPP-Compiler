@@ -1,6 +1,5 @@
 int main()
 {
-
     if(a < b)
     {
         a = b;
