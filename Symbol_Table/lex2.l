@@ -7,7 +7,7 @@ letter [A-Za-z_]
 	int st[100];
 	int top;
 	int count;
-	void insertIntoSym(char *text,int nm,int scp);
+	void Gen_Symbol_Table(char *text,int nm,int scp);
 	void display();
 	// char Global_Type_Array[100];
 
@@ -60,7 +60,7 @@ present
 
 ";"								{return T_Semicolon ;}
 
-{letter}({letter}|{digit})* 	{insertIntoSym(yytext,yylineno,st[top]);return T_identifier ;}
+{letter}({letter}|{digit})* 	{Gen_Symbol_Table(yytext,yylineno,st[top]);return T_identifier ;}
 
 {digit}+						{return T_numericConstants ;}
 
@@ -92,7 +92,7 @@ struct scope
 struct scope Symbol_Table[100];
 
 
-void insertIntoSym(char *text,int nm,int scp)
+void Gen_Symbol_Table(char *text,int nm,int scp)
 {
 	int flag=0;
 	for(int i=0;i<=Symbol_Table[scp].up;i++)

@@ -776,7 +776,7 @@ char *yytext;
 	int st[100];
 	int top;
 	int count;
-	void insertIntoSym(char *text,int nm,int scp);
+	void Gen_Symbol_Table(char *text,int nm,int scp);
 	void display();
 	// char Global_Type_Array[100];
 
@@ -1230,7 +1230,7 @@ YY_RULE_SETUP
 case 32:
 YY_RULE_SETUP
 #line 63 "lex2.l"
-{insertIntoSym(yytext,yylineno,st[top]);return T_identifier ;}
+{Gen_Symbol_Table(yytext,yylineno,st[top]);return T_identifier ;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
@@ -2294,7 +2294,7 @@ struct scope
 struct scope Symbol_Table[100];
 
 
-void insertIntoSym(char *text,int nm,int scp)
+void Gen_Symbol_Table(char *text,int nm,int scp)
 {
 	int flag=0;
 	for(int i=0;i<=Symbol_Table[scp].up;i++)
