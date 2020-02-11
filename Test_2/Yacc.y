@@ -2,8 +2,11 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
-	int yydebug = 1;
+	int yydebug = 0;
+	extern int yylineno;
 %}
+
+%error-verbose
 
 %token T_keyword T_int T_main T_type T_return T_for T_if T_else T_while T_InputStream T_OutputStream 
 %token T_openParenthesis T_closedParanthesis T_openFlowerBracket T_closedFlowerBracket 
@@ -16,6 +19,8 @@
 %left T_less T_less_equal T_greater T_greater_equal T_equal_equal T_not_equal
 %left T_plus T_minus
 %left T_multiply T_divide T_mod
+
+
 
 %%
 
@@ -121,10 +126,9 @@ expr_or_empty: expr
 
 %%
 
-int yyerror() 
+int yyerror(const char *str) 
 { 
-	printf("Syntax error\n");
-	return 1;
+	printf("Error | Line: %d\n%s\n",yylineno,str);
 } 
 
 

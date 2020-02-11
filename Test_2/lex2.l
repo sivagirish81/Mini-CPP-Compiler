@@ -6,6 +6,8 @@ letter [A-Za-z_]
 	int yyerror(char*);
 %}
 
+%option yylineno
+
 %%
 
 

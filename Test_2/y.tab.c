@@ -66,9 +66,10 @@
 
     #include <stdio.h>
     #include <stdlib.h>
-	int yydebug = 1;
+	int yydebug = 0;
+	extern int yylineno;
 
-#line 72 "y.tab.c" /* yacc.c:339  */
+#line 73 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -83,7 +84,7 @@
 # undef YYERROR_VERBOSE
 # define YYERROR_VERBOSE 1
 #else
-# define YYERROR_VERBOSE 0
+# define YYERROR_VERBOSE 1
 #endif
 
 /* In a future release of Bison, this section will be replaced
@@ -201,7 +202,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 205 "y.tab.c" /* yacc.c:358  */
+#line 206 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -502,15 +503,15 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    24,    24,    28,    29,    32,    33,    34,    46,    47,
-      50,    51,    52,    53,    54,    60,    62,    64,    66,    67,
-      68,    69,    72,    73,    76,    77,    78,    79,    82,    83,
-      84,    85,    88,    89,    90,    91,    92,    93,    94,    95,
-      96,    97,    98,    99,   100,   101,   102,   103,   106,   107
+       0,    29,    29,    33,    34,    37,    38,    39,    51,    52,
+      55,    56,    57,    58,    59,    65,    67,    69,    71,    72,
+      73,    74,    77,    78,    81,    82,    83,    84,    87,    88,
+      89,    90,    93,    94,    95,    96,    97,    98,    99,   100,
+     101,   102,   103,   104,   105,   106,   107,   108,   111,   112
 };
 #endif
 
-#if YYDEBUG || YYERROR_VERBOSE || 0
+#if YYDEBUG || YYERROR_VERBOSE || 1
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
@@ -1377,19 +1378,19 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 24 "Yacc.y" /* yacc.c:1646  */
+#line 29 "Yacc.y" /* yacc.c:1646  */
     {printf("Works!\n");}
-#line 1383 "y.tab.c" /* yacc.c:1646  */
+#line 1384 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 50 "Yacc.y" /* yacc.c:1646  */
+#line 55 "Yacc.y" /* yacc.c:1646  */
     {/*Statement cannot be empty, block takes care of empty string*/}
-#line 1389 "y.tab.c" /* yacc.c:1646  */
+#line 1390 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1393 "y.tab.c" /* yacc.c:1646  */
+#line 1394 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1617,13 +1618,12 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 122 "Yacc.y" /* yacc.c:1906  */
+#line 127 "Yacc.y" /* yacc.c:1906  */
 
 
-int yyerror() 
+int yyerror(const char *str) 
 { 
-	printf("Syntax error\n");
-	return 1;
+	printf("Error | Line: %d\n%s\n",yylineno,str);
 } 
 
 
