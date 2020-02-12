@@ -1,5 +1,6 @@
 int main()
 {
+    a = 1;
     if(a < b)
     {
         a = b;
