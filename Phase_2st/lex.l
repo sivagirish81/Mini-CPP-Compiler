@@ -12,6 +12,7 @@ letter [A-Za-z_]
 	void Gen_Symbol_Table(char *text,int nm,int scp);
 	void display();
 	// char Global_Type_Array[100];
+	
 %}
 
 %option yylineno
@@ -121,6 +122,8 @@ void Gen_Symbol_Table(char *text,int nm,int scp)
 	}
 	if(flag==0)
 	{
+		if (!isalpha(text[0]) || text[0]!='_')
+			return;
 		char buffer[20];
 		sprintf(buffer,"%d",nm);
 		Symbol_Table[scp].up++;
