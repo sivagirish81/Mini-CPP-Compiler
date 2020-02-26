@@ -1,8 +1,5 @@
 # Points to ponder
 
-+ Add arguments for int main 
-+ A block is anthing which can come inside a block with flower brckets included
-+ A statement is as defined by cpp
-+ An epression is anything which ca come within a while
-+ Work on string constants
-+ expr returns only numbers
+* Change expression and statement (expression can be statement in cpp)
+* Symbol table
+* If else if ladder (taking care of [if if else] - see if grammar works for this )
