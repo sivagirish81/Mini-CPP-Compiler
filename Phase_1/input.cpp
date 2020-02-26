@@ -1,6 +1,6 @@
 int main()
 {
-    9a;
+    int a = 4;
     // int a = c;
     // if(a < b)
     // {

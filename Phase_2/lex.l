@@ -5,14 +5,18 @@ letter [A-Za-z_]
 	#include "y.tab.h"
 	#include<stdio.h>
 	#include<stdlib.h>
+	#include<ctype.h>
 	int yyerror(char*);
 	int st[100];
-	int top;
-	int count;
+	int top = 0;
+	int count = 0;
 	void Gen_Symbol_Table(char *text,int nm,int scp);
 	void display();
+	void insert_in_st(char*, char*, int );
 	// char Global_Type_Array[100];
 %}
+
+
 
 %option yylineno
 
@@ -30,9 +34,9 @@ alignas|alignof|and|and_eq|asm|atomic_cancel|atomic_commit|atomic_noexcept|bitan
 "if"																{return T_if ;}
 "else"																{return T_else ;}
 
-"int" 																{return T_int ; }
+"int" 																{yylval.str = strdup(yytext); return T_int ; }
 "main"																{return T_main ; }
-"auto"|"bool"|"char"|"char8_t"|"char16_t"|"char32_t"|"double"|"float"|"long"|"short" 	{return T_type ;}
+"auto"|"bool"|"char"|"char8_t"|"char16_t"|"char32_t"|"double"|"float"|"long"|"short" 	{yylval.str = strdup(yytext); return T_type ;}
 "return" 																{return T_return;}
 
 "for"							{return T_for;}
@@ -71,7 +75,7 @@ alignas|alignof|and|and_eq|asm|atomic_cancel|atomic_commit|atomic_noexcept|bitan
 
 ";"								{return T_Semicolon ;}
 
-{letter}({letter}|{digit})* 	{Gen_Symbol_Table(yytext,yylineno,st[top]);return T_identifier ;}
+{letter}({letter}|{digit})* 	{Gen_Symbol_Table(yytext,yylineno,st[top]); yylval.str = strdup(yytext);return T_identifier ;}
 
 {digit}+						{return T_numericConstants ;}
 
@@ -91,7 +95,7 @@ struct var
 {
 	char var_name[20];
 	char Line_t[100];
-	// char type[100];
+	char type[100];
 	int scope;
 };
 struct scope
@@ -121,8 +125,6 @@ void Gen_Symbol_Table(char *text,int nm,int scp)
 	}
 	if(flag==0)
 	{
-		if (!isalpha(text[0]) || text[0]!='_')
-			return;
 		char buffer[20];
 		sprintf(buffer,"%d",nm);
 		Symbol_Table[scp].up++;
@@ -142,9 +144,20 @@ void display()
 		int h=Symbol_Table[i].up;
 		for (int j=1;j<=h;j++)
 		{
-			printf("Symbol:%s \t Scope:%d \t Line number: %s\n",Symbol_Table[i].arr[j].var_name,Symbol_Table[i].arr[j].scope,Symbol_Table[i].arr[j].Line_t);
+			printf("Symbol:%s \t Scope:%d \t Line number: %s \t Type: %s\n",Symbol_Table[i].arr[j].var_name,Symbol_Table[i].arr[j].scope,Symbol_Table[i].arr[j].Line_t, Symbol_Table[i].arr[j].type);
 		}
 	}	
+}
+
+void insert_in_st(char* type, char* id, int scp)
+{
+	for(int i=0;i<=Symbol_Table[scp].up;i++)
+	{
+		if(strcmp(Symbol_Table[scp].arr[i].var_name,id)==0)
+		{
+			strcpy(Symbol_Table[scp].arr[i].type, type);
+		}
+	}
 }
 
 int yywrap()

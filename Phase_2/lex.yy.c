@@ -747,15 +747,17 @@ char *yytext;
 	#include "y.tab.h"
 	#include<stdio.h>
 	#include<stdlib.h>
+	#include<ctype.h>
 	int yyerror(char*);
 	int st[100];
-	int top;
-	int count;
+	int top = 0;
+	int count = 0;
 	void Gen_Symbol_Table(char *text,int nm,int scp);
 	void display();
+	void insert_in_st(char*, char*, int );
 	// char Global_Type_Array[100];
-#line 758 "lex.yy.c"
-#line 759 "lex.yy.c"
+#line 760 "lex.yy.c"
+#line 761 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -972,11 +974,11 @@ YY_DECL
 		}
 
 	{
-#line 19 "lex.l"
+#line 23 "lex.l"
 
 
 
-#line 980 "lex.yy.c"
+#line 982 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1046,213 +1048,213 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 22 "lex.l"
+#line 26 "lex.l"
 {return T_stringLiteral;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 23 "lex.l"
+#line 27 "lex.l"
 {return T_character;}
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 24 "lex.l"
+#line 28 "lex.l"
 {;}
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 25 "lex.l"
+#line 29 "lex.l"
 {;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 28 "lex.l"
+#line 32 "lex.l"
 {return T_keyword;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 30 "lex.l"
+#line 34 "lex.l"
 {return T_if ;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 31 "lex.l"
+#line 35 "lex.l"
 {return T_else ;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 33 "lex.l"
-{return T_int ; }
+#line 37 "lex.l"
+{yylval.str = strdup(yytext); return T_int ; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 34 "lex.l"
+#line 38 "lex.l"
 {return T_main ; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 35 "lex.l"
-{return T_type ;}
+#line 39 "lex.l"
+{yylval.str = strdup(yytext); return T_type ;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 36 "lex.l"
+#line 40 "lex.l"
 {return T_return;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 38 "lex.l"
+#line 42 "lex.l"
 {return T_for;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 39 "lex.l"
+#line 43 "lex.l"
 {return T_while;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 42 "lex.l"
+#line 46 "lex.l"
 {return T_InputStream ;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 43 "lex.l"
+#line 47 "lex.l"
 {return T_OutputStream ;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 46 "lex.l"
+#line 50 "lex.l"
 {return T_openParenthesis ;}		  
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 47 "lex.l"
+#line 51 "lex.l"
 {return T_closedParanthesis ;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 48 "lex.l"
+#line 52 "lex.l"
 {count=count+1;top=top+1;st[top]=count;return T_openFlowerBracket ;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 49 "lex.l"
+#line 53 "lex.l"
 {top=top-1;return T_closedFlowerBracket ;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 51 "lex.l"
+#line 55 "lex.l"
 {return T_greater;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 52 "lex.l"
+#line 56 "lex.l"
 {return T_greater_equal;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 53 "lex.l"
+#line 57 "lex.l"
 {return T_less;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 54 "lex.l"
+#line 58 "lex.l"
 {return T_less_equal;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 55 "lex.l"
+#line 59 "lex.l"
 {return T_equal_equal;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 56 "lex.l"
+#line 60 "lex.l"
 {return T_not_equal;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 58 "lex.l"
+#line 62 "lex.l"
 {return T_LogicalAnd;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 59 "lex.l"
+#line 63 "lex.l"
 {return T_LogicalOr;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 63 "lex.l"
+#line 67 "lex.l"
 {return T_shortHand;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 65 "lex.l"
+#line 69 "lex.l"
 {return T_plus;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 66 "lex.l"
+#line 70 "lex.l"
 {return T_minus;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 67 "lex.l"
+#line 71 "lex.l"
 {return T_divide;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 68 "lex.l"
+#line 72 "lex.l"
 {return T_multiply;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 69 "lex.l"
+#line 73 "lex.l"
 {return T_mod;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 70 "lex.l"
+#line 74 "lex.l"
 {return T_AssignmentOperator ;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 72 "lex.l"
+#line 76 "lex.l"
 {return T_Semicolon ;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 74 "lex.l"
-{Gen_Symbol_Table(yytext,yylineno,st[top]);return T_identifier ;}
+#line 78 "lex.l"
+{Gen_Symbol_Table(yytext,yylineno,st[top]); yylval.str = strdup(yytext);return T_identifier ;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 76 "lex.l"
+#line 80 "lex.l"
 {return T_numericConstants ;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 80 "lex.l"
+#line 84 "lex.l"
 {/*printf("T_whiteSpace ");*/}
 	YY_BREAK
 case 39:
 /* rule 39 can match eol */
 YY_RULE_SETUP
-#line 81 "lex.l"
+#line 85 "lex.l"
 {;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 82 "lex.l"
+#line 86 "lex.l"
 {printf("Invalid character found, Abort!!!");}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 85 "lex.l"
+#line 89 "lex.l"
 ECHO;
 	YY_BREAK
-#line 1256 "lex.yy.c"
+#line 1258 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2269,7 +2271,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 85 "lex.l"
+#line 89 "lex.l"
 
 // Variable structure that consists of - :
 // + Variable name
@@ -2279,7 +2281,7 @@ struct var
 {
 	char var_name[20];
 	char Line_t[100];
-	// char type[100];
+	char type[100];
 	int scope;
 };
 struct scope
@@ -2309,8 +2311,6 @@ void Gen_Symbol_Table(char *text,int nm,int scp)
 	}
 	if(flag==0)
 	{
-		if (!isalpha(text[0]) || text[0]!='_')
-			return;
 		char buffer[20];
 		sprintf(buffer,"%d",nm);
 		Symbol_Table[scp].up++;
@@ -2330,9 +2330,20 @@ void display()
 		int h=Symbol_Table[i].up;
 		for (int j=1;j<=h;j++)
 		{
-			printf("Symbol:%s \t Scope:%d \t Line number: %s\n",Symbol_Table[i].arr[j].var_name,Symbol_Table[i].arr[j].scope,Symbol_Table[i].arr[j].Line_t);
+			printf("Symbol:%s \t Scope:%d \t Line number: %s \t Type: %s\n",Symbol_Table[i].arr[j].var_name,Symbol_Table[i].arr[j].scope,Symbol_Table[i].arr[j].Line_t, Symbol_Table[i].arr[j].type);
 		}
 	}	
+}
+
+void insert_in_st(char* type, char* id, int scp)
+{
+	for(int i=0;i<=Symbol_Table[scp].up;i++)
+	{
+		if(strcmp(Symbol_Table[scp].arr[i].var_name,id)==0)
+		{
+			strcpy(Symbol_Table[scp].arr[i].type, type);
+		}
+	}
 }
 
 int yywrap()
