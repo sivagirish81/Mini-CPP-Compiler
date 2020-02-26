@@ -2,14 +2,14 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
+	int yylex();
 	int yydebug = 0;
 	extern int yylineno;
 	extern int st[100];
 	extern int top;
 	extern int count;
 	extern void display();
-	extern void insert_in_st(char*, char*, int);
-	int scp = 0;
+	extern void insert_in_st(char*, char*, int, char*);
 %}
 
 %union {
@@ -38,7 +38,7 @@
 /*Flower brackets are mandatory for main*/
 
 
-Start : T_int T_main T_openParenthesis T_closedParanthesis openflower block_end_flower  	{printf("Works!\n");}
+Start : T_int T_main T_openParenthesis T_closedParanthesis openflower block_end_flower  	{}
 
 
 /* This production assumes flower bracket has been opened*/
@@ -69,6 +69,7 @@ stmt : expr T_Semicolon					{/*Statement cannot be empty, block takes care of em
 		| while_stmt
 		| for_stmt
 		| Assignment_stmt T_Semicolon
+		| error T_Semicolon
 		;
 
 
@@ -98,10 +99,11 @@ stmt_without_if : expr T_Semicolon
 
 Assignment_stmt: 	T_identifier T_AssignmentOperator expr
 					| T_identifier T_shortHand expr
-					| T_type T_identifier T_AssignmentOperator expr_without_constants   {insert_in_st($1, $2, scp, "j");}
-					| T_type T_identifier T_AssignmentOperator constants   {insert_in_st($1, $2, scp, $4);}
-					| T_int T_identifier T_AssignmentOperator expr_without_constants    {insert_in_st($1, $2, scp, 10);}
-					| T_int T_identifier T_AssignmentOperator constants    {insert_in_st($1, $2, scp, 10);}
+					| T_type T_identifier T_AssignmentOperator expr_without_constants   {insert_in_st($1, $2, st[top], "j");}	
+					| T_type T_identifier T_AssignmentOperator T_stringLiteral   {insert_in_st($1, $2, st[top], $4);}
+					| T_type T_identifier T_AssignmentOperator T_numericConstants   {insert_in_st($1, $2, st[top], $4);}
+					| T_int T_identifier T_AssignmentOperator expr_without_constants    {insert_in_st($1, $2, st[top], "j");}
+					| T_int T_identifier T_AssignmentOperator T_numericConstants    {insert_in_st($1, $2, st[top], $4);}
 				;
 
 
@@ -121,9 +123,7 @@ expr_without_constants:  T_identifier
 		| expr T_equal_equal expr
 		| expr T_not_equal expr
 		;
-constants: T_numericConstants
-		| T_stringLiteral
-		;
+
 
 expr: 	T_numericConstants
 		| T_stringLiteral
@@ -147,8 +147,8 @@ expr_or_empty: expr
 				| 
 				;
 
-openflower: T_openFlowerBracket {++scp;};
-closeflower: T_closedFlowerBracket {--scp;};
+openflower: T_openFlowerBracket {};
+closeflower: T_closedFlowerBracket {};
 
 
 %%

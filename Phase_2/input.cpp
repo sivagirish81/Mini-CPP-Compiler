@@ -1,7 +1,11 @@
 int main()
 {
 
-    int c = 2;
+    int c + 2;
+    int f = 4;
+    int d + 4;
+    int e + 5;
+    
     int b = 4;
     int a = 3;
     if(a < b)
@@ -16,7 +20,8 @@ int main()
     }
     else
     {
-        2;
+        int a = 4;
+        int c = a + 4;
 
     }
 

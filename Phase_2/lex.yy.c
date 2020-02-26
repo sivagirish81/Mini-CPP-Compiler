@@ -754,7 +754,7 @@ char *yytext;
 	int count = 0;
 	void Gen_Symbol_Table(char *text,int nm,int scp);
 	void display();
-	void insert_in_st(char*, char*, int );
+	void insert_in_st(char*, char*, int, char* );
 	// char Global_Type_Array[100];
 #line 760 "lex.yy.c"
 #line 761 "lex.yy.c"
@@ -1049,12 +1049,12 @@ case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
 #line 26 "lex.l"
-{return T_stringLiteral;}
+{yylval.str = strdup(yytext); return T_stringLiteral;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 27 "lex.l"
-{return T_character;}
+{yylval.str = strdup(yytext); return T_character;}
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
@@ -1231,7 +1231,7 @@ YY_RULE_SETUP
 case 37:
 YY_RULE_SETUP
 #line 80 "lex.l"
-{return T_numericConstants ;}
+{yylval.str = strdup(yytext); return T_numericConstants ;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
@@ -2282,6 +2282,7 @@ struct var
 	char var_name[20];
 	char Line_t[100];
 	char type[100];
+	char value[100];
 	int scope;
 };
 struct scope
@@ -2330,18 +2331,20 @@ void display()
 		int h=Symbol_Table[i].up;
 		for (int j=1;j<=h;j++)
 		{
-			printf("Symbol:%s \t Scope:%d \t Line number: %s \t Type: %s\n",Symbol_Table[i].arr[j].var_name,Symbol_Table[i].arr[j].scope,Symbol_Table[i].arr[j].Line_t, Symbol_Table[i].arr[j].type);
+			printf("Symbol:%s \t Scope:%d \t Line number: %s \t Type: %s \t Value: %s\n ",Symbol_Table[i].arr[j].var_name,Symbol_Table[i].arr[j].scope,Symbol_Table[i].arr[j].Line_t, Symbol_Table[i].arr[j].type, Symbol_Table[i].arr[j].value);
 		}
 	}	
 }
 
-void insert_in_st(char* type, char* id, int scp)
+void insert_in_st(char* type, char* id, int scp, char* value)
 {
+	
 	for(int i=0;i<=Symbol_Table[scp].up;i++)
 	{
 		if(strcmp(Symbol_Table[scp].arr[i].var_name,id)==0)
 		{
 			strcpy(Symbol_Table[scp].arr[i].type, type);
+			strcpy(Symbol_Table[scp].arr[i].value, value);
 		}
 	}
 }
