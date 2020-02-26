@@ -8,23 +8,25 @@
 	extern int top;
 	extern int count;
 	extern void display();
-	extern void insert_in_st(char*, char*, int);
-	int scp = 0;
-%}
 
-%union {
-    char *str;
-}
-
+	//void yyerror(char *);
+  	extern void lookup(char*,char*,int);
+  	//void insert(char *,int,char,char*,char* );
+  	//void update(char *,int,char *);
+  	//void search_id(char *,int );
+  	//extern FILE *yyin;
+  	//extern int yylineno;
+  	//extern char *yytext;
+%}	
 
 %error-verbose
 
-%token <str> T_keyword T_int T_main T_type T_return T_for T_if T_else T_while T_InputStream T_OutputStream 
-%token <str> T_openParenthesis T_closedParanthesis T_openFlowerBracket T_closedFlowerBracket 
-%token <str> T_RelationalOperator T_LogicalOperator T_UnaryOperator 
-%token <str> T_AssignmentOperator  T_Semicolon T_identifier T_numericConstants T_stringLiteral
-%token <str> T_character T_plus T_minus T_mod T_divide T_multiply
-%token <str> T_whiteSpace T_shortHand
+%token T_keyword T_int T_main T_type T_return T_for T_if T_else T_while T_InputStream T_OutputStream 
+%token T_openParenthesis T_closedParanthesis T_openFlowerBracket T_closedFlowerBracket 
+%token T_RelationalOperator T_LogicalOperator T_UnaryOperator 
+%token T_AssignmentOperator  T_Semicolon T_identifier T_numericConstants T_stringLiteral
+%token T_character T_plus T_minus T_mod T_divide T_multiply
+%token T_whiteSpace T_shortHand
 
 %left T_LogicalAnd T_LogicalOr
 %left T_less T_less_equal T_greater T_greater_equal T_equal_equal T_not_equal
@@ -33,20 +35,21 @@
 
 
 
+
+
 %%
 
 /*Flower brackets are mandatory for main*/
 
-
-Start : T_int T_main T_openParenthesis T_closedParanthesis openflower block_end_flower  	{printf("Works!\n");}
+Start : T_int T_main T_openParenthesis T_closedParanthesis T_openFlowerBracket block_end_flower  	{printf("Works!\n");}
 
 
 /* This production assumes flower bracket has been opened*/
 block_end_flower : stmt Multiple_stmts 
-				| closeflower
+				| T_closedFlowerBracket
 
 /*This takes care of statements like if(...);. Note that to include multiple statements, a block has to open with a flower bracket*/
-block :  openflower block_end_flower
+block :  T_openFlowerBracket block_end_flower
 	    | stmt
 	    | T_Semicolon
 		;
@@ -61,7 +64,7 @@ for(...){stmt, if/while/for{stmt, stmt.}} , this is achieved implicity because s
 
 
 Multiple_stmts : stmt Multiple_stmts
-		|closeflower
+		|T_closedFlowerBracket
 		;
 
 stmt : expr T_Semicolon					{/*Statement cannot be empty, block takes care of empty string*/}
@@ -82,7 +85,7 @@ if_stmt : T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empt
 
 elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty
 					| T_else Multiple_stmts_not_if
-					| T_else openflower block_end_flower
+					| T_else T_openFlowerBracket block_end_flower
 					|
 					;
 
@@ -98,32 +101,9 @@ stmt_without_if : expr T_Semicolon
 
 Assignment_stmt: 	T_identifier T_AssignmentOperator expr
 					| T_identifier T_shortHand expr
-					| T_type T_identifier T_AssignmentOperator expr_without_constants   {insert_in_st($1, $2, scp, "j");}
-					| T_type T_identifier T_AssignmentOperator constants   {insert_in_st($1, $2, scp, $4);}
-					| T_int T_identifier T_AssignmentOperator expr_without_constants    {insert_in_st($1, $2, scp, 10);}
-					| T_int T_identifier T_AssignmentOperator constants    {insert_in_st($1, $2, scp, 10);}
+					| T_type T_identifier T_AssignmentOperator expr	
+					| T_int T_identifier T_AssignmentOperator expr	
 				;
-
-
-
-expr_without_constants:  T_identifier
-		| expr T_plus expr
-		| expr T_minus expr
-		| expr T_divide expr
-		| expr T_multiply expr
-		| expr T_mod expr
-		| expr T_LogicalAnd expr
-		| expr T_LogicalOr expr
-		| expr T_less expr
-		| expr T_less_equal expr
-		| expr T_greater expr
-		| expr T_greater_equal expr
-		| expr T_equal_equal expr
-		| expr T_not_equal expr
-		;
-constants: T_numericConstants
-		| T_stringLiteral
-		;
 
 expr: 	T_numericConstants
 		| T_stringLiteral
@@ -147,15 +127,24 @@ expr_or_empty: expr
 				| 
 				;
 
-openflower: T_openFlowerBracket {++scp;};
-closeflower: T_closedFlowerBracket {--scp;};
+// expr_with_semicolon:
+// 		T_numericConstants T_Semicolon
+// 		| T_stringLiteral T_Semicolon
+// 		| T_identifier T_Semicolon
+// 		|expr BinaryOperator expr T_Semicolon
+// 		;
 
+
+// ArithmeticOperator: T_plus | T_minus | T_multiply | T_divide | T_mod
+
+// BinaryOperator : ArithmeticOperator | T_LogicalOperator | T_RelationalOperator
 
 %%
 
 int yyerror(const char *str) 
 { 
 	printf("Error | Line: %d\n%s\n",yylineno,str);
+	//printf("HI");
 } 
 
 
