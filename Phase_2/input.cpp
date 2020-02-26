@@ -13,7 +13,7 @@ int main()
         int a = 4;
         int b = 6;
         a = b;
-    }
+    
     else if(1+3)
     {
         2 + 3;
@@ -24,6 +24,4 @@ int main()
         int c = a + 4;
 
     }
-
-
 }
