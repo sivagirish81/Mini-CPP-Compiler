@@ -4,7 +4,6 @@
     #include <stdlib.h>
 	#include <string.h>
   	#include <ctype.h>
-	#include <stdarg.h>
 	int yylex();
 	int yydebug = 0;
 	extern int yylineno;
@@ -28,8 +27,6 @@
 	void display_Tree(AST_Node*);
 
 %}
-
-%locations
 
 %union {
     char *str;
@@ -93,8 +90,8 @@ Multiple_stmts : stmt Multiple_stmts
 		;
 
 stmt : expr T_Semicolon					{/*Statement cannot be empty, block takes care of empty string*/ display_Tree($1);}
-		| if_stmt						{display_Tree($$);}
-		| while_stmt					{display_Tree($$);}
+		| if_stmt						{display_Tree($1);}
+		| while_stmt					{display_Tree($1);}
 		| for_stmt						{}
 		| Assignment_stmt T_Semicolon	{$$ = $1;}
 		| error T_Semicolon				
@@ -156,22 +153,22 @@ expr_without_constants:  T_identifier	{$$ = Construct_AST((char*)yylval,NULL,NUL
 expr: 	T_numericConstants  			{$$ = Construct_AST((char*)yylval,NULL,NULL);}
 		| T_stringLiteral   			{$$ = Construct_AST((char*)yylval,NULL,NULL);}
 		| T_identifier  				{$$ = Construct_AST((char*)yylval,NULL,NULL);}
-		| expr T_plus expr  			{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST("+",$1,$3);}
-		| expr T_minus expr 			{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST("-",$1,$3);}
-		| expr T_divide expr			{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST("/",$1,$3);}
-		| expr T_multiply expr			{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST("*",$1,$3);}
-		| expr T_mod expr				{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST("%",$1,$3);}
-		| expr T_LogicalAnd expr		{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST("&",$1,$3);}
-		| expr T_LogicalOr expr			{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST("|",$1,$3);}
-		| expr T_less expr				{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST("<",$1,$3);}
-		| expr T_less_equal expr		{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST("<=",$1,$3);}
-		| expr T_greater expr			{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST(">",$1,$3);}
-		| expr T_greater_equal expr		{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST(">=",$1,$3);}
-		| expr T_equal_equal expr		{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST("==",$1,$3);}
-		| expr T_not_equal expr			{$$ = Make_Leaf($1);$$ = Make_Leaf($2);$$ = Construct_AST("!=",$1,$3);}
+		| expr T_plus expr  			{$$ = Construct_AST("+",$1,$3);}
+		| expr T_minus expr 			{$$ = Construct_AST("-",$1,$3);}
+		| expr T_divide expr			{$$ = Construct_AST("/",$1,$3);}
+		| expr T_multiply expr			{$$ = Construct_AST("*",$1,$3);}
+		| expr T_mod expr				{$$ = Construct_AST("%",$1,$3);}
+		| expr T_LogicalAnd expr		{$$ = Construct_AST("&",$1,$3);}
+		| expr T_LogicalOr expr			{$$ = Construct_AST("|",$1,$3);}
+		| expr T_less expr				{$$ = Construct_AST("<",$1,$3);}
+		| expr T_less_equal expr		{$$ = Construct_AST("<=",$1,$3);}
+		| expr T_greater expr			{$$ = Construct_AST(">",$1,$3);}
+		| expr T_greater_equal expr		{$$ = Construct_AST(">=",$1,$3);}
+		| expr T_equal_equal expr		{$$ = Construct_AST("==",$1,$3);}
+		| expr T_not_equal expr			{$$ = Construct_AST("!=",$1,$3);}
 		;
 
-expr_or_empty: expr						//{$$ = $1;}
+expr_or_empty: expr						{$$ = $1;}
 				|
 				;
 
@@ -203,14 +200,6 @@ void display_Tree(AST_Node *AST)
 		display_Tree(AST->right);
 	if(AST->left || AST->right)
 		printf("]");
-}
-
-AST_Node* Make_Leaf(char* rt)
-{
-	AST_Node* root = (AST_Node*)malloc(sizeof(AST_Node*));
-	strcpy(root->data,rt);
-	root->left = root->right = NULL;
-	return root;
 }
 
 int yyerror(const char *str) 

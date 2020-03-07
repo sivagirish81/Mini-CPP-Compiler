@@ -132,7 +132,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 33 "Yacc.y" /* yacc.c:1909  */
+#line 31 "Yacc.y" /* yacc.c:1909  */
 
     char *str;
 	AST_Node* node;
@@ -145,23 +145,9 @@ typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
-/* Location type.  */
-#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
-typedef struct YYLTYPE YYLTYPE;
-struct YYLTYPE
-{
-  int first_line;
-  int first_column;
-  int last_line;
-  int last_column;
-};
-# define YYLTYPE_IS_DECLARED 1
-# define YYLTYPE_IS_TRIVIAL 1
-#endif
-
 
 extern YYSTYPE yylval;
-extern YYLTYPE yylloc;
+
 int yyparse (void);
 
 #endif /* !YY_YY_Y_TAB_H_INCLUDED  */
