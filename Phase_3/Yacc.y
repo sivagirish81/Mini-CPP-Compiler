@@ -16,15 +16,15 @@
 	// AST_Node* Construct_AST(char*,AST_Node*,AST_Node*);
 	// void display_Tree(AST_Node*);
 	#define YYSTYPE char*
-	//typedef struct Abstract_Syntax_Tree_Node AST_Node;
-	struct Node
+	typedef struct Abstract_Syntax_Tree_Node AST_Node;
+	struct Abstract_Syntax_Tree_Node
 	{
 		char *Name;
 		struct Node* left;
 		struct Node* right;
 	};
-	struct AST_Node* Construct_AST(char *op,struct Node *left,struct Node *right);
-	void display_Tree(struct Node*);
+	struct AST_Node* Construct_AST(char *op,AST_Node *left,AST_Node *right);
+	void display_Tree(AST_Node*);
 
 %}
 
@@ -32,12 +32,15 @@
 
 %union {
     char *str;
+	/*
 	struct ast_Node
 	{
 		int float;
 		int val;
 		struct Node* node;
 	}ast_Node;
+	*/
+	AST_Node* node;
 }
 
 %error-verbose
@@ -57,18 +60,18 @@
 %left T_multiply T_divide T_mod
 
 
-%type <ast_Node> Start block_end_flower block Multiple_stmts stmt
-%type <ast_Node> if_stmt Multiple_stmts_not_if elseif_else_empty stmt_without_if
-%type <ast_Node> expr_without_constants expr expr_or_empty expr_with_semicolon 
-%type <ast_Node> Assignment_stmt
-%type <ast_Node> for_stmt while_stmt 
+%type <node> Start block_end_flower block Multiple_stmts stmt
+%type <node> if_stmt Multiple_stmts_not_if elseif_else_empty stmt_without_if
+%type <node> expr_without_constants expr expr_or_empty expr_with_semicolon 
+%type <node> Assignment_stmt
+%type <node> for_stmt while_stmt 
 
 %%
 
 /*Flower brackets are mandatory for main*/
 
 
-Start : T_int T_main T_openParenthesis T_closedParanthesis openflower block_end_flower  	{$$ = display_Tree($6.node);}
+Start : T_int T_main T_openParenthesis T_closedParanthesis openflower block_end_flower  	{$$ = display_Tree($6);}
 
 
 /* This production assumes flower bracket has been opened*/
@@ -97,10 +100,10 @@ Multiple_stmts : stmt Multiple_stmts
 		;
 
 stmt : expr T_Semicolon					{/*Statement cannot be empty, block takes care of empty string*/ display_Tree($1);}
-		| if_stmt						{display_Tree($$.node);}
-		| while_stmt					{display_Tree($$.node);}
+		| if_stmt						{display_Tree($$);}
+		| while_stmt					{display_Tree($$);}
 		| for_stmt						{}
-		| Assignment_stmt T_Semicolon	{$$ = $1.node;}
+		| Assignment_stmt T_Semicolon	{$$ = $1;}
 		| error T_Semicolon				
 		;
 
@@ -123,9 +126,9 @@ Multiple_stmts_not_if : stmt_without_if Multiple_stmts
 					|T_Semicolon
 					;
 
-stmt_without_if : expr T_Semicolon						{display_Tree($1.node);}
-					| Assignment_stmt T_Semicolon		{$$ = $1.node;}
-					| while_stmt						{display_Tree($1.node);}
+stmt_without_if : expr T_Semicolon						{display_Tree($1);}
+					| Assignment_stmt T_Semicolon		{$$ = $1;}
+					| while_stmt						{display_Tree($1);}
 					|for_stmt
 					;
 
@@ -141,19 +144,19 @@ Assignment_stmt: 	T_identifier T_AssignmentOperator expr								{$$ = Construct_
 
 
 expr_without_constants:  T_identifier	{$$.node = Construct_AST((char*)yylval,NULL,NULL);}
-		| expr T_plus expr				{$$.node = Construct_AST("+",$1.node,$3.node);}
-		| expr T_minus expr				{$$.node = Construct_AST("-",$1.node,$3.node);}
-		| expr T_divide expr			{$$.node = Construct_AST("/",$1.node,$3.node);}
-		| expr T_multiply expr			{$$.node = Construct_AST("*",$1.node,$3.node);}
-		| expr T_mod expr				{$$.node = Construct_AST("%",$1.node,$3.node);}
-		| expr T_LogicalAnd expr		{$$.node = Construct_AST("&",$1.node,$3.node);}
-		| expr T_LogicalOr expr			{$$.node = Construct_AST("|",$1.node,$3.node);}
-		| expr T_less expr				{$$.node = Construct_AST("<",$1.node,$3.node);}
-		| expr T_less_equal expr		{$$.node = Construct_AST("<=",$1.node,$3.node);}
-		| expr T_greater expr			{$$.node = Construct_AST(">",$1.node,$3.node);}
-		| expr T_greater_equal expr		{$$.node = Construct_AST(">=",$1.node,$3.node);}
-		| expr T_equal_equal expr		{$$.node = Construct_AST("==",$1.node,$3.node);}
-		| expr T_not_equal expr			{$$.node = Construct_AST("!=",$1.node,$3.node);}
+		| expr T_plus expr				{$$.node = Construct_AST("+",$1,$3);}
+		| expr T_minus expr				{$$.node = Construct_AST("-",$1,$3);}
+		| expr T_divide expr			{$$.node = Construct_AST("/",$1,$3);}
+		| expr T_multiply expr			{$$.node = Construct_AST("*",$1,$3);}
+		| expr T_mod expr				{$$.node = Construct_AST("%",$1,$3);}
+		| expr T_LogicalAnd expr		{$$.node = Construct_AST("&",$1,$3);}
+		| expr T_LogicalOr expr			{$$.node = Construct_AST("|",$1,$3);}
+		| expr T_less expr				{$$.node = Construct_AST("<",$1,$3);}
+		| expr T_less_equal expr		{$$.node = Construct_AST("<=",$1,$3);}
+		| expr T_greater expr			{$$.node = Construct_AST(">",$1,$3);}
+		| expr T_greater_equal expr		{$$.node = Construct_AST(">=",$1,$3);}
+		| expr T_equal_equal expr		{$$.node = Construct_AST("==",$1,$3);}
+		| expr T_not_equal expr			{$$.node = Construct_AST("!=",$1,$3);}
 		;
 
 
@@ -185,7 +188,7 @@ closeflower: T_closedFlowerBracket {};
 
 %%
 
-AST_Node* Construct_AST(char *op,Astruct Node *left,struct Node *right)
+AST_Node* Construct_AST(char *op,AST_Node *left,AST_Node *right)
 {
 	AST_Node *root = (AST_Node*)malloc(sizeof(AST_Node));
 	char* Operator = (char*)malloc(strlen(op) + 1);
@@ -197,7 +200,7 @@ AST_Node* Construct_AST(char *op,Astruct Node *left,struct Node *right)
 }
 
 
-void display_Tree(struct Node *AST)
+void display_Tree(AST_Node *AST)
 {
 	if(AST->left || AST->right)
 		printf("[");

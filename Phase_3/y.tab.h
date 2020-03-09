@@ -34,7 +34,7 @@
 # define YY_YY_Y_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -135,14 +135,17 @@ union YYSTYPE
 #line 33 "Yacc.y" /* yacc.c:1909  */
 
     char *str;
+	/*
 	struct ast_Node
 	{
 		int float;
 		int val;
 		struct Node* node;
 	}ast_Node;
+	*/
+	AST_Node* node;
 
-#line 146 "y.tab.h" /* yacc.c:1909  */
+#line 149 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
