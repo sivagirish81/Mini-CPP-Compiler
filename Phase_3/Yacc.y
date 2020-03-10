@@ -71,6 +71,7 @@
 %type <NODE> Assignment_stmt
 %type <NODE> for_stmt while_stmt 
 %type <NODE> idid nc sc
+%type <NODE> expr_or_empty_with_semicolon_and_assignment  expr_or_empty_with_assignment_and_closed_parent
 
 %%
 
@@ -114,10 +115,14 @@ stmt : expr T_Semicolon					{$$ = $1;}
 
 //for_stmt : T_for T_openParenthesis expr_with_semicolon expr_with_semicolon expr_or_empty T_closedParanthesis block
 
-for_stmt : T_for T_openParenthesis expr_or_empty T_Semicolon expr_or_empty T_Semicolon expr_or_empty T_closedParanthesis block	{{ 	node* left,right;
-																																	left = Construct_AST($5, $9, "Cond_Loopstmts");
-																																	$$ = Construct_AST($3,left,"FOR");
+for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment  expr_or_empty_with_semicolon_and_assignment  expr_or_empty_with_assignment_and_closed_parent  block	{{ 	node* left;
+																																	node* right;
+																																	left = Construct_AST($4, $6, "Cond_Loopstmts");
+																																	right = Construct_AST($3,$5,"Init_&_Increment");
+																																	$$ = Construct_AST(left,right,"FOR");
 																																	Display_tree($$); printf("\n");}}
+
+
 
 // Condition : 		{}
 
@@ -149,7 +154,6 @@ Assignment_stmt: 	idid T_AssignmentOperator expr																		{$$ = Construc
 					| T_int idid T_AssignmentOperator expr_without_constants    {insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
 					| T_int idid T_AssignmentOperator nc    {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
 				;
-
 
 
 
@@ -188,6 +192,11 @@ expr: 	nc												{$$ = $1;}
 		| expr T_not_equal expr							{$$ = Construct_AST($1, $3, "!=");}
 		;
 
+expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon			{$$ = $1;}
+	| Assignment_stmt T_Semicolon												{$$ = $1;}
+
+expr_or_empty_with_assignment_and_closed_parent: expr_or_empty T_closedParanthesis							{$$ = $1;}
+	| Assignment_stmt T_closedParanthesis																	{$$ = $1;}
 
 idid : T_identifier										{$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
 		;
