@@ -1,10 +1,10 @@
 int main()
 {
 
-    int c + 2;
+    int c = 2;
     int f = 4;
-    int d + 4;
-    int e + 5;
+    int d = 4;
+    int e = 5;
     
     int b = 4;
     int a = 3;
@@ -13,7 +13,7 @@ int main()
         int a = 4;
         int b = 6;
         a = b;
-    
+	}
     else if(1+3)
     {
         2 + 3;
@@ -24,4 +24,9 @@ int main()
         int c = a + 4;
 
     }
+	while (c)
+	{
+		a = b + c;
+	}
+	
 }

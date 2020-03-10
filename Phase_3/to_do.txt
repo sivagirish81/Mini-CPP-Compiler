@@ -1,3 +1,0 @@
-1) Finish AST
-2) make error productions fool proof
-3) customize errors

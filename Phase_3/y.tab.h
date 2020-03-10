@@ -64,18 +64,18 @@ extern int yydebug;
     T_LogicalOperator = 274,
     T_UnaryOperator = 275,
     T_AssignmentOperator = 276,
-    T_numericConstants = 277,
-    T_stringLiteral = 278,
-    T_character = 279,
-    T_plus = 280,
-    T_minus = 281,
-    T_mod = 282,
-    T_divide = 283,
-    T_multiply = 284,
-    T_whiteSpace = 285,
-    T_shortHand = 286,
-    T_identifier = 287,
-    T_Semicolon = 288,
+    T_Semicolon = 277,
+    T_identifier = 278,
+    T_numericConstants = 279,
+    T_stringLiteral = 280,
+    T_character = 281,
+    T_plus = 282,
+    T_minus = 283,
+    T_mod = 284,
+    T_divide = 285,
+    T_multiply = 286,
+    T_whiteSpace = 287,
+    T_shortHand = 288,
     T_LogicalAnd = 289,
     T_LogicalOr = 290,
     T_less = 291,
@@ -106,18 +106,18 @@ extern int yydebug;
 #define T_LogicalOperator 274
 #define T_UnaryOperator 275
 #define T_AssignmentOperator 276
-#define T_numericConstants 277
-#define T_stringLiteral 278
-#define T_character 279
-#define T_plus 280
-#define T_minus 281
-#define T_mod 282
-#define T_divide 283
-#define T_multiply 284
-#define T_whiteSpace 285
-#define T_shortHand 286
-#define T_identifier 287
-#define T_Semicolon 288
+#define T_Semicolon 277
+#define T_identifier 278
+#define T_numericConstants 279
+#define T_stringLiteral 280
+#define T_character 281
+#define T_plus 282
+#define T_minus 283
+#define T_mod 284
+#define T_divide 285
+#define T_multiply 286
+#define T_whiteSpace 287
+#define T_shortHand 288
 #define T_LogicalAnd 289
 #define T_LogicalOr 290
 #define T_less 291
@@ -132,20 +132,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 33 "Yacc.y" /* yacc.c:1909  */
+#line 47 "Yacc.y" /* yacc.c:1909  */
 
     char *str;
-	/*
-	struct ast_Node
-	{
-		int float;
-		int val;
-		struct Node* node;
-	}ast_Node;
-	*/
-	AST_Node* node;
+	struct ASTNode *NODE;
 
-#line 149 "y.tab.h" /* yacc.c:1909  */
+#line 141 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -153,23 +145,9 @@ typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
-/* Location type.  */
-#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
-typedef struct YYLTYPE YYLTYPE;
-struct YYLTYPE
-{
-  int first_line;
-  int first_column;
-  int last_line;
-  int last_column;
-};
-# define YYLTYPE_IS_DECLARED 1
-# define YYLTYPE_IS_TRIVIAL 1
-#endif
-
 
 extern YYSTYPE yylval;
-extern YYLTYPE yylloc;
+
 int yyparse (void);
 
 #endif /* !YY_YY_Y_TAB_H_INCLUDED  */
