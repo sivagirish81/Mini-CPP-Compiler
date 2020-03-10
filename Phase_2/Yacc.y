@@ -75,7 +75,7 @@ stmt : expr T_Semicolon					{/*Statement cannot be empty, block takes care of em
 
 //for_stmt : T_for T_openParenthesis expr_with_semicolon expr_with_semicolon expr_or_empty T_closedParanthesis block
 
-for_stmt : T_for T_openParenthesis expr_or_empty T_Semicolon expr_or_empty T_Semicolon expr_or_empty T_closedParanthesis block
+for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment  expr_or_empty_with_semicolon_and_assignment  expr_or_empty_with_assignment_and_closed_parent  block	
 
 while_stmt : T_while T_openParenthesis expr T_closedParanthesis block
 
@@ -107,6 +107,11 @@ Assignment_stmt: 	T_identifier T_AssignmentOperator expr
 				;
 
 
+expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon
+	| Assignment_stmt T_Semicolon
+
+expr_or_empty_with_assignment_and_closed_parent: expr_or_empty T_closedParanthesis
+	| Assignment_stmt T_closedParanthesis
 
 expr_without_constants:  T_identifier
 		| expr T_plus expr
