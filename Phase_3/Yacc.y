@@ -114,7 +114,12 @@ stmt : expr T_Semicolon					{$$ = $1;}
 
 //for_stmt : T_for T_openParenthesis expr_with_semicolon expr_with_semicolon expr_or_empty T_closedParanthesis block
 
-for_stmt : T_for T_openParenthesis expr_or_empty T_Semicolon expr_or_empty T_Semicolon expr_or_empty T_closedParanthesis block	{{$$ = Construct_AST(NULL, NULL, "For"); Display_tree($$); printf("\n");}}
+for_stmt : T_for T_openParenthesis expr_or_empty T_Semicolon expr_or_empty T_Semicolon expr_or_empty T_closedParanthesis block	{{ 	node* left,right;
+																																	left = Construct_AST($5, $9, "Cond_Loopstmts");
+																																	$$ = Construct_AST($3,left,"FOR");
+																																	Display_tree($$); printf("\n");}}
+
+// Condition : 		{}
 
 while_stmt : T_while T_openParenthesis expr T_closedParanthesis block										{$$ = Construct_AST($3, $5, "While"); Display_tree($$); printf("\n");}
 

@@ -28,5 +28,10 @@ int main()
 	{
 		a = b + c;
 	}
+    int i = 0;
+    for (i = 5;i < 10;i += 1)
+    {
+        c = d + 10;
+    }
 	
 }
