@@ -10,6 +10,7 @@
 	extern int count;
 	extern void display();
 	extern void insert_in_st(char*, char*, int, char*);
+	void yyerror(const char *s);
 %}
 
 %union {
@@ -158,7 +159,7 @@ closeflower: T_closedFlowerBracket {};
 
 %%
 
-int yyerror(const char *str) 
+void yyerror(const char *str) 
 { 
 	printf("Error | Line: %d\n%s\n",yylineno,str);
 } 

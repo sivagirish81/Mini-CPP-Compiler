@@ -74,8 +74,9 @@
 	extern int count;
 	extern void display();
 	extern void insert_in_st(char*, char*, int, char*);
+	void yyerror(const char *s);
 
-#line 79 "y.tab.c" /* yacc.c:339  */
+#line 80 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -197,11 +198,11 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 15 "Yacc.y" /* yacc.c:355  */
+#line 16 "Yacc.y" /* yacc.c:355  */
 
     char *str;
 
-#line 205 "y.tab.c" /* yacc.c:355  */
+#line 206 "y.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -218,7 +219,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 222 "y.tab.c" /* yacc.c:358  */
+#line 223 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -519,14 +520,14 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    41,    41,    45,    46,    49,    50,    51,    63,    64,
-      67,    68,    69,    70,    71,    72,    78,    80,    82,    84,
-      85,    86,    87,    90,    91,    94,    95,    96,    97,   100,
-     101,   102,   103,   104,   105,   106,   110,   111,   113,   114,
-     116,   117,   118,   119,   120,   121,   122,   123,   124,   125,
-     126,   127,   128,   129,   133,   134,   135,   136,   137,   138,
-     139,   140,   141,   142,   143,   144,   145,   146,   147,   148,
-     151,   152,   155,   156
+       0,    42,    42,    46,    47,    50,    51,    52,    64,    65,
+      68,    69,    70,    71,    72,    73,    79,    81,    83,    85,
+      86,    87,    88,    91,    92,    95,    96,    97,    98,   101,
+     102,   103,   104,   105,   106,   107,   111,   112,   114,   115,
+     117,   118,   119,   120,   121,   122,   123,   124,   125,   126,
+     127,   128,   129,   130,   134,   135,   136,   137,   138,   139,
+     140,   141,   142,   143,   144,   145,   146,   147,   148,   149,
+     152,   153,   156,   157
 };
 #endif
 
@@ -1444,61 +1445,61 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 41 "Yacc.y" /* yacc.c:1646  */
+#line 42 "Yacc.y" /* yacc.c:1646  */
     {}
-#line 1450 "y.tab.c" /* yacc.c:1646  */
+#line 1451 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 67 "Yacc.y" /* yacc.c:1646  */
+#line 68 "Yacc.y" /* yacc.c:1646  */
     {/*Statement cannot be empty, block takes care of empty string*/}
-#line 1456 "y.tab.c" /* yacc.c:1646  */
+#line 1457 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 102 "Yacc.y" /* yacc.c:1646  */
+#line 103 "Yacc.y" /* yacc.c:1646  */
     {insert_in_st((yyvsp[-3].str), (yyvsp[-2].str), st[top], "j");}
-#line 1462 "y.tab.c" /* yacc.c:1646  */
+#line 1463 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 103 "Yacc.y" /* yacc.c:1646  */
+#line 104 "Yacc.y" /* yacc.c:1646  */
     {insert_in_st((yyvsp[-3].str), (yyvsp[-2].str), st[top], (yyvsp[0].str));}
-#line 1468 "y.tab.c" /* yacc.c:1646  */
+#line 1469 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 104 "Yacc.y" /* yacc.c:1646  */
+#line 105 "Yacc.y" /* yacc.c:1646  */
     {insert_in_st((yyvsp[-3].str), (yyvsp[-2].str), st[top], (yyvsp[0].str));}
-#line 1474 "y.tab.c" /* yacc.c:1646  */
+#line 1475 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 105 "Yacc.y" /* yacc.c:1646  */
+#line 106 "Yacc.y" /* yacc.c:1646  */
     {insert_in_st((yyvsp[-3].str), (yyvsp[-2].str), st[top], "j");}
-#line 1480 "y.tab.c" /* yacc.c:1646  */
+#line 1481 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 106 "Yacc.y" /* yacc.c:1646  */
+#line 107 "Yacc.y" /* yacc.c:1646  */
     {insert_in_st((yyvsp[-3].str), (yyvsp[-2].str), st[top], (yyvsp[0].str));}
-#line 1486 "y.tab.c" /* yacc.c:1646  */
+#line 1487 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 155 "Yacc.y" /* yacc.c:1646  */
+#line 156 "Yacc.y" /* yacc.c:1646  */
     {}
-#line 1492 "y.tab.c" /* yacc.c:1646  */
+#line 1493 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 156 "Yacc.y" /* yacc.c:1646  */
+#line 157 "Yacc.y" /* yacc.c:1646  */
     {}
-#line 1498 "y.tab.c" /* yacc.c:1646  */
+#line 1499 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1502 "y.tab.c" /* yacc.c:1646  */
+#line 1503 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1726,10 +1727,10 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 159 "Yacc.y" /* yacc.c:1906  */
+#line 160 "Yacc.y" /* yacc.c:1906  */
 
 
-int yyerror(const char *str) 
+void yyerror(const char *str) 
 { 
 	printf("Error | Line: %d\n%s\n",yylineno,str);
 } 
