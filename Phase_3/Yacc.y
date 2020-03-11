@@ -5,6 +5,7 @@
 	#include <string.h>
 	int yylex();
 	int yydebug = 0;
+	void yyerror(const char*);
 	extern int yylineno;
 	extern int st[100];
 	extern int top;
@@ -215,7 +216,7 @@ closeflower: T_closedFlowerBracket {};
 
 %%
 
-int yyerror(const char *str) 
+void yyerror(const char *str) 
 { 
 	printf("Error | Line: %d\n%s\n",yylineno,str);
 } 
