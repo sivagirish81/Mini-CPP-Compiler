@@ -129,15 +129,15 @@ for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment  
 
 while_stmt : T_while T_openParenthesis expr T_closedParanthesis block										{$$ = Construct_AST($3, $5, "While"); Display_tree($$); printf("\n");}
 
-if_stmt : T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {$$ = Construct_AST(NULL, NULL, ";"); }
+if_stmt : T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {$$ = Construct_AST($3, $5, "IF");Display_tree($$); printf("\n"); }
 
-elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {$$ = Construct_AST(NULL, NULL, ";"); }
-					| T_else Multiple_stmts_not_if {$$ = Construct_AST(NULL, NULL, ";"); }
-					| T_else openflower block_end_flower {$$ = Construct_AST(NULL, NULL, ";"); }
+elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {$$ = Construct_AST($4, $6, "ELSEIF"); }
+					| T_else Multiple_stmts_not_if {$$ = $2;}
+					| T_else openflower block_end_flower {$$ = $3; }
 					| {$$ = Construct_AST(NULL, NULL, ";"); }
 					;
 
-Multiple_stmts_not_if : stmt_without_if Multiple_stmts {$$ = Construct_AST(NULL, NULL, ";"); }
+Multiple_stmts_not_if : stmt_without_if Multiple_stmts {$$ = $1;}
 					|T_Semicolon {$$ = Construct_AST(NULL, NULL, ";"); }
 					;
 
