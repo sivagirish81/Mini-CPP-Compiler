@@ -32,6 +32,12 @@ int main()
     for (i = 5;i < 10;i += 1)
     {
         c = d + 10;
+	if(a < b)
+    {
+        int a = 4;
+        int b = 6;
+        a = b;
+	}
     }
 	
 }
