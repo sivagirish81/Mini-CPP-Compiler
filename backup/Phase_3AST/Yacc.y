@@ -9,12 +9,25 @@
 	extern int top;
 	extern int count;
 	extern void display();
-	extern void insert_in_st(char*, char*, int, char*);
-	void yyerror(const char *s);
+	extern void insert_in_st(char*, char*, int, char*);	
+	struct node{
+		char* var;
+		char* val;
+		struct node * left;
+		struct node* right;
+	};
+	struct node* createLeafNode(char* val,char* var);
+	struct node* createNode(char* val,struct node* left,struct node* right);
 %}
 
 %union {
     char *str;
+	struct ast_Node
+	{
+		int val;
+		float flt;
+		struct node* nd;
+	}ast_Node;
 }
 
 
@@ -32,6 +45,11 @@
 %left T_plus T_minus
 %left T_multiply T_divide T_mod
 
+%type <ast_Node> Start block_end_flower block Multiple_stmts stmt
+%type <ast_Node> if_stmt Multiple_stmts_not_if elseif_else_empty stmt_without_if
+%type <ast_Node> expr_without_constants expr expr_or_empty expr_with_semicolon 
+%type <ast_Node> Assignment_stmt
+%type <ast_Node> for_stmt while_stmt 
 
 
 %%
@@ -76,7 +94,7 @@ stmt : expr T_Semicolon					{/*Statement cannot be empty, block takes care of em
 
 //for_stmt : T_for T_openParenthesis expr_with_semicolon expr_with_semicolon expr_or_empty T_closedParanthesis block
 
-for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment  expr_or_empty_with_semicolon_and_assignment  expr_or_empty_with_assignment_and_closed_parent  block	
+for_stmt : T_for T_openParenthesis expr_or_empty T_Semicolon expr_or_empty T_Semicolon expr_or_empty T_closedParanthesis block
 
 while_stmt : T_while T_openParenthesis expr T_closedParanthesis block
 
@@ -108,11 +126,6 @@ Assignment_stmt: 	T_identifier T_AssignmentOperator expr
 				;
 
 
-expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon
-	| Assignment_stmt T_Semicolon
-
-expr_or_empty_with_assignment_and_closed_parent: expr_or_empty T_closedParanthesis
-	| Assignment_stmt T_closedParanthesis
 
 expr_without_constants:  T_identifier
 		| expr T_plus expr
@@ -159,7 +172,7 @@ closeflower: T_closedFlowerBracket {};
 
 %%
 
-void yyerror(const char *str) 
+int yyerror(const char *str) 
 { 
 	printf("Error | Line: %d\n%s\n",yylineno,str);
 } 
