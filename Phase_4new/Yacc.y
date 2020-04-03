@@ -9,9 +9,23 @@
 	extern int yylineno;
 	extern int st[100];
 	extern int top;
+	int stop;
 	extern int count;
 	extern void display();
 	extern void insert_in_st(char*, char*, int, char*);
+	int label[20];
+	int label_num=0;
+	int ltop=0;
+	char st1[100][10];
+	typedef struct quadruples
+  	{
+    	char *op;
+    	char *arg1;
+    	char *arg2;
+    	char *res;
+  	}quad;
+  	int quadlen = 0;
+  	quad q[100];
 
 	typedef struct ASTNode
 	{
@@ -42,6 +56,24 @@
 			Display_tree(tree->right);
 		if (tree->left || tree->right)
 			printf(")"); 
+	}
+
+	void while1()
+	{
+		printf("while1\n");
+		label_num++;
+		label[++ltop]=label_num;
+		printf("\nL%d:\n",label_num);
+	}
+
+	void while2()
+	{
+		printf("while2\n");
+	}
+
+	void while3()
+	{
+		printf("while3\n");
 	}
 %}
 
@@ -127,7 +159,7 @@ for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment  
 
 // Condition : 		{}
 
-while_stmt : T_while T_openParenthesis expr T_closedParanthesis block										{$$ = Construct_AST($3, $5, "While"); Display_tree($$); printf("\n");}
+while_stmt : T_while {while1();} T_openParenthesis expr T_closedParanthesis {while2();} block										{while3();$$ = Construct_AST($3, $5, "While"); Display_tree($$); printf("\n");}
 
 if_stmt : T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {$$ = Construct_AST($3, $5, "IF");Display_tree($$); printf("\n"); }
 
@@ -147,50 +179,50 @@ stmt_without_if : expr T_Semicolon										{$$ = $1;}
 					|for_stmt											{$$ = $1;}
 					;
 
-Assignment_stmt: 	idid T_AssignmentOperator expr																		{$$ = Construct_AST($1,$3,"=");Display_tree($$);}
-					| idid T_shortHand expr																				{$$ = Construct_AST($1,$3,"SE");Display_tree($$);}
-					| T_type idid T_AssignmentOperator expr_without_constants   {insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}	
-					| T_type idid T_AssignmentOperator sc   {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
-					| T_type idid T_AssignmentOperator nc   {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
-					| T_int idid T_AssignmentOperator expr_without_constants    {insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
-					| T_int idid T_AssignmentOperator nc    {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
+Assignment_stmt: 	idid T_AssignmentOperator{strcpy(st1[++stop],"=");} expr																		{$$ = Construct_AST($1,$3,"=");Display_tree($$);}
+					| idid T_shortHand{strcpy(st1[++stop],"SE");} expr																				{$$ = Construct_AST($1,$3,"SE");Display_tree($$);}
+					| T_type idid T_AssignmentOperator{strcpy(st1[++stop],"=");} expr_without_constants   {insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}	
+					| T_type idid T_AssignmentOperator{strcpy(st1[++stop],"=");} sc   {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
+					| T_type idid T_AssignmentOperator{strcpy(st1[++stop],"=");} nc   {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
+					| T_int idid T_AssignmentOperator{strcpy(st1[++stop],"=");} expr_without_constants    {insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
+					| T_int idid T_AssignmentOperator{strcpy(st1[++stop],"=");} nc    {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
 				;
 
 
 
 expr_without_constants:  idid							{$$ = $1;}
-		| expr T_plus expr								{$$ = Construct_AST($1, $3, "+");}
-		| expr T_minus expr								{$$ = Construct_AST($1, $3, "-");}
-		| expr T_divide expr							{$$ = Construct_AST($1, $3, "/");}
-		| expr T_multiply expr							{$$ = Construct_AST($1, $3, "*");}
-		| expr T_mod expr								{$$ = Construct_AST($1, $3, "%");}
-		| expr T_LogicalAnd expr						{$$ = Construct_AST($1, $3, "&");}
-		| expr T_LogicalOr expr							{$$ = Construct_AST($1, $3, "|");}
-		| expr T_less expr								{$$ = Construct_AST($1, $3, "<");}				
-		| expr T_less_equal expr						{$$ = Construct_AST($1, $3, "<=");}
-		| expr T_greater expr							{$$ = Construct_AST($1, $3, ">");}
-		| expr T_greater_equal expr						{$$ = Construct_AST($1, $3, ">=");}
-		| expr T_equal_equal expr						{$$ = Construct_AST($1, $3, "==");}
-		| expr T_not_equal expr							{$$ = Construct_AST($1, $3, "!=");}
+		| expr T_plus{strcpy(st1[++stop],"+");} expr								{$$ = Construct_AST($1, $3, "+");}
+		| expr T_minus{strcpy(st1[++stop],"-");} expr								{$$ = Construct_AST($1, $3, "-");}
+		| expr T_divide{strcpy(st1[++stop],"/");} expr							{$$ = Construct_AST($1, $3, "/");}
+		| expr T_multiply{strcpy(st1[++stop],"*");} expr							{$$ = Construct_AST($1, $3, "*");}
+		| expr T_mod{strcpy(st1[++stop],"%");} expr								{$$ = Construct_AST($1, $3, "%");}
+		| expr T_LogicalAnd{strcpy(st1[++stop],"&");} expr						{$$ = Construct_AST($1, $3, "&");}
+		| expr T_LogicalOr{strcpy(st1[++stop],"|");} expr							{$$ = Construct_AST($1, $3, "|");}
+		| expr T_less{strcpy(st1[++stop],"<");} expr								{$$ = Construct_AST($1, $3, "<");}				
+		| expr T_less_equal{strcpy(st1[++stop],"<=");} expr						{$$ = Construct_AST($1, $3, "<=");}
+		| expr T_greater{strcpy(st1[++stop],">");} expr							{$$ = Construct_AST($1, $3, ">");}
+		| expr T_greater_equal{strcpy(st1[++stop],">=");} expr						{$$ = Construct_AST($1, $3, ">=");}
+		| expr T_equal_equal{strcpy(st1[++stop],"==");} expr						{$$ = Construct_AST($1, $3, "==");}
+		| expr T_not_equal{strcpy(st1[++stop],"!=");} expr							{$$ = Construct_AST($1, $3, "!=");}
 		;
 
 
 expr: 	nc												{$$ = $1;}
 		| sc											{$$ = $1;}								
 		| idid											{$$ = $1;}
-		| expr T_plus expr								{$$ = Construct_AST($1, $3, "+");}
-		| expr T_minus expr								{$$ = Construct_AST($1, $3, "-");}
-		| expr T_divide expr							{$$ = Construct_AST($1, $3, "/");}
-		| expr T_multiply expr							{$$ = Construct_AST($1, $3, "*");}
-		| expr T_mod expr								{$$ = Construct_AST($1, $3, "%");}
-		| expr T_LogicalAnd expr						{$$ = Construct_AST($1, $3, "&");}
-		| expr T_LogicalOr expr							{$$ = Construct_AST($1, $3, "|");}
-		| expr T_less expr								{$$ = Construct_AST($1, $3, "<");}				
-		| expr T_less_equal expr						{$$ = Construct_AST($1, $3, "<=");}
-		| expr T_greater expr							{$$ = Construct_AST($1, $3, ">");}
-		| expr T_greater_equal expr						{$$ = Construct_AST($1, $3, ">=");}
-		| expr T_equal_equal expr						{$$ = Construct_AST($1, $3, "==");}
-		| expr T_not_equal expr							{$$ = Construct_AST($1, $3, "!=");}
+		| expr T_plus{strcpy(st1[++stop],"+");} expr								{$$ = Construct_AST($1, $3, "+");}
+		| expr T_minus{strcpy(st1[++stop],"-");} expr								{$$ = Construct_AST($1, $3, "-");}
+		| expr T_divide{strcpy(st1[++stop],"/");} expr							{$$ = Construct_AST($1, $3, "/");}
+		| expr T_multiply{strcpy(st1[++stop],"*");} expr							{$$ = Construct_AST($1, $3, "*");}
+		| expr T_mod{strcpy(st1[++stop],"%");} expr								{$$ = Construct_AST($1, $3, "%");}
+		| expr T_LogicalAnd{strcpy(st1[++stop],"&");} expr						{$$ = Construct_AST($1, $3, "&");}
+		| expr T_LogicalOr{strcpy(st1[++stop],"|");} expr							{$$ = Construct_AST($1, $3, "|");}
+		| expr T_less{strcpy(st1[++stop],"<");} expr								{$$ = Construct_AST($1, $3, "<");}				
+		| expr T_less_equal{strcpy(st1[++stop],"<=");} expr						{$$ = Construct_AST($1, $3, "<=");}
+		| expr T_greater{strcpy(st1[++stop],">");} expr							{$$ = Construct_AST($1, $3, ">");}
+		| expr T_greater_equal{strcpy(st1[++stop],">=");} expr						{$$ = Construct_AST($1, $3, ">=");}
+		| expr T_equal_equal{strcpy(st1[++stop],"==");} expr						{$$ = Construct_AST($1, $3, "==");}
+		| expr T_not_equal{strcpy(st1[++stop],"!=");} expr							{$$ = Construct_AST($1, $3, "!=");}
 		;
 
 expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon			{$$ = $1;}

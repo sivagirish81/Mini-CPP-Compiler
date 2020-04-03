@@ -226,6 +226,7 @@ closeflower: T_closedFlowerBracket {};
 
 %%
 
+#include<ctype.h>
 char ststack[100][100];
 
 char i_[2]="0";
@@ -280,7 +281,7 @@ int main()
 
 void push()
 {
-	strcpy(ststack[++top],yytext);
+	strcpy(ststack[++top],yylval);
 }
 
 void pusha()
