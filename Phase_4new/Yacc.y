@@ -14,6 +14,9 @@
 	extern void display();
 	extern void insert_in_st(char*, char*, int, char*);
 	int label[20];
+	char temp[2]="t";
+	char null[2]=" ";
+	char temp_count[2]="0";
 	int label_num=0;
 	int ltop=0;
 	char st1[100][10];
@@ -58,9 +61,38 @@
 			printf(")"); 
 	}
 
+	void push(char *a)
+	{
+		strcpy(st1[++top],a);
+	}
+
+	// If handler
+	void if1()
+	{
+		label_num++;
+		strcpy(temp,"t");
+		strcat(temp,temp_count);
+		printf("\n%s = not %s\n",temp,st1[top]);
+	 	printf("if %s goto L%d\n",temp,label_num);
+		temp_count[0]++;
+		label[++ltop]=label_num;
+	}
+
+	void if2()
+	{
+		label_num++;
+		printf("\ngoto L%d\n",label_num);
+		printf("L%d: \n",label[ltop--]);
+		label[++ltop]=label_num;
+	}
+
+	void if3()
+	{
+		printf("\nL%d:\n",label[ltop--]);
+	}
+
 	void while1()
 	{
-		printf("while1\n");
 		label_num++;
 		label[++ltop]=label_num;
 		printf("\nL%d:\n",label_num);
@@ -68,12 +100,82 @@
 
 	void while2()
 	{
-		printf("while2\n");
+		label_num++;
+		strcpy(temp,"t");
+		strcat(temp,temp_count);
+		printf("\n%s = not %s\n",temp,st1[stop--]);
+	 	printf("if %s goto L%d\n",temp,label_num);
+		temp_count[0]++;
+		label[++ltop]=label_num;
 	}
 
 	void while3()
 	{
-		printf("while3\n");
+		int y=label[ltop--];
+		printf("\ngoto L%d\n",label[ltop--]);
+		printf("L%d:\n",y);
+	}
+
+	void for1()
+	{
+		label_num++;
+		label[++ltop]=label_num;
+		printf("\nL%d:\n",label_num);
+	}
+
+	void for2()
+	{
+		label_num++;
+		strcpy(temp,"t");
+		strcat(temp,temp_count);
+		printf("\n%s = not %s\n",temp,st1[stop--]);
+	 	printf("if %s goto L%d\n",temp,label_num);
+		temp_count[0]++;
+		label[++ltop]=label_num;
+		label_num++;
+		printf("goto L%d\n",label_num);
+		label[++ltop]=label_num;
+		label_num++;
+		printf("L%d:\n",label_num);
+		label[++ltop]=label_num;
+	}
+
+	void for3()
+	{
+		printf("\ngoto L%d\n",label[ltop-3]);
+		printf("L%d:\n",label[ltop-1]);
+	}
+
+	void for4()
+	{
+		printf("\ngoto L%d\n",label[ltop]);
+		printf("L%d:\n",label[ltop-2]);
+		ltop-=4;
+	}
+
+	void codegen()
+	{
+		strcpy(temp,"t");
+		strcat(temp,temp_count);
+		printf("\n%s = %s %s %s\n",temp,st1[stop-2],st1[stop-1],st1[stop]);
+		stop-=2;
+		strcpy(st1[stop],temp);
+		temp_count[0]++;
+	}
+	void codegen_umin()
+	{
+		strcpy(temp,"t");
+		strcat(temp,temp_count);
+		printf("\n%s = -%s\n",temp,st1[stop]);
+		stop--;
+		strcpy(st1[stop],temp);
+		temp_count[0]++;
+	}
+
+	void codegen_assign()
+	{
+		printf("\n%s = %s\n",st1[stop-2],st1[stop]);
+		stop-=2;
 	}
 %}
 
@@ -148,7 +250,7 @@ stmt : expr T_Semicolon					{$$ = $1;}
 
 //for_stmt : T_for T_openParenthesis expr_with_semicolon expr_with_semicolon expr_or_empty T_closedParanthesis block
 
-for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment  expr_or_empty_with_semicolon_and_assignment  expr_or_empty_with_assignment_and_closed_parent  block	{{ 	node* left;
+for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {for1();} expr_or_empty_with_semicolon_and_assignment {for2();} expr_or_empty_with_assignment_and_closed_parent {for3();} block {for4();}	{{ 	node* left;
 																																	node* right;
 																																	left = Construct_AST($4, $6, "Cond_Loopstmts");
 																																	right = Construct_AST($3,$5,"Init_&_Increment");
@@ -163,7 +265,7 @@ while_stmt : T_while {while1();} T_openParenthesis expr T_closedParanthesis {whi
 
 if_stmt : T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {$$ = Construct_AST($3, $5, "IF");Display_tree($$); printf("\n"); }
 
-elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {$$ = Construct_AST($4, $6, "ELSEIF"); }
+elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis {if1();} block {if2();} elseif_else_empty {$$ = Construct_AST($4, $6, "ELSEIF"); }
 					| T_else Multiple_stmts_not_if {$$ = $2;}
 					| T_else openflower block_end_flower {$$ = $3; }
 					| {$$ = Construct_AST(NULL, NULL, ";"); }
@@ -181,48 +283,48 @@ stmt_without_if : expr T_Semicolon										{$$ = $1;}
 
 Assignment_stmt: 	idid T_AssignmentOperator{strcpy(st1[++stop],"=");} expr																		{$$ = Construct_AST($1,$3,"=");Display_tree($$);}
 					| idid T_shortHand{strcpy(st1[++stop],"SE");} expr																				{$$ = Construct_AST($1,$3,"SE");Display_tree($$);}
-					| T_type idid T_AssignmentOperator{strcpy(st1[++stop],"=");} expr_without_constants   {insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}	
-					| T_type idid T_AssignmentOperator{strcpy(st1[++stop],"=");} sc   {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
-					| T_type idid T_AssignmentOperator{strcpy(st1[++stop],"=");} nc   {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
-					| T_int idid T_AssignmentOperator{strcpy(st1[++stop],"=");} expr_without_constants    {insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
-					| T_int idid T_AssignmentOperator{strcpy(st1[++stop],"=");} nc    {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
+					| T_type idid T_AssignmentOperator{strcpy(st1[++stop],"=");} expr_without_constants   {codegen_assign();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}	
+					| T_type idid T_AssignmentOperator{strcpy(st1[++stop],"=");} sc   {codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
+					| T_type idid T_AssignmentOperator{strcpy(st1[++stop],"=");} nc   {codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
+					| T_int idid T_AssignmentOperator{strcpy(st1[++stop],"=");} expr_without_constants    {codegen_assign();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
+					| T_int idid T_AssignmentOperator{strcpy(st1[++stop],"=");} nc    {codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
 				;
 
 
 
 expr_without_constants:  idid							{$$ = $1;}
-		| expr T_plus{strcpy(st1[++stop],"+");} expr								{$$ = Construct_AST($1, $3, "+");}
-		| expr T_minus{strcpy(st1[++stop],"-");} expr								{$$ = Construct_AST($1, $3, "-");}
-		| expr T_divide{strcpy(st1[++stop],"/");} expr							{$$ = Construct_AST($1, $3, "/");}
-		| expr T_multiply{strcpy(st1[++stop],"*");} expr							{$$ = Construct_AST($1, $3, "*");}
-		| expr T_mod{strcpy(st1[++stop],"%");} expr								{$$ = Construct_AST($1, $3, "%");}
-		| expr T_LogicalAnd{strcpy(st1[++stop],"&");} expr						{$$ = Construct_AST($1, $3, "&");}
-		| expr T_LogicalOr{strcpy(st1[++stop],"|");} expr							{$$ = Construct_AST($1, $3, "|");}
-		| expr T_less{strcpy(st1[++stop],"<");} expr								{$$ = Construct_AST($1, $3, "<");}				
-		| expr T_less_equal{strcpy(st1[++stop],"<=");} expr						{$$ = Construct_AST($1, $3, "<=");}
-		| expr T_greater{strcpy(st1[++stop],">");} expr							{$$ = Construct_AST($1, $3, ">");}
-		| expr T_greater_equal{strcpy(st1[++stop],">=");} expr						{$$ = Construct_AST($1, $3, ">=");}
-		| expr T_equal_equal{strcpy(st1[++stop],"==");} expr						{$$ = Construct_AST($1, $3, "==");}
-		| expr T_not_equal{strcpy(st1[++stop],"!=");} expr							{$$ = Construct_AST($1, $3, "!=");}
+		| expr T_plus{strcpy(st1[++stop],"+");} expr								{codegen();$$ = Construct_AST($1, $3, "+");}
+		| expr T_minus{strcpy(st1[++stop],"-");} expr								{codegen();$$ = Construct_AST($1, $3, "-");}
+		| expr T_divide{strcpy(st1[++stop],"/");} expr							{codegen();$$ = Construct_AST($1, $3, "/");}
+		| expr T_multiply{strcpy(st1[++stop],"*");} expr							{codegen();$$ = Construct_AST($1, $3, "*");}
+		| expr T_mod{strcpy(st1[++stop],"%");} expr								{codegen();$$ = Construct_AST($1, $3, "%");}
+		| expr T_LogicalAnd{strcpy(st1[++stop],"&");} expr						{codegen();$$ = Construct_AST($1, $3, "&");}
+		| expr T_LogicalOr{strcpy(st1[++stop],"|");} expr							{codegen();$$ = Construct_AST($1, $3, "|");}
+		| expr T_less{strcpy(st1[++stop],"<");} expr								{codegen();$$ = Construct_AST($1, $3, "<");}				
+		| expr T_less_equal{strcpy(st1[++stop],"<=");} expr						{codegen();$$ = Construct_AST($1, $3, "<=");}
+		| expr T_greater{strcpy(st1[++stop],">");} expr							{codegen();$$ = Construct_AST($1, $3, ">");}
+		| expr T_greater_equal{strcpy(st1[++stop],">=");} expr						{codegen();$$ = Construct_AST($1, $3, ">=");}
+		| expr T_equal_equal{strcpy(st1[++stop],"==");} expr						{codegen();$$ = Construct_AST($1, $3, "==");}
+		| expr T_not_equal{strcpy(st1[++stop],"!=");} expr							{codegen();$$ = Construct_AST($1, $3, "!=");}
 		;
 
 
 expr: 	nc												{$$ = $1;}
 		| sc											{$$ = $1;}								
 		| idid											{$$ = $1;}
-		| expr T_plus{strcpy(st1[++stop],"+");} expr								{$$ = Construct_AST($1, $3, "+");}
-		| expr T_minus{strcpy(st1[++stop],"-");} expr								{$$ = Construct_AST($1, $3, "-");}
-		| expr T_divide{strcpy(st1[++stop],"/");} expr							{$$ = Construct_AST($1, $3, "/");}
-		| expr T_multiply{strcpy(st1[++stop],"*");} expr							{$$ = Construct_AST($1, $3, "*");}
-		| expr T_mod{strcpy(st1[++stop],"%");} expr								{$$ = Construct_AST($1, $3, "%");}
-		| expr T_LogicalAnd{strcpy(st1[++stop],"&");} expr						{$$ = Construct_AST($1, $3, "&");}
-		| expr T_LogicalOr{strcpy(st1[++stop],"|");} expr							{$$ = Construct_AST($1, $3, "|");}
-		| expr T_less{strcpy(st1[++stop],"<");} expr								{$$ = Construct_AST($1, $3, "<");}				
-		| expr T_less_equal{strcpy(st1[++stop],"<=");} expr						{$$ = Construct_AST($1, $3, "<=");}
-		| expr T_greater{strcpy(st1[++stop],">");} expr							{$$ = Construct_AST($1, $3, ">");}
-		| expr T_greater_equal{strcpy(st1[++stop],">=");} expr						{$$ = Construct_AST($1, $3, ">=");}
-		| expr T_equal_equal{strcpy(st1[++stop],"==");} expr						{$$ = Construct_AST($1, $3, "==");}
-		| expr T_not_equal{strcpy(st1[++stop],"!=");} expr							{$$ = Construct_AST($1, $3, "!=");}
+		| expr T_plus{strcpy(st1[++stop],"+");} expr								{codegen();$$ = Construct_AST($1, $3, "+");}
+		| expr T_minus{strcpy(st1[++stop],"-");} expr								{codegen();$$ = Construct_AST($1, $3, "-");}
+		| expr T_divide{strcpy(st1[++stop],"/");} expr							{codegen();$$ = Construct_AST($1, $3, "/");}
+		| expr T_multiply{strcpy(st1[++stop],"*");} expr							{codegen();$$ = Construct_AST($1, $3, "*");}
+		| expr T_mod{strcpy(st1[++stop],"%");} expr								{codegen();$$ = Construct_AST($1, $3, "%");}
+		| expr T_LogicalAnd{strcpy(st1[++stop],"&");} expr						{codegen();$$ = Construct_AST($1, $3, "&");}
+		| expr T_LogicalOr{strcpy(st1[++stop],"|");} expr							{codegen();$$ = Construct_AST($1, $3, "|");}
+		| expr T_less{strcpy(st1[++stop],"<");} expr								{codegen();$$ = Construct_AST($1, $3, "<");}				
+		| expr T_less_equal{strcpy(st1[++stop],"<=");} expr						{codegen();$$ = Construct_AST($1, $3, "<=");}
+		| expr T_greater{strcpy(st1[++stop],">");} expr							{codegen();$$ = Construct_AST($1, $3, ">");}
+		| expr T_greater_equal{strcpy(st1[++stop],">=");} expr						{codegen();$$ = Construct_AST($1, $3, ">=");}
+		| expr T_equal_equal{strcpy(st1[++stop],"==");} expr						{codegen();$$ = Construct_AST($1, $3, "==");}
+		| expr T_not_equal{strcpy(st1[++stop],"!=");} expr							{codegen();$$ = Construct_AST($1, $3, "!=");}
 		;
 
 expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon			{$$ = $1;}
@@ -231,11 +333,11 @@ expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon			{$$ = $
 expr_or_empty_with_assignment_and_closed_parent: expr_or_empty T_closedParanthesis							{$$ = $1;}
 	| Assignment_stmt T_closedParanthesis																	{$$ = $1;}
 
-idid : T_identifier										{$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
+idid : T_identifier										{push((char*)yylval.str);$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
 		;
-sc 	 : T_stringLiteral									{$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
+sc 	 : T_stringLiteral									{push((char*)yylval.str);$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
 		;
-nc	 : T_numericConstants								{$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
+nc	 : T_numericConstants								{push((char*)yylval.str);$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
 		;
 
 expr_or_empty: expr										{$$ = $1;}
