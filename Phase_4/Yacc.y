@@ -48,7 +48,7 @@
 	}
 
 	// Statements -helper
-	void codegen()
+	void TAC()
 	{
 	    strcpy(temp,"T");
 	    sprintf(tmp_i, "%d", temp_i);
@@ -69,7 +69,7 @@
 	}
 
 	// Assignment Operations
-	void codegen_assign()
+	void TAC_assign()
 	{
 	    printf("%s = %s\n",st1[stop-2],st1[stop - 1]);
 	    Q[quadindex].op = (char*)malloc(sizeof(char));
@@ -83,7 +83,7 @@
 	    stop-=2;
 	}
 
-	void codegen_assign_back()
+	void TAC_assign_back()
 	{
 	    strcpy(temp,"T");
 	    sprintf(tmp_i, "%d", temp_i);
@@ -503,50 +503,50 @@ stmt_without_if : expr T_Semicolon										{$$ = $1;}
 					|for_stmt											{$$ = $1;}
 					;
 
-Assignment_stmt: 	idid T_AssignmentOperator expr																		{push("=");codegen_assign();$$ = Construct_AST($1,$3,"=");/*Display_tree($$);printf("\n");*/}
-					| idid T_shortHand expr																				{push("se");codegen_assign();$$ = Construct_AST($1,$3,"SE");/*Display_tree($$);printf("\n");*/ }
-					| T_type idid T_AssignmentOperator expr_without_constants   {push("=");codegen_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}	
-					| T_type idid T_AssignmentOperator sc   {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
-					| T_type idid T_AssignmentOperator nc   {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
-					| T_int idid T_AssignmentOperator expr_without_constants    {push("=");codegen_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
-					| T_int idid T_AssignmentOperator nc    {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+Assignment_stmt: 	idid T_AssignmentOperator expr																		{push("=");TAC_assign();$$ = Construct_AST($1,$3,"=");/*Display_tree($$);printf("\n");*/}
+					| idid T_shortHand expr																				{push("se");TAC_assign();$$ = Construct_AST($1,$3,"SE");/*Display_tree($$);printf("\n");*/ }
+					| T_type idid T_AssignmentOperator expr_without_constants   {push("=");TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}	
+					| T_type idid T_AssignmentOperator sc   {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+					| T_type idid T_AssignmentOperator nc   {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+					| T_int idid T_AssignmentOperator expr_without_constants    {push("=");TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+					| T_int idid T_AssignmentOperator nc    {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
 				;
 
 
 
 expr_without_constants:  idid								{$$ = $1;}
-		| expr T_plus expr									{push("+");codegen();$$ = Construct_AST($1, $3, "+");}
-		| expr T_minus expr									{push("-");codegen();$$ = Construct_AST($1, $3, "-");}
-		| expr T_divide expr								{push("/");codegen();$$ = Construct_AST($1, $3, "/");}
-		| expr T_multiply expr								{push("*");codegen();$$ = Construct_AST($1, $3, "*");}
-		| expr T_mod expr									{push("%");codegen();$$ = Construct_AST($1, $3, "%");}
-		| expr T_LogicalAnd expr							{push("&");codegen();$$ = Construct_AST($1, $3, "&");}
-		| expr T_LogicalOr expr								{push("|");codegen();$$ = Construct_AST($1, $3, "|");}
-		| expr T_less expr									{push("<");codegen();$$ = Construct_AST($1, $3, "<");}				
-		| expr T_less_equal expr							{push("<=");codegen();$$ = Construct_AST($1, $3, "<=");}
-		| expr T_greater expr								{push(">");codegen();$$ = Construct_AST($1, $3, ">");}
-		| expr T_greater_equal expr							{push(">=");codegen();$$ = Construct_AST($1, $3, ">=");}
-		| expr T_equal_equal expr							{push("==");codegen();$$ = Construct_AST($1, $3, "==");}
-		| expr T_not_equal expr								{push("!=");codegen();$$ = Construct_AST($1, $3, "!=");}
+		| expr T_plus expr									{push("+");TAC();$$ = Construct_AST($1, $3, "+");}
+		| expr T_minus expr									{push("-");TAC();$$ = Construct_AST($1, $3, "-");}
+		| expr T_divide expr								{push("/");TAC();$$ = Construct_AST($1, $3, "/");}
+		| expr T_multiply expr								{push("*");TAC();$$ = Construct_AST($1, $3, "*");}
+		| expr T_mod expr									{push("%");TAC();$$ = Construct_AST($1, $3, "%");}
+		| expr T_LogicalAnd expr							{push("&");TAC();$$ = Construct_AST($1, $3, "&");}
+		| expr T_LogicalOr expr								{push("|");TAC();$$ = Construct_AST($1, $3, "|");}
+		| expr T_less expr									{push("<");TAC();$$ = Construct_AST($1, $3, "<");}				
+		| expr T_less_equal expr							{push("<=");TAC();$$ = Construct_AST($1, $3, "<=");}
+		| expr T_greater expr								{push(">");TAC();$$ = Construct_AST($1, $3, ">");}
+		| expr T_greater_equal expr							{push(">=");TAC();$$ = Construct_AST($1, $3, ">=");}
+		| expr T_equal_equal expr							{push("==");TAC();$$ = Construct_AST($1, $3, "==");}
+		| expr T_not_equal expr								{push("!=");TAC();$$ = Construct_AST($1, $3, "!=");}
 		;
 
 
 expr: 	nc													{$$ = $1;}
 		| sc												{$$ = $1;}								
 		| idid												{$$ = $1;}
-		| expr T_plus expr									{push("+");codegen();$$ = Construct_AST($1, $3, "+");}
-		| expr T_minus expr									{push("-");codegen();$$ = Construct_AST($1, $3, "-");}
-		| expr T_divide expr								{push("/");codegen();$$ = Construct_AST($1, $3, "/");}
-		| expr T_multiply expr								{push("*");codegen();$$ = Construct_AST($1, $3, "*");}
-		| expr T_mod expr									{push("%");codegen();$$ = Construct_AST($1, $3, "%");}
-		| expr T_LogicalAnd expr							{push("&");codegen();$$ = Construct_AST($1, $3, "&");}
-		| expr T_LogicalOr expr								{push("|");codegen();$$ = Construct_AST($1, $3, "|");}
-		| expr T_less expr									{push("<");codegen();$$ = Construct_AST($1, $3, "<");}				
-		| expr T_less_equal expr							{push("<=");codegen();$$ = Construct_AST($1, $3, "<=");}
-		| expr T_greater expr								{push(">");codegen();$$ = Construct_AST($1, $3, ">");}
-		| expr T_greater_equal expr							{push(">=");codegen();$$ = Construct_AST($1, $3, ">=");}
-		| expr T_equal_equal expr							{push("==");codegen();$$ = Construct_AST($1, $3, "==");}
-		| expr T_not_equal expr								{push("!=");codegen();$$ = Construct_AST($1, $3, "!=");}
+		| expr T_plus expr									{push("+");TAC();$$ = Construct_AST($1, $3, "+");}
+		| expr T_minus expr									{push("-");TAC();$$ = Construct_AST($1, $3, "-");}
+		| expr T_divide expr								{push("/");TAC();$$ = Construct_AST($1, $3, "/");}
+		| expr T_multiply expr								{push("*");TAC();$$ = Construct_AST($1, $3, "*");}
+		| expr T_mod expr									{push("%");TAC();$$ = Construct_AST($1, $3, "%");}
+		| expr T_LogicalAnd expr							{push("&");TAC();$$ = Construct_AST($1, $3, "&");}
+		| expr T_LogicalOr expr								{push("|");TAC();$$ = Construct_AST($1, $3, "|");}
+		| expr T_less expr									{push("<");TAC();$$ = Construct_AST($1, $3, "<");}				
+		| expr T_less_equal expr							{push("<=");TAC();$$ = Construct_AST($1, $3, "<=");}
+		| expr T_greater expr								{push(">");TAC();$$ = Construct_AST($1, $3, ">");}
+		| expr T_greater_equal expr							{push(">=");TAC();$$ = Construct_AST($1, $3, ">=");}
+		| expr T_equal_equal expr							{push("==");TAC();$$ = Construct_AST($1, $3, "==");}
+		| expr T_not_equal expr								{push("!=");TAC();$$ = Construct_AST($1, $3, "!=");}
 		;
 
 expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon			{$$ = $1;}
