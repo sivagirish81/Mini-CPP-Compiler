@@ -61,6 +61,19 @@
 		temp_i++;
 	}
 */
+	void codegen_assign()
+	{
+	    printf("%s = %s\n",st[top-3],st[top]);
+	    q[quadlen].op = (char*)malloc(sizeof(char));
+	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st[top]));
+	    q[quadlen].arg2 = NULL;
+	    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(st[top-3]));
+	    strcpy(q[quadlen].op,"=");
+	    strcpy(q[quadlen].arg1,st[top]);
+	    strcpy(q[quadlen].res,st[top-3]);
+	    quadlen++;
+	    top-=2;
+	}
 
 	void while1()
 	{
@@ -269,11 +282,11 @@ stmt_without_if : expr T_Semicolon										{$$ = $1;}
 
 Assignment_stmt: 	idid T_AssignmentOperator expr																		{push("=");$$ = Construct_AST($1,$3,"=");/*Display_tree($$);printf("\n");*/}
 					| idid T_shortHand expr																				{push("se");$$ = Construct_AST($1,$3,"SE");/*Display_tree($$);printf("\n");*/ }
-					| T_type idid T_AssignmentOperator expr_without_constants   {push("=");insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}	
-					| T_type idid T_AssignmentOperator sc   {push("=");insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
-					| T_type idid T_AssignmentOperator nc   {push("=");insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
-					| T_int idid T_AssignmentOperator expr_without_constants    {push("=");insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
-					| T_int idid T_AssignmentOperator nc    {push("=");insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+					| T_type idid T_AssignmentOperator expr_without_constants   {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}	
+					| T_type idid T_AssignmentOperator sc   {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+					| T_type idid T_AssignmentOperator nc   {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+					| T_int idid T_AssignmentOperator expr_without_constants    {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+					| T_int idid T_AssignmentOperator nc    {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
 				;
 
 
