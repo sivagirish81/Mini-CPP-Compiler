@@ -3,6 +3,7 @@
     #include <stdio.h>
     #include <stdlib.h>
 	#include <string.h>
+	//#include "lex.yy.c"
 	int yylex();
 	int yydebug = 0;
 	void yyerror(const char*);
@@ -12,7 +13,362 @@
 	extern int count;
 	extern void display();
 	extern void insert_in_st(char*, char*, int, char*);
+	char st1[100][100];
+	char i_[2]="0";
+	int temp_i=0;
+	char tmp_i[3];
+	char temp[2]="t";
+	int label[20];
+	int lnum=0;
+	int ltop=0;
+	int abcd=0;
+	int l_while=0;
+	int l_for=0;
+	int flag_set = 1;
+	int stop = -1;
 
+	int ftemp1;
+	int ftemp2;
+	int ftemp3;
+	int ftemp4;
+
+	typedef struct quadruples
+  	{
+  	  char *op;
+  	  char *arg1;
+  	  char *arg2;
+  	  char *res;
+  	}quad;
+  	int quadindex = 0;
+	quad Q[100];
+
+	void push(char *a)
+	{
+		strcpy(st1[++stop],a);
+	}
+
+	// Statements -helper
+	void codegen()
+	{
+	    strcpy(temp,"T");
+	    sprintf(tmp_i, "%d", temp_i);
+	    strcat(temp,tmp_i);
+	    printf("%s = %s %s %s\n",temp,st1[stop-2],st1[stop],st1[stop - 1]);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*strlen(st1[stop]));
+	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop-2]));
+	    Q[quadindex].arg2 = (char*)malloc(sizeof(char)*strlen(st1[stop - 1]));
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(temp));
+	    strcpy(Q[quadindex].op,st1[stop]);
+	    strcpy(Q[quadindex].arg1,st1[stop-2]);
+	    strcpy(Q[quadindex].arg2,st1[stop - 1]);
+	    strcpy(Q[quadindex].res,temp);
+	    quadindex++;
+	    stop-=2;
+	    strcpy(st1[stop],temp);
+		temp_i++;
+	}
+
+	// Assignment Operations
+	void codegen_assign()
+	{
+	    printf("%s = %s\n",st1[stop-2],st1[stop - 1]);
+	    Q[quadindex].op = (char*)malloc(sizeof(char));
+	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop - 1]));
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(st1[stop-2]));
+	    strcpy(Q[quadindex].op,"=");
+	    strcpy(Q[quadindex].arg1,st1[stop - 1]);
+	    strcpy(Q[quadindex].res,st1[stop-2]);
+	    quadindex++;
+	    stop-=2;
+	}
+
+	void codegen_assign_back()
+	{
+	    strcpy(temp,"T");
+	    sprintf(tmp_i, "%d", temp_i);
+	    strcat(temp,tmp_i);
+	    printf("%s = %s %s %s\n",temp,st1[stop-2],st1[stop],st1[stop - 1]);
+		printf("temp = %s\n",temp);
+		printf("%s = %s\n",st1[stop - 3],temp);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*strlen(st1[stop]));
+	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop-2]));
+	    Q[quadindex].arg2 = (char*)malloc(sizeof(char)*strlen(st1[stop - 1]));
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(temp));
+	    strcpy(Q[quadindex].op,st1[stop]);
+	    strcpy(Q[quadindex].arg1,st1[stop-2]);
+	    strcpy(Q[quadindex].arg2,st1[stop - 1]);
+	    strcpy(Q[quadindex].res,temp);
+	    quadindex++;
+	    stop-=2;
+	    strcpy(st1[stop],temp);
+		temp_i++;
+	}
+
+	// ICG - While
+
+	// Create label for while
+	void While_Loop()
+	{
+
+	    l_while = lnum;
+	    printf("L%d: \n",lnum++);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);
+	    Q[quadindex].arg1 = NULL;
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum+2));
+	    strcpy(Q[quadindex].op,"Label");
+	    char x[10];
+	    sprintf(x,"%d",lnum-1);
+	    char l[]="L";
+	    strcpy(Q[quadindex].res,strcat(l,x));
+	    quadindex++;
+	}
+
+	// While Loop Condition
+	void While_loop_cond()
+	{
+	 	strcpy(temp,"T");
+	 	sprintf(tmp_i, "%d", temp_i);
+	 	strcat(temp,tmp_i);
+	 	printf("%s = not %s\n",temp,st1[stop]);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*4);
+	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop]));
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(temp));
+	    strcpy(Q[quadindex].op,"not");
+	    strcpy(Q[quadindex].arg1,st1[stop]);
+	    strcpy(Q[quadindex].res,temp);
+	    quadindex++;
+	    printf("if %s goto L%d\n",temp,lnum);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*3);
+	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum+2));
+	    strcpy(Q[quadindex].op,"if");
+	    strcpy(Q[quadindex].arg1,temp);
+	    char x[10];
+	    sprintf(x,"%d",lnum);char l[]="L";
+	    strcpy(Q[quadindex].res,strcat(l,x));
+	    quadindex++;
+	 	temp_i++;
+	}
+
+	// End While loop
+	void While_END()
+	{
+		printf("goto L%d \n",l_while);
+		Q[quadindex].op = (char*)malloc(sizeof(char)*5);
+	    Q[quadindex].arg1 = NULL;
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(l_while+2));
+	    strcpy(Q[quadindex].op,"goto");
+	    char x[10];
+	    sprintf(x,"%d",l_while);
+	    char l[]="L";
+	    strcpy(Q[quadindex].res,strcat(l,x));
+	    quadindex++;
+	    printf("L%d: \n",lnum++);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);
+	    Q[quadindex].arg1 = NULL;
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum+2));
+	    strcpy(Q[quadindex].op,"Label");
+	    char x1[10];
+	    sprintf(x1,"%d",lnum-1);
+	    char l1[]="L";
+	    strcpy(Q[quadindex].res,strcat(l1,x1));
+	    quadindex++;
+	}
+
+	// ICG - IF
+
+	// Handle Initial IF as well as else if
+	void IfElif()
+	{
+	    lnum++;
+	    strcpy(temp,"T");
+	    sprintf(tmp_i, "%d", temp_i);
+	    strcat(temp,tmp_i);
+	    printf("%s = not %s\n",temp,st1[stop]);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*4);
+	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop]));
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(temp));
+	    strcpy(Q[quadindex].op,"not");
+	    strcpy(Q[quadindex].arg1,st1[stop]);
+	    strcpy(Q[quadindex].res,temp);
+	    quadindex++;
+	    printf("if %s goto L%d\n",temp,lnum);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*3);
+	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum+2));
+	    strcpy(Q[quadindex].op,"if");
+	    strcpy(Q[quadindex].arg1,temp);
+	    char x[10];
+	    sprintf(x,"%d",lnum);
+	    char l[]="L";
+	    strcpy(Q[quadindex].res,strcat(l,x));
+	    quadindex++;
+	    temp_i++;
+	    label[++ltop]=lnum;
+	}
+
+
+	// Handle else
+	void Else()
+	{
+		int y;
+		y=label[ltop--];
+		printf("L%d: \n",y);
+		Q[quadindex].op = (char*)malloc(sizeof(char)*6);
+	    Q[quadindex].arg1 = NULL;
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(y+2));
+	    strcpy(Q[quadindex].op,"Label");
+	    char x[10];
+	    sprintf(x,"%d",y);
+	    char l[]="L";
+	    strcpy(Q[quadindex].res,strcat(l,x));
+	    quadindex++;
+		lnum++;
+	}
+	
+	// ICG - For
+
+	//Define Label for "FOR"
+	void FOR()
+	{
+	    l_for = lnum;
+	    printf("L%d: \n",lnum++);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);
+	    Q[quadindex].arg1 = NULL;
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum+2));
+	    strcpy(Q[quadindex].op,"Label");
+	    char x[10];
+	    sprintf(x,"%d",lnum-1);
+	    char l[]="L";
+	    strcpy(Q[quadindex].res,strcat(l,x));
+	    quadindex++;
+	}
+
+	// Handle Loop Condition
+	void FOR_Condition()
+	{
+	    strcpy(temp,"T");
+	    sprintf(tmp_i, "%d", temp_i);
+	    strcat(temp,tmp_i);
+	    printf("%s = not %s\n",temp,st1[stop]);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*4);
+	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop]));
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(temp));
+	    strcpy(Q[quadindex].op,"not");
+	    strcpy(Q[quadindex].arg1,st1[stop]);
+	    strcpy(Q[quadindex].res,temp);
+	    quadindex++;
+	    printf("if %s goto L%d\n",temp,lnum);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*3);
+	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum+2));
+	    strcpy(Q[quadindex].op,"if");
+	    strcpy(Q[quadindex].arg1,temp);
+	    char x[10];
+	    sprintf(x,"%d",lnum);
+	    char l[]="L";
+	    strcpy(Q[quadindex].res,strcat(l,x));
+	    quadindex++;
+	    temp_i++;
+	    label[++ltop]=lnum;
+	    lnum++;
+	    printf("goto L%d\n",lnum);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*5);
+	    Q[quadindex].arg1 = NULL;
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum+2));
+	    strcpy(Q[quadindex].op,"goto");
+	    char x1[10];
+	    sprintf(x1,"%d",lnum);
+	    char l1[]="L";
+	    strcpy(Q[quadindex].res,strcat(l1,x1));
+	    quadindex++;
+	    label[++ltop]=lnum;
+	    printf("L%d: \n",++lnum);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);
+	    Q[quadindex].arg1 = NULL;
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum+2));
+	    strcpy(Q[quadindex].op,"Label");
+	    char x2[10];
+	    sprintf(x2,"%d",lnum);
+	    char l2[]="L";
+	    strcpy(Q[quadindex].res,strcat(l2,x2));
+	    quadindex++;
+	}
+
+	// Increment
+	void FOR_INC_Cond()
+	{
+	    int x;
+	    x=label[ltop--];
+	    printf("goto L%d \n",l_for);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*5);
+	    Q[quadindex].arg1 = NULL;
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(temp));
+	    strcpy(Q[quadindex].op,"goto");
+	    char jug[10];
+	    sprintf(jug,"%d",l_for);
+	    char l[]="L";
+	    strcpy(Q[quadindex].res,strcat(l,jug));
+	    quadindex++;
+	    printf("L%d: \n",x);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);
+	    Q[quadindex].arg1 = NULL;
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(x+2));
+	    strcpy(Q[quadindex].op,"Label");
+	    char jug1[10];
+	    sprintf(jug1,"%d",x);
+	    char l1[]="L";
+	    strcpy(Q[quadindex].res,strcat(l1,jug1));
+	    quadindex++;
+	}
+
+	// Ending of for
+	void FOR_End()
+	{
+	    int x;
+	    x=label[ltop--];
+	    printf("goto L%d \n",lnum);
+
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*5);
+	    Q[quadindex].arg1 = NULL;
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(temp));
+	    strcpy(Q[quadindex].op,"goto");
+	    char jug[10];
+	    sprintf(jug,"%d",lnum);
+	    char l[]="L";
+	    strcpy(Q[quadindex].res,strcat(l,jug));
+	    quadindex++;
+	    printf("L%d: \n",x);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);
+	    Q[quadindex].arg1 = NULL;
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(x+2));
+	    strcpy(Q[quadindex].op,"Label");
+	    char jug1[10];
+	    sprintf(jug1,"%d",x);
+	    char l1[]="L";
+	    strcpy(Q[quadindex].res,strcat(l1,jug1));
+	    quadindex++;
+	}
+
+	char LineBreaker[] = "\n_______________________________________________________________________________________________________\n";
 	typedef struct ASTNode
 	{
 		struct ASTNode *left;
@@ -43,16 +399,6 @@
 		if (tree->left || tree->right)
 			printf(")"); 
 	}
-
-	typedef struct quadruples
-  	{
-    	char *op;
-    	char *arg1;
-    	char *arg2;
-    	char *res;
-  	}quad;
-  	int quadlen = 0;
-  	quad q[100];
 %}
 
 %union {
@@ -126,24 +472,24 @@ stmt : expr T_Semicolon					{$$ = $1;}
 
 //for_stmt : T_for T_openParenthesis expr_with_semicolon expr_with_semicolon expr_or_empty T_closedParanthesis block
 
-for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment  expr_or_empty_with_semicolon_and_assignment  expr_or_empty_with_assignment_and_closed_parent  block	{{ 	node* left;
+for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {FOR();} expr_or_empty_with_semicolon_and_assignment {FOR_Condition();} expr_or_empty_with_assignment_and_closed_parent {FOR_INC_Cond();} block	{{ 	FOR_End();node* left;
 																																	node* right;
-																																	left = Construct_AST($4, $6, "Cond_Loopstmts");
+																																	left = Construct_AST($5, $7, "Cond_Loopstmts");
 																																	right = Construct_AST($3,$5,"Init_&_Increment");
 																																	$$ = Construct_AST(left,right,"FOR");
-																																	Display_tree($$); printf("\n");}}
+																																	/*Display_tree($$);*/ }}
 
 
 
 // Condition : 		{}
 
-while_stmt : T_while T_openParenthesis expr T_closedParanthesis block										{$$ = Construct_AST($3, $5, "While"); Display_tree($$); printf("\n");}
+while_stmt : T_while {While_Loop();} T_openParenthesis expr T_closedParanthesis {While_loop_cond();} block										{While_END();$$ = Construct_AST($3, $5, "While"); /*printf("%s",LineBreaker);Display_tree($$);printf("%s",LineBreaker);*/}
 
-if_stmt : T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {$$ = Construct_AST($3, $5, "IF");Display_tree($$); printf("\n"); }
+if_stmt : T_if T_openParenthesis expr T_closedParanthesis {IfElif();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");/*Display_tree($$);*/ }
 
-elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {$$ = Construct_AST($4, $6, "ELSEIF"); }
-					| T_else Multiple_stmts_not_if {$$ = $2;}
-					| T_else openflower block_end_flower {$$ = $3; }
+elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis {lnum--;IfElif();} block elseif_else_empty {$$ = Construct_AST($4, $7, "ELSEIF"); }
+					| T_else Multiple_stmts_not_if {Else();$$ = $2;}
+					| T_else openflower block_end_flower {Else();$$ = $3; }
 					| {$$ = Construct_AST(NULL, NULL, ";"); }
 					;
 
@@ -152,55 +498,55 @@ Multiple_stmts_not_if : stmt_without_if Multiple_stmts {$$ = $1;}
 					;
 
 stmt_without_if : expr T_Semicolon										{$$ = $1;}
-					| Assignment_stmt T_Semicolon						{$$ = $1;Display_tree($$);}
+					| Assignment_stmt T_Semicolon						{$$ = $1;/*Display_tree($$);*/}
 					| while_stmt										{$$ = $1;}
 					|for_stmt											{$$ = $1;}
 					;
 
-Assignment_stmt: 	idid T_AssignmentOperator expr																		{$$ = Construct_AST($1,$3,"=");Display_tree($$);}
-					| idid T_shortHand expr																				{$$ = Construct_AST($1,$3,"SE");Display_tree($$);}
-					| T_type idid T_AssignmentOperator expr_without_constants   {insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}	
-					| T_type idid T_AssignmentOperator sc   {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
-					| T_type idid T_AssignmentOperator nc   {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
-					| T_int idid T_AssignmentOperator expr_without_constants    {insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
-					| T_int idid T_AssignmentOperator nc    {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
+Assignment_stmt: 	idid T_AssignmentOperator expr																		{push("=");codegen_assign();$$ = Construct_AST($1,$3,"=");/*Display_tree($$);printf("\n");*/}
+					| idid T_shortHand expr																				{push("se");codegen_assign();$$ = Construct_AST($1,$3,"SE");/*Display_tree($$);printf("\n");*/ }
+					| T_type idid T_AssignmentOperator expr_without_constants   {push("=");codegen_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}	
+					| T_type idid T_AssignmentOperator sc   {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+					| T_type idid T_AssignmentOperator nc   {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+					| T_int idid T_AssignmentOperator expr_without_constants    {push("=");codegen_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+					| T_int idid T_AssignmentOperator nc    {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
 				;
 
 
 
-expr_without_constants:  idid							{$$ = $1;}
-		| expr T_plus expr								{$$ = Construct_AST($1, $3, "+");}
-		| expr T_minus expr								{$$ = Construct_AST($1, $3, "-");}
-		| expr T_divide expr							{$$ = Construct_AST($1, $3, "/");}
-		| expr T_multiply expr							{$$ = Construct_AST($1, $3, "*");}
-		| expr T_mod expr								{$$ = Construct_AST($1, $3, "%");}
-		| expr T_LogicalAnd expr						{$$ = Construct_AST($1, $3, "&");}
-		| expr T_LogicalOr expr							{$$ = Construct_AST($1, $3, "|");}
-		| expr T_less expr								{$$ = Construct_AST($1, $3, "<");}				
-		| expr T_less_equal expr						{$$ = Construct_AST($1, $3, "<=");}
-		| expr T_greater expr							{$$ = Construct_AST($1, $3, ">");}
-		| expr T_greater_equal expr						{$$ = Construct_AST($1, $3, ">=");}
-		| expr T_equal_equal expr						{$$ = Construct_AST($1, $3, "==");}
-		| expr T_not_equal expr							{$$ = Construct_AST($1, $3, "!=");}
+expr_without_constants:  idid								{$$ = $1;}
+		| expr T_plus expr									{push("+");codegen();$$ = Construct_AST($1, $3, "+");}
+		| expr T_minus expr									{push("-");codegen();$$ = Construct_AST($1, $3, "-");}
+		| expr T_divide expr								{push("/");codegen();$$ = Construct_AST($1, $3, "/");}
+		| expr T_multiply expr								{push("*");codegen();$$ = Construct_AST($1, $3, "*");}
+		| expr T_mod expr									{push("%");codegen();$$ = Construct_AST($1, $3, "%");}
+		| expr T_LogicalAnd expr							{push("&");codegen();$$ = Construct_AST($1, $3, "&");}
+		| expr T_LogicalOr expr								{push("|");codegen();$$ = Construct_AST($1, $3, "|");}
+		| expr T_less expr									{push("<");codegen();$$ = Construct_AST($1, $3, "<");}				
+		| expr T_less_equal expr							{push("<=");codegen();$$ = Construct_AST($1, $3, "<=");}
+		| expr T_greater expr								{push(">");codegen();$$ = Construct_AST($1, $3, ">");}
+		| expr T_greater_equal expr							{push(">=");codegen();$$ = Construct_AST($1, $3, ">=");}
+		| expr T_equal_equal expr							{push("==");codegen();$$ = Construct_AST($1, $3, "==");}
+		| expr T_not_equal expr								{push("!=");codegen();$$ = Construct_AST($1, $3, "!=");}
 		;
 
 
-expr: 	nc												{$$ = $1;}
-		| sc											{$$ = $1;}								
-		| idid											{$$ = $1;}
-		| expr T_plus expr								{$$ = Construct_AST($1, $3, "+");}
-		| expr T_minus expr								{$$ = Construct_AST($1, $3, "-");}
-		| expr T_divide expr							{$$ = Construct_AST($1, $3, "/");}
-		| expr T_multiply expr							{$$ = Construct_AST($1, $3, "*");}
-		| expr T_mod expr								{$$ = Construct_AST($1, $3, "%");}
-		| expr T_LogicalAnd expr						{$$ = Construct_AST($1, $3, "&");}
-		| expr T_LogicalOr expr							{$$ = Construct_AST($1, $3, "|");}
-		| expr T_less expr								{$$ = Construct_AST($1, $3, "<");}				
-		| expr T_less_equal expr						{$$ = Construct_AST($1, $3, "<=");}
-		| expr T_greater expr							{$$ = Construct_AST($1, $3, ">");}
-		| expr T_greater_equal expr						{$$ = Construct_AST($1, $3, ">=");}
-		| expr T_equal_equal expr						{$$ = Construct_AST($1, $3, "==");}
-		| expr T_not_equal expr							{$$ = Construct_AST($1, $3, "!=");}
+expr: 	nc													{$$ = $1;}
+		| sc												{$$ = $1;}								
+		| idid												{$$ = $1;}
+		| expr T_plus expr									{push("+");codegen();$$ = Construct_AST($1, $3, "+");}
+		| expr T_minus expr									{push("-");codegen();$$ = Construct_AST($1, $3, "-");}
+		| expr T_divide expr								{push("/");codegen();$$ = Construct_AST($1, $3, "/");}
+		| expr T_multiply expr								{push("*");codegen();$$ = Construct_AST($1, $3, "*");}
+		| expr T_mod expr									{push("%");codegen();$$ = Construct_AST($1, $3, "%");}
+		| expr T_LogicalAnd expr							{push("&");codegen();$$ = Construct_AST($1, $3, "&");}
+		| expr T_LogicalOr expr								{push("|");codegen();$$ = Construct_AST($1, $3, "|");}
+		| expr T_less expr									{push("<");codegen();$$ = Construct_AST($1, $3, "<");}				
+		| expr T_less_equal expr							{push("<=");codegen();$$ = Construct_AST($1, $3, "<=");}
+		| expr T_greater expr								{push(">");codegen();$$ = Construct_AST($1, $3, ">");}
+		| expr T_greater_equal expr							{push(">=");codegen();$$ = Construct_AST($1, $3, ">=");}
+		| expr T_equal_equal expr							{push("==");codegen();$$ = Construct_AST($1, $3, "==");}
+		| expr T_not_equal expr								{push("!=");codegen();$$ = Construct_AST($1, $3, "!=");}
 		;
 
 expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon			{$$ = $1;}
@@ -209,11 +555,11 @@ expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon			{$$ = $
 expr_or_empty_with_assignment_and_closed_parent: expr_or_empty T_closedParanthesis							{$$ = $1;}
 	| Assignment_stmt T_closedParanthesis																	{$$ = $1;}
 
-idid : T_identifier										{$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
+idid : T_identifier										{push((char*)yylval.str);$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
 		;
-sc 	 : T_stringLiteral									{$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
+sc 	 : T_stringLiteral									{push((char*)yylval.str);$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
 		;
-nc	 : T_numericConstants								{$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
+nc	 : T_numericConstants								{push((char*)yylval.str);$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
 		;
 
 expr_or_empty: expr										{$$ = $1;}
@@ -226,508 +572,34 @@ closeflower: T_closedFlowerBracket {};
 
 %%
 
-#include<ctype.h>
-char ststack[100][100];
-
-char i_[2]="0";
-int temp_i=0;
-char tmp_i[3];
-char temp[2]="t";
-int label[20];
-int lnum=0;
-int ltop=0;
-int abcd=0;
-int l_while=0;
-int l_for=0;
-int flag_set = 1;
-
 void yyerror(const char *str) 
 { 
 	printf("Error | Line: %d\n%s\n",yylineno,str);
 } 
 
-void printICG()
+void symboldisplay()
 {
-	if(!yyparse())  //yyparse-> 0 if success
-  	{
-    	printf("Parsing Complete\n");
-    	printf("---------------------Quadruples-------------------------\n\n");
-    	printf("Operator \t Arg1 \t\t Arg2 \t\t Result \n");
-    	int i;
-    	for(i=0;i<quadlen;i++)
-    	{
-    	    printf("%-8s \t %-8s \t %-8s \t %-6s \n",q[i].op,q[i].arg1,q[i].arg2,q[i].res);
-    	}
-  	}
-  	else
-  	{
-    	printf("Parsing failed\n");
-  	}
+	//printf("Hi");
+	printf("%s",LineBreaker);
+	for (int i = 0;i < stop;i++)
+	{
+		printf("%s\t",st1[i]);
+	}
+	// Display Quads
+	printf("%s",LineBreaker);
+	printf("Quadruplets\n");
+	for(int i=0;i<quadindex;i++)
+    {
+        printf("%-8s \t %-8s \t %-8s \t %-6s \n",Q[i].op,Q[i].arg1,Q[i].arg2,Q[i].res);
+    }
+	printf("%s",LineBreaker);
 }
-
 int main()
 {
 	yyparse();
 	printf("\n*************************************************************************************************\n");
 	display();
 	printf("\n*************************************************************************************************\n");
-	printf("Intermediate Code Generation(ICG)\n");
-	printf("\n_________________________________________________________________________________________________\n");
-	printICG();
-	printf("\n_________________________________________________________________________________________________\n");
+	symboldisplay();
 	return 0;
-}
-
-
-void push()
-{
-	strcpy(ststack[++top],yylval);
-}
-
-void pusha()
-{
-	strcpy(ststack[++top],"  ");
-}
-
-void pushx()
-{
-	strcpy(ststack[++top],"x ");
-}
-
-void pushab()
-{
-	strcpy(ststack[++top],"  ");
-	strcpy(ststack[++top],"  ");
-	strcpy(ststack[++top],"  ");
-}
-
-void codegen()
-{
-    strcpy(temp,"T");
-    sprintf(tmp_i, "%d", temp_i);
-    strcat(temp,tmp_i);
-    printf("%s = %s %s %s\n",temp,ststack[top-2],ststack[top-1],ststack[top]);
-    q[quadlen].op = (char*)malloc(sizeof(char)*strlen(ststack[top-1]));
-    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(ststack[top-2]));
-    q[quadlen].arg2 = (char*)malloc(sizeof(char)*strlen(ststack[top]));
-    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
-    strcpy(q[quadlen].op,ststack[top-1]);
-    strcpy(q[quadlen].arg1,ststack[top-2]);
-    strcpy(q[quadlen].arg2,ststack[top]);
-    strcpy(q[quadlen].res,temp);
-    quadlen++;
-    top-=2;
-    strcpy(ststack[top],temp);
-
-	temp_i++;
-}
-void codegen_assigna()
-{
-	strcpy(temp,"T");
-	sprintf(tmp_i, "%d", temp_i);
-	strcat(temp,tmp_i);
-	printf("%s = %s %s %s %s\n",temp,ststack[top-3],ststack[top-2],ststack[top-1],ststack[top]);
-	//printf("%d\n",strlen(st[top]));
-	if(strlen(ststack[top])==1)
-	{
-		//printf("hello");
-
-	    char t[20];
-		//printf("hello");
-		strcpy(t,ststack[top-2]);
-		strcat(t,ststack[top-1]);
-		q[quadlen].op = (char*)malloc(sizeof(char)*strlen(t));
-	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(ststack[top-3]));
-	    q[quadlen].arg2 = (char*)malloc(sizeof(char)*strlen(ststack[top]));
-	    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
-	    strcpy(q[quadlen].op,t);
-	    strcpy(q[quadlen].arg1,ststack[top-3]);
-	    strcpy(q[quadlen].arg2,ststack[top]);
-	    strcpy(q[quadlen].res,temp);
-	    quadlen++;
-	
-	}
-	else
-	{
-		q[quadlen].op = (char*)malloc(sizeof(char)*strlen(ststack[top-2]));
-	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(ststack[top-3]));
-	    q[quadlen].arg2 = (char*)malloc(sizeof(char)*strlen(ststack[top-1]));
-	    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
-	    strcpy(q[quadlen].op,ststack[top-2]);
-	    strcpy(q[quadlen].arg1,ststack[top-3]);
-	    strcpy(q[quadlen].arg2,ststack[top-1]);
-	    strcpy(q[quadlen].res,temp);
-	    quadlen++;
-	}
-	top-=4;
-
-	temp_i++;
-	strcpy(ststack[++top],temp);
-}
-
-void codegen_umin()
-{
-    strcpy(temp,"T");
-    sprintf(tmp_i, "%d", temp_i);
-    strcat(temp,tmp_i);
-    printf("%s = -%s\n",temp,ststack[top]);
-    q[quadlen].op = (char*)malloc(sizeof(char));
-    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(ststack[top]));
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
-    strcpy(q[quadlen].op,"-");
-    strcpy(q[quadlen].arg1,ststack[top-2]);
-    strcpy(q[quadlen].res,temp);
-    quadlen++;
-    top--;
-    strcpy(ststack[top],temp);
-    temp_i++;
-}
-
-void codegen_assign()
-{
-    printf("%s = %s\n",ststack[top-3],ststack[top]);
-    q[quadlen].op = (char*)malloc(sizeof(char));
-    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(ststack[top]));
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(ststack[top-3]));
-    strcpy(q[quadlen].op,"=");
-    strcpy(q[quadlen].arg1,ststack[top]);
-    strcpy(q[quadlen].res,ststack[top-3]);
-    quadlen++;
-    top-=2;
-}
-
-void if1()
-{
-	lnum++;
-	strcpy(temp,"T");
-	sprintf(tmp_i, "%d", temp_i);
-	strcat(temp,tmp_i);
-	printf("%s = not %s\n",temp,ststack[top]);
-	q[quadlen].op = (char*)malloc(sizeof(char)*4);
-	q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(ststack[top]));
-	q[quadlen].arg2 = NULL;
-	q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
-	strcpy(q[quadlen].op,"not");
-	strcpy(q[quadlen].arg1,ststack[top]);
-	strcpy(q[quadlen].res,temp);
-	quadlen++;
-	printf("if %s goto L%d\n",temp,lnum);
-	q[quadlen].op = (char*)malloc(sizeof(char)*3);
-	q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
-	q[quadlen].arg2 = NULL;
-	q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
-	strcpy(q[quadlen].op,"if");
-	strcpy(q[quadlen].arg1,ststack[top-2]);
-	char x[10];
-	sprintf(x,"%d",lnum);
-	char l[]="L";
-	strcpy(q[quadlen].res,strcat(l,x));
-	quadlen++;	
-	temp_i++;
-	label[++ltop]=lnum;
-}
-
-void if3()
-{
-    int y;
-    y=label[ltop--];
-    printf("L%d: \n",y);
-    q[quadlen].op = (char*)malloc(sizeof(char)*6);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(y+2));
-    strcpy(q[quadlen].op,"Label");
-    char x[10];
-    sprintf(x,"%d",y);
-    char l[]="L";
-    strcpy(q[quadlen].res,strcat(l,x));
-    quadlen++;
-}
-
-void ifelse1()
-{
-    lnum++;
-    strcpy(temp,"T");
-    sprintf(tmp_i, "%d", temp_i);
-    strcat(temp,tmp_i);
-    printf("%s = not %s\n",temp,ststack[top]);
-    q[quadlen].op = (char*)malloc(sizeof(char)*4);
-    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(ststack[top]));
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
-    strcpy(q[quadlen].op,"not");
-    strcpy(q[quadlen].arg1,ststack[top]);
-    strcpy(q[quadlen].res,temp);
-    quadlen++;
-    printf("if %s goto L%d\n",temp,lnum);
-    q[quadlen].op = (char*)malloc(sizeof(char)*3);
-    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
-    strcpy(q[quadlen].op,"if");
-    strcpy(q[quadlen].arg1,temp);
-    char x[10];
-    sprintf(x,"%d",lnum);
-    char l[]="L";
-    strcpy(q[quadlen].res,strcat(l,x));
-    quadlen++;
-    temp_i++;
-    label[++ltop]=lnum;
-}
-
-void ifelse2()
-{
-    int x;
-    lnum++;
-    x=label[ltop--];
-    printf("goto L%d\n",lnum);
-    q[quadlen].op = (char*)malloc(sizeof(char)*5);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
-    strcpy(q[quadlen].op,"goto");
-    char jug[10];
-    sprintf(jug,"%d",lnum);
-    char l[]="L";
-    strcpy(q[quadlen].res,strcat(l,jug));
-    quadlen++;
-    printf("L%d: \n",x);
-    q[quadlen].op = (char*)malloc(sizeof(char)*6);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(x+2));
-    strcpy(q[quadlen].op,"Label");
-
-    char jug1[10];
-    sprintf(jug1,"%d",x);
-    char l1[]="L";
-    strcpy(q[quadlen].res,strcat(l1,jug1));
-    quadlen++;
-    label[++ltop]=lnum;
-}
-
-void ifelse3()
-{
-	int y;
-	y=label[ltop--];
-	printf("L%d: \n",y);
-	q[quadlen].op = (char*)malloc(sizeof(char)*6);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(y+2));
-    strcpy(q[quadlen].op,"Label");
-    char x[10];
-    sprintf(x,"%d",y);
-    char l[]="L";
-    strcpy(q[quadlen].res,strcat(l,x));
-    quadlen++;
-	lnum++;
-}
-
-void while1()
-{
-
-    l_while = lnum;
-    printf("L%d: \n",lnum++);
-    q[quadlen].op = (char*)malloc(sizeof(char)*6);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
-    strcpy(q[quadlen].op,"Label");
-    char x[10];
-    sprintf(x,"%d",lnum-1);
-    char l[]="L";
-    strcpy(q[quadlen].res,strcat(l,x));
-    quadlen++;
-}
-
-void while2()
-{
- 	strcpy(temp,"T");
- 	sprintf(tmp_i, "%d", temp_i);
- 	strcat(temp,tmp_i);
- 	printf("%s = not %s\n",temp,st[top]);
-    q[quadlen].op = (char*)malloc(sizeof(char)*4);
-    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(ststack[top]));
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
-    strcpy(q[quadlen].op,"not");
-    strcpy(q[quadlen].arg1,ststack[top]);
-    strcpy(q[quadlen].res,temp);
-    quadlen++;
-    printf("if %s goto L%d\n",temp,lnum);
-    q[quadlen].op = (char*)malloc(sizeof(char)*3);
-    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
-    strcpy(q[quadlen].op,"if");
-    strcpy(q[quadlen].arg1,temp);
-    char x[10];
-    sprintf(x,"%d",lnum);char l[]="L";
-    strcpy(q[quadlen].res,strcat(l,x));
-    quadlen++;
-	temp_i++;
- }
-
-void while3()
-{
-	printf("goto L%d \n",l_while);
-	q[quadlen].op = (char*)malloc(sizeof(char)*5);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(l_while+2));
-    strcpy(q[quadlen].op,"goto");
-    char x[10];
-    sprintf(x,"%d",l_while);
-    char l[]="L";
-    strcpy(q[quadlen].res,strcat(l,x));
-    quadlen++;
-    printf("L%d: \n",lnum++);
-    q[quadlen].op = (char*)malloc(sizeof(char)*6);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
-    strcpy(q[quadlen].op,"Label");
-    char x1[10];
-    sprintf(x1,"%d",lnum-1);
-    char l1[]="L";
-    strcpy(q[quadlen].res,strcat(l1,x1));
-    quadlen++;
-}
-
-void for1()
-{
-    l_for = lnum;
-    printf("L%d: \n",lnum++);
-    q[quadlen].op = (char*)malloc(sizeof(char)*6);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
-    strcpy(q[quadlen].op,"Label");
-    char x[10];
-    sprintf(x,"%d",lnum-1);
-    char l[]="L";
-    strcpy(q[quadlen].res,strcat(l,x));
-    quadlen++;
-}
-
-void for2()
-{
-    strcpy(temp,"T");
-    sprintf(tmp_i, "%d", temp_i);
-    strcat(temp,tmp_i);
-    printf("%s = not %s\n",temp,st[top]);
-    q[quadlen].op = (char*)malloc(sizeof(char)*4);
-    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(ststack[top]));
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
-    strcpy(q[quadlen].op,"not");
-    strcpy(q[quadlen].arg1,ststack[top]);
-    strcpy(q[quadlen].res,temp);
-    quadlen++;
-    printf("if %s goto L%d\n",temp,lnum);
-    q[quadlen].op = (char*)malloc(sizeof(char)*3);
-    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
-    strcpy(q[quadlen].op,"if");
-    strcpy(q[quadlen].arg1,temp);
-    char x[10];
-    sprintf(x,"%d",lnum);
-    char l[]="L";
-    strcpy(q[quadlen].res,strcat(l,x));
-    quadlen++;
-
-    temp_i++;
-    label[++ltop]=lnum;
-    lnum++;
-    printf("goto L%d\n",lnum);
-    q[quadlen].op = (char*)malloc(sizeof(char)*5);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
-    strcpy(q[quadlen].op,"goto");
-    char x1[10];
-    sprintf(x1,"%d",lnum);
-    char l1[]="L";
-    strcpy(q[quadlen].res,strcat(l1,x1));
-    quadlen++;
-    label[++ltop]=lnum;
-    printf("L%d: \n",++lnum);
-    q[quadlen].op = (char*)malloc(sizeof(char)*6);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
-    strcpy(q[quadlen].op,"Label");
-    char x2[10];
-    sprintf(x2,"%d",lnum);
-    char l2[]="L";
-    strcpy(q[quadlen].res,strcat(l2,x2));
-    quadlen++;
-}
-
-void for3()
-{
-    int x;
-    x=label[ltop--];
-    printf("goto L%d \n",l_for);
-
-    q[quadlen].op = (char*)malloc(sizeof(char)*5);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
-    strcpy(q[quadlen].op,"goto");
-    char jug[10];
-    sprintf(jug,"%d",l_for);
-    char l[]="L";
-    strcpy(q[quadlen].res,strcat(l,jug));
-    quadlen++;
-
-
-    printf("L%d: \n",x);
-
-    q[quadlen].op = (char*)malloc(sizeof(char)*6);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(x+2));
-    strcpy(q[quadlen].op,"Label");
-    char jug1[10];
-    sprintf(jug1,"%d",x);
-    char l1[]="L";
-    strcpy(q[quadlen].res,strcat(l1,jug1));
-    quadlen++;
-
-}
-
-void for4()
-{
-    int x;
-    x=label[ltop--];
-    printf("goto L%d \n",lnum);
-
-    q[quadlen].op = (char*)malloc(sizeof(char)*5);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
-    strcpy(q[quadlen].op,"goto");
-    char jug[10];
-    sprintf(jug,"%d",lnum);
-    char l[]="L";
-    strcpy(q[quadlen].res,strcat(l,jug));
-    quadlen++;
-
-    printf("L%d: \n",x);
-
-    q[quadlen].op = (char*)malloc(sizeof(char)*6);
-    q[quadlen].arg1 = NULL;
-    q[quadlen].arg2 = NULL;
-    q[quadlen].res = (char*)malloc(sizeof(char)*(x+2));
-    strcpy(q[quadlen].op,"Label");
-    char jug1[10];
-    sprintf(jug1,"%d",x);
-    char l1[]="L";
-    strcpy(q[quadlen].res,strcat(l1,jug1));
-    quadlen++;
 }
