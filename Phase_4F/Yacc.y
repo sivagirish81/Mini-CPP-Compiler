@@ -47,6 +47,7 @@
 		strcpy(st1[++stop],a);
 	}
 
+	// Statements -helper
 	void codegen()
 	{
 	    strcpy(temp,"T");
@@ -65,6 +66,21 @@
 	    stop-=2;
 	    strcpy(st1[stop],temp);
 		temp_i++;
+	}
+
+	// Assignment Operations
+	void codegen_assign()
+	{
+	    printf("%s = %s\n",st1[stop-2],st1[stop - 1]);
+	    q[quadlen].op = (char*)malloc(sizeof(char));
+	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop - 1]));
+	    q[quadlen].arg2 = NULL;
+	    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(st1[stop-2]));
+	    strcpy(q[quadlen].op,"=");
+	    strcpy(q[quadlen].arg1,st1[stop - 1]);
+	    strcpy(q[quadlen].res,st1[stop-2]);
+	    quadlen++;
+	    stop-=2;
 	}
 
 	void codegen_assign_back()
