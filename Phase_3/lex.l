@@ -97,6 +97,7 @@ struct var
 	char Line_t[100];
 	char type[100];
 	char value[100];
+	int storage;
 	int scope;
 };
 struct scope
@@ -145,7 +146,7 @@ void display()
 		int h=Symbol_Table[i].up;
 		for (int j=1;j<=h;j++)
 		{
-			printf("Symbol:%s \t Scope:%d \t Line number: %s \t Type: %s \t Value: %s\n ",Symbol_Table[i].arr[j].var_name,Symbol_Table[i].arr[j].scope,Symbol_Table[i].arr[j].Line_t, Symbol_Table[i].arr[j].type, Symbol_Table[i].arr[j].value);
+			printf("Symbol:%s \t Scope:%d \t Line number: %s \t Type: %s \t Storage: %d \t Value: %s\n ",Symbol_Table[i].arr[j].var_name,Symbol_Table[i].arr[j].scope,Symbol_Table[i].arr[j].Line_t, Symbol_Table[i].arr[j].type, Symbol_Table[i].arr[j].storage,  Symbol_Table[i].arr[j].value);
 		}
 	}	
 }
@@ -159,6 +160,11 @@ void insert_in_st(char* type, char* id, int scp, char* value)
 		{
 			strcpy(Symbol_Table[scp].arr[i].type, type);
 			strcpy(Symbol_Table[scp].arr[i].value, value);
+			if(strcmp(type, "int") == 0)
+			Symbol_Table[scp].arr[i].storage = 4;
+			else if(strcmp(type, "long") == 0)
+			Symbol_Table[scp].arr[i].storage = 8;
+
 		}
 	}
 }
