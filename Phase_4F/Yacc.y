@@ -46,14 +46,14 @@
 	    strcpy(temp,"T");
 	    sprintf(tmp_i, "%d", temp_i);
 	    strcat(temp,tmp_i);
-	    printf("%s = %s %s %s\n",temp,st[top-2],st[top-1],st1[stop]);
-	    q[quadlen].op = (char*)malloc(sizeof(char)*strlen(st1[stop-1]));
+	    printf("%s = %s %s %s\n",temp,st1[stop-2],st1[stop],st1[stop - 1]);
+	    q[quadlen].op = (char*)malloc(sizeof(char)*strlen(st1[stop]));
 	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop-2]));
-	    q[quadlen].arg2 = (char*)malloc(sizeof(char)*strlen(st1[stop]));
+	    q[quadlen].arg2 = (char*)malloc(sizeof(char)*strlen(st1[stop - 1]));
 	    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
-	    strcpy(q[quadlen].op,st1[stop-1]);
+	    strcpy(q[quadlen].op,st1[stop]);
 	    strcpy(q[quadlen].arg1,st1[stop-2]);
-	    strcpy(q[quadlen].arg2,st1[stop]);
+	    strcpy(q[quadlen].arg2,st1[stop - 1]);
 	    strcpy(q[quadlen].res,temp);
 	    quadlen++;
 	    stop-=2;
@@ -63,14 +63,14 @@
 
 	void codegen_assign()
 	{
-	    printf("%s = %s\n",st1[stop-3],st1[stop - 1]);
+	    printf("%s = %s\n",st1[stop-2],st1[stop - 1]);
 	    q[quadlen].op = (char*)malloc(sizeof(char));
 	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop - 1]));
 	    q[quadlen].arg2 = NULL;
-	    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(st1[stop-3]));
+	    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(st1[stop-2]));
 	    strcpy(q[quadlen].op,"=");
 	    strcpy(q[quadlen].arg1,st1[stop - 1]);
-	    strcpy(q[quadlen].res,st1[stop-3]);
+	    strcpy(q[quadlen].res,st1[stop-2]);
 	    quadlen++;
 	    stop-=2;
 	}
@@ -260,7 +260,7 @@ for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment  
 
 // Condition : 		{}
 
-while_stmt : T_while T_openParenthesis expr T_closedParanthesis block										{while1();while2();while3();$$ = Construct_AST($3, $5, "While"); /*printf("%s",LineBreaker);Display_tree($$);printf("%s",LineBreaker);*/}
+while_stmt : T_while {while1();} T_openParenthesis expr T_closedParanthesis {while2();} block										{while3();$$ = Construct_AST($3, $5, "While"); /*printf("%s",LineBreaker);Display_tree($$);printf("%s",LineBreaker);*/}
 
 if_stmt : T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {$$ = Construct_AST($3, $5, "IF");/*Display_tree($$);*/ }
 
@@ -292,38 +292,38 @@ Assignment_stmt: 	idid T_AssignmentOperator expr																		{push("=");$$ 
 
 
 expr_without_constants:  idid											{$$ = $1;}
-		| expr T_plus expr								{push("+");$$ = Construct_AST($1, $3, "+");}
-		| expr T_minus expr									{push("-");$$ = Construct_AST($1, $3, "-");}
-		| expr T_divide expr								{push("/");$$ = Construct_AST($1, $3, "/");}
-		| expr T_multiply expr								{push("*");$$ = Construct_AST($1, $3, "*");}
-		| expr T_mod expr									{push("%");$$ = Construct_AST($1, $3, "%");}
-		| expr T_LogicalAnd expr								{push("&");$$ = Construct_AST($1, $3, "&");}
-		| expr T_LogicalOr expr								{push("|");$$ = Construct_AST($1, $3, "|");}
-		| expr T_less expr									{push("<");$$ = Construct_AST($1, $3, "<");}				
-		| expr T_less_equal expr								{push("<=");$$ = Construct_AST($1, $3, "<=");}
-		| expr T_greater expr								{push(">");$$ = Construct_AST($1, $3, ">");}
-		| expr T_greater_equal expr							{push(">=");$$ = Construct_AST($1, $3, ">=");}
-		| expr T_equal_equal expr							{push("==");$$ = Construct_AST($1, $3, "==");}
-		| expr T_not_equal expr								{push("!=");$$ = Construct_AST($1, $3, "!=");}
+		| expr T_plus expr								{push("+");codegen();$$ = Construct_AST($1, $3, "+");}
+		| expr T_minus expr									{push("-");codegen();$$ = Construct_AST($1, $3, "-");}
+		| expr T_divide expr								{push("/");codegen();$$ = Construct_AST($1, $3, "/");}
+		| expr T_multiply expr								{push("*");codegen();$$ = Construct_AST($1, $3, "*");}
+		| expr T_mod expr									{push("%");codegen();$$ = Construct_AST($1, $3, "%");}
+		| expr T_LogicalAnd expr								{push("&");codegen();$$ = Construct_AST($1, $3, "&");}
+		| expr T_LogicalOr expr								{push("|");codegen();$$ = Construct_AST($1, $3, "|");}
+		| expr T_less expr									{push("<");codegen();$$ = Construct_AST($1, $3, "<");}				
+		| expr T_less_equal expr								{push("<=");codegen();$$ = Construct_AST($1, $3, "<=");}
+		| expr T_greater expr								{push(">");codegen();$$ = Construct_AST($1, $3, ">");}
+		| expr T_greater_equal expr							{push(">=");codegen();$$ = Construct_AST($1, $3, ">=");}
+		| expr T_equal_equal expr							{push("==");codegen();$$ = Construct_AST($1, $3, "==");}
+		| expr T_not_equal expr								{push("!=");codegen();$$ = Construct_AST($1, $3, "!=");}
 		;
 
 
 expr: 	nc																{$$ = $1;}
 		| sc															{$$ = $1;}								
 		| idid															{$$ = $1;}
-		| expr T_plus expr								{push("+");$$ = Construct_AST($1, $3, "+");}
-		| expr T_minus expr									{push("-");$$ = Construct_AST($1, $3, "-");}
-		| expr T_divide expr								{push("/");$$ = Construct_AST($1, $3, "/");}
-		| expr T_multiply expr								{push("*");$$ = Construct_AST($1, $3, "*");}
-		| expr T_mod expr									{push("%");$$ = Construct_AST($1, $3, "%");}
-		| expr T_LogicalAnd expr								{push("&");$$ = Construct_AST($1, $3, "&");}
-		| expr T_LogicalOr expr								{push("|");$$ = Construct_AST($1, $3, "|");}
-		| expr T_less expr									{push("<");$$ = Construct_AST($1, $3, "<");}				
-		| expr T_less_equal expr								{push("<=");$$ = Construct_AST($1, $3, "<=");}
-		| expr T_greater expr								{push(">");$$ = Construct_AST($1, $3, ">");}
-		| expr T_greater_equal expr							{push(">=");$$ = Construct_AST($1, $3, ">=");}
-		| expr T_equal_equal expr							{push("==");$$ = Construct_AST($1, $3, "==");}
-		| expr T_not_equal expr								{push("!=");$$ = Construct_AST($1, $3, "!=");}
+		| expr T_plus expr								{push("+");codegen();$$ = Construct_AST($1, $3, "+");}
+		| expr T_minus expr									{push("-");codegen();$$ = Construct_AST($1, $3, "-");}
+		| expr T_divide expr								{push("/");codegen();$$ = Construct_AST($1, $3, "/");}
+		| expr T_multiply expr								{push("*");codegen();$$ = Construct_AST($1, $3, "*");}
+		| expr T_mod expr									{push("%");codegen();$$ = Construct_AST($1, $3, "%");}
+		| expr T_LogicalAnd expr								{push("&");codegen();$$ = Construct_AST($1, $3, "&");}
+		| expr T_LogicalOr expr								{push("|");codegen();$$ = Construct_AST($1, $3, "|");}
+		| expr T_less expr									{push("<");codegen();$$ = Construct_AST($1, $3, "<");}				
+		| expr T_less_equal expr								{push("<=");codegen();$$ = Construct_AST($1, $3, "<=");}
+		| expr T_greater expr								{push(">");codegen();$$ = Construct_AST($1, $3, ">");}
+		| expr T_greater_equal expr							{push(">=");codegen();$$ = Construct_AST($1, $3, ">=");}
+		| expr T_equal_equal expr							{push("==");codegen();$$ = Construct_AST($1, $3, "==");}
+		| expr T_not_equal expr								{push("!=");codegen();$$ = Construct_AST($1, $3, "!=");}
 		;
 
 expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon			{$$ = $1;}
@@ -362,10 +362,13 @@ void symboldisplay()
 		printf("%s\t",st1[i]);
 	}
 	// Display Quads
-	 for(int i=0;i<quadlen;i++)
+	printf("%s",LineBreaker);
+	printf("Quadruplets\n");
+	for(int i=0;i<quadlen;i++)
     {
         printf("%-8s \t %-8s \t %-8s \t %-6s \n",q[i].op,q[i].arg1,q[i].arg2,q[i].res);
     }
+	printf("%s",LineBreaker);
 }
 int main()
 {
