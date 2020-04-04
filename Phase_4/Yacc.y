@@ -26,7 +26,7 @@
 	int l_for=0;
 	int flag_set = 1;
 	int stop = -1;
-
+	char G_val[10];
 	int ftemp1;
 	int ftemp2;
 	int ftemp3;
@@ -84,6 +84,24 @@
 	}
 
 	void TAC_assign_back()
+	{
+		temp_i--;
+	    strcpy(temp,"T");
+	    sprintf(tmp_i, "%d", temp_i);
+	    strcat(temp,tmp_i);
+		temp_i++;
+		printf("%s = %s\n",G_val,temp);
+	    Q[quadindex].op = (char*)malloc(sizeof(char));
+	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(G_val));
+	    strcpy(Q[quadindex].op,"=");
+		strcpy(Q[quadindex].arg1,temp);
+	    strcpy(Q[quadindex].res,G_val);
+		quadindex++;
+	}
+
+	void TAC_assign_back1()
 	{
 	    strcpy(temp,"T");
 	    sprintf(tmp_i, "%d", temp_i);
@@ -505,10 +523,10 @@ stmt_without_if : expr T_Semicolon										{$$ = $1;}
 
 Assignment_stmt: 	idid T_AssignmentOperator expr																		{push("=");TAC_assign();$$ = Construct_AST($1,$3,"=");/*Display_tree($$);printf("\n");*/}
 					| idid T_shortHand expr																				{push("se");TAC_assign();$$ = Construct_AST($1,$3,"SE");/*Display_tree($$);printf("\n");*/ }
-					| T_type idid T_AssignmentOperator expr_without_constants   {push("=");TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}	
+					| T_type idid T_AssignmentOperator expr_without_constants   {push("=");strcpy(G_val,$2->token);TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}	
 					| T_type idid T_AssignmentOperator sc   {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
 					| T_type idid T_AssignmentOperator nc   {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
-					| T_int idid T_AssignmentOperator expr_without_constants    {push("=");TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+					| T_int idid T_AssignmentOperator expr_without_constants    {push("=");strcpy(G_val,$2->token);TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
 					| T_int idid T_AssignmentOperator nc    {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
 				;
 
