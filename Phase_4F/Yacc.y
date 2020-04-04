@@ -154,20 +154,20 @@
 	}
 
 	// ICG - IF
-	/*
+
 	void if1()
 	{
 		lnum++;
 		strcpy(temp,"T");
 		sprintf(tmp_i, "%d", temp_i);
 		strcat(temp,tmp_i);
-		printf("%s = not %s\n",temp,st[top]);
+		printf("%s = not %s\n",temp,st1[stop]);
 		q[quadlen].op = (char*)malloc(sizeof(char)*4);
-		q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st[top]));
+		q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop]));
 		q[quadlen].arg2 = NULL;
 		q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
 		strcpy(q[quadlen].op,"not");
-		strcpy(q[quadlen].arg1,st[top]);
+		strcpy(q[quadlen].arg1,st1[stop]);
 		strcpy(q[quadlen].res,temp);
 		quadlen++;
 		printf("if %s goto L%d\n",temp,lnum);
@@ -176,7 +176,7 @@
 		q[quadlen].arg2 = NULL;
 		q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
 		strcpy(q[quadlen].op,"if");
-		strcpy(q[quadlen].arg1,st[top-2]);
+		strcpy(q[quadlen].arg1,st1[stop-2]);
 		char x[10];
 		sprintf(x,"%d",lnum);
 		char l[]="L";
@@ -209,13 +209,13 @@
 	    strcpy(temp,"T");
 	    sprintf(tmp_i, "%d", temp_i);
 	    strcat(temp,tmp_i);
-	    printf("%s = not %s\n",temp,st[top]);
+	    printf("%s = not %s\n",temp,st1[stop]);
 	    q[quadlen].op = (char*)malloc(sizeof(char)*4);
-	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st[top]));
+	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop]));
 	    q[quadlen].arg2 = NULL;
 	    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
 	    strcpy(q[quadlen].op,"not");
-	    strcpy(q[quadlen].arg1,st[top]);
+	    strcpy(q[quadlen].arg1,st1[stop]);
 	    strcpy(q[quadlen].res,temp);
 	    quadlen++;
 	    printf("if %s goto L%d\n",temp,lnum);
@@ -256,7 +256,6 @@
 	    q[quadlen].arg2 = NULL;
 	    q[quadlen].res = (char*)malloc(sizeof(char)*(x+2));
 	    strcpy(q[quadlen].op,"Label");
-
 	    char jug1[10];
 	    sprintf(jug1,"%d",x);
 	    char l1[]="L";
@@ -282,7 +281,7 @@
 	    quadlen++;
 		lnum++;
 	}
-	*/
+	
 	// ICG - For
 
 	void for1()
@@ -360,7 +359,6 @@
 	    int x;
 	    x=label[ltop--];
 	    printf("goto L%d \n",l_for);
-
 	    q[quadlen].op = (char*)malloc(sizeof(char)*5);
 	    q[quadlen].arg1 = NULL;
 	    q[quadlen].arg2 = NULL;
@@ -371,10 +369,7 @@
 	    char l[]="L";
 	    strcpy(q[quadlen].res,strcat(l,jug));
 	    quadlen++;
-
-
 	    printf("L%d: \n",x);
-
 	    q[quadlen].op = (char*)malloc(sizeof(char)*6);
 	    q[quadlen].arg1 = NULL;
 	    q[quadlen].arg2 = NULL;
@@ -385,7 +380,6 @@
 	    char l1[]="L";
 	    strcpy(q[quadlen].res,strcat(l1,jug1));
 	    quadlen++;
-
 	}
 
 	void for4()
@@ -536,11 +530,11 @@ for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {
 
 while_stmt : T_while {while1();} T_openParenthesis expr T_closedParanthesis {while2();} block										{while3();$$ = Construct_AST($3, $5, "While"); /*printf("%s",LineBreaker);Display_tree($$);printf("%s",LineBreaker);*/}
 
-if_stmt : T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {$$ = Construct_AST($3, $5, "IF");/*Display_tree($$);*/ }
+if_stmt : T_if T_openParenthesis expr T_closedParanthesis {ifelse1();} block elseif_else_empty {$$ = Construct_AST($3, $5, "IF");/*Display_tree($$);*/ }
 
-elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {$$ = Construct_AST($4, $6, "ELSEIF"); }
-					| T_else Multiple_stmts_not_if {$$ = $2;}
-					| T_else openflower block_end_flower {$$ = $3; }
+elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {ifelse2();$$ = Construct_AST($4, $6, "ELSEIF"); }
+					| T_else Multiple_stmts_not_if {ifelse3();$$ = $2;}
+					| T_else openflower block_end_flower {ifelse3();$$ = $3; }
 					| {$$ = Construct_AST(NULL, NULL, ";"); }
 					;
 
