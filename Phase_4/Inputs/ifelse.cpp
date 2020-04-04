@@ -13,7 +13,5 @@ int main()
     else
     {
         int a = 4;
-        int c = a + 4;
-
     }
 }
