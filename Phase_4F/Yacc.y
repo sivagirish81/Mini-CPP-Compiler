@@ -89,6 +89,7 @@
 	    sprintf(tmp_i, "%d", temp_i);
 	    strcat(temp,tmp_i);
 	    printf("%s = %s %s %s\n",temp,st1[stop-2],st1[stop],st1[stop - 1]);
+		printf("temp = %s\n",temp);
 		printf("%s = %s\n",st1[stop - 3],temp);
 	    q[quadlen].op = (char*)malloc(sizeof(char)*strlen(st1[stop]));
 	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop-2]));
@@ -178,54 +179,7 @@
 
 	// ICG - IF
 
-	void if1()
-	{
-		lnum++;
-		strcpy(temp,"T");
-		sprintf(tmp_i, "%d", temp_i);
-		strcat(temp,tmp_i);
-		printf("%s = not %s\n",temp,st1[stop]);
-		q[quadlen].op = (char*)malloc(sizeof(char)*4);
-		q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop]));
-		q[quadlen].arg2 = NULL;
-		q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
-		strcpy(q[quadlen].op,"not");
-		strcpy(q[quadlen].arg1,st1[stop]);
-		strcpy(q[quadlen].res,temp);
-		quadlen++;
-		printf("if %s goto L%d\n",temp,lnum);
-		q[quadlen].op = (char*)malloc(sizeof(char)*3);
-		q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
-		q[quadlen].arg2 = NULL;
-		q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
-		strcpy(q[quadlen].op,"if");
-		strcpy(q[quadlen].arg1,st1[stop-2]);
-		char x[10];
-		sprintf(x,"%d",lnum);
-		char l[]="L";
-		strcpy(q[quadlen].res,strcat(l,x));
-		quadlen++;
-		temp_i++;
-		label[++ltop]=lnum;
-	}
-
-	void if3()
-	{
-	    int y;
-	    y=label[ltop--];
-	    printf("L%d: \n",y);
-	    q[quadlen].op = (char*)malloc(sizeof(char)*6);
-	    q[quadlen].arg1 = NULL;
-	    q[quadlen].arg2 = NULL;
-	    q[quadlen].res = (char*)malloc(sizeof(char)*(y+2));
-	    strcpy(q[quadlen].op,"Label");
-	    char x[10];
-	    sprintf(x,"%d",y);
-	    char l[]="L";
-	    strcpy(q[quadlen].res,strcat(l,x));
-	    quadlen++;
-	}
-
+	// Handle Initial IF
 	void ifelse1()
 	{
 	    lnum++;
@@ -257,6 +211,7 @@
 	    label[++ltop]=lnum;
 	}
 
+	// Handle Else IF
 	void ifelse2()
 	{
 	    int x;
@@ -287,6 +242,7 @@
 	    label[++ltop]=lnum;
 	}
 
+	// Handle else
 	void ifelse3()
 	{
 		int y;
@@ -307,6 +263,7 @@
 	
 	// ICG - For
 
+	//Define Label for "FOR"
 	void for1()
 	{
 	    l_for = lnum;
@@ -323,6 +280,7 @@
 	    quadlen++;
 	}
 
+	// Handle Loop Condition
 	void for2()
 	{
 	    strcpy(temp,"T");
@@ -377,6 +335,7 @@
 	    quadlen++;
 	}
 
+	// 
 	void for3()
 	{
 	    int x;
@@ -421,9 +380,7 @@
 	    char l[]="L";
 	    strcpy(q[quadlen].res,strcat(l,jug));
 	    quadlen++;
-
 	    printf("L%d: \n",x);
-
 	    q[quadlen].op = (char*)malloc(sizeof(char)*6);
 	    q[quadlen].arg1 = NULL;
 	    q[quadlen].arg2 = NULL;
@@ -555,7 +512,7 @@ while_stmt : T_while {while1();} T_openParenthesis expr T_closedParanthesis {whi
 
 if_stmt : T_if T_openParenthesis expr T_closedParanthesis {ifelse1();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");/*Display_tree($$);*/ }
 
-elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {ifelse2();$$ = Construct_AST($4, $6, "ELSEIF"); }
+elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis {lnum--;ifelse1();} block elseif_else_empty {$$ = Construct_AST($4, $7, "ELSEIF"); }
 					| T_else Multiple_stmts_not_if {ifelse3();$$ = $2;}
 					| T_else openflower block_end_flower {ifelse3();$$ = $3; }
 					| {$$ = Construct_AST(NULL, NULL, ";"); }
@@ -571,8 +528,8 @@ stmt_without_if : expr T_Semicolon										{$$ = $1;}
 					|for_stmt											{$$ = $1;}
 					;
 
-Assignment_stmt: 	idid T_AssignmentOperator expr																		{push("=");$$ = Construct_AST($1,$3,"=");/*Display_tree($$);printf("\n");*/}
-					| idid T_shortHand expr																				{push("se");$$ = Construct_AST($1,$3,"SE");/*Display_tree($$);printf("\n");*/ }
+Assignment_stmt: 	idid T_AssignmentOperator expr																		{push("=");codegen_assign();$$ = Construct_AST($1,$3,"=");/*Display_tree($$);printf("\n");*/}
+					| idid T_shortHand expr																				{push("se");codegen_assign();$$ = Construct_AST($1,$3,"SE");/*Display_tree($$);printf("\n");*/ }
 					| T_type idid T_AssignmentOperator expr_without_constants   {push("=");codegen_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}	
 					| T_type idid T_AssignmentOperator sc   {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
 					| T_type idid T_AssignmentOperator nc   {push("=");codegen_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
