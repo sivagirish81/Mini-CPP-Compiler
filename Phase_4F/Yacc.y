@@ -25,7 +25,7 @@
 	int l_while=0;
 	int l_for=0;
 	int flag_set = 1;
-	int stop;
+	int stop = -1;
 	typedef struct quadruples
   	{
   	  char *op;
@@ -63,16 +63,16 @@
 */
 	void codegen_assign()
 	{
-	    printf("%s = %s\n",st[top-3],st[top]);
+	    printf("%s = %s\n",st1[stop-3],st1[stop - 1]);
 	    q[quadlen].op = (char*)malloc(sizeof(char));
-	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st[top]));
+	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop - 1]));
 	    q[quadlen].arg2 = NULL;
-	    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(st[top-3]));
+	    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(st1[stop-3]));
 	    strcpy(q[quadlen].op,"=");
-	    strcpy(q[quadlen].arg1,st[top]);
-	    strcpy(q[quadlen].res,st[top-3]);
+	    strcpy(q[quadlen].arg1,st1[stop - 1]);
+	    strcpy(q[quadlen].res,st1[stop-3]);
 	    quadlen++;
-	    top-=2;
+	    stop-=2;
 	}
 
 	void while1()
@@ -97,13 +97,13 @@
 	 	strcpy(temp,"T");
 	 	sprintf(tmp_i, "%d", temp_i);
 	 	strcat(temp,tmp_i);
-	 	printf("%s = not %s\n",temp,st1[top]);
+	 	printf("%s = not %s\n",temp,st1[stop]);
 	    q[quadlen].op = (char*)malloc(sizeof(char)*4);
-	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st1[top]));
+	    q[quadlen].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop]));
 	    q[quadlen].arg2 = NULL;
 	    q[quadlen].res = (char*)malloc(sizeof(char)*strlen(temp));
 	    strcpy(q[quadlen].op,"not");
-	    strcpy(q[quadlen].arg1,st1[top]);
+	    strcpy(q[quadlen].arg1,st1[stop]);
 	    strcpy(q[quadlen].res,temp);
 	    quadlen++;
 	    printf("if %s goto L%d\n",temp,lnum);
