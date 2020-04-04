@@ -106,7 +106,9 @@
 	}
 
 	// ICG - While
-	void while1()
+
+	// Create label for while
+	void While_Loop()
 	{
 
 	    l_while = lnum;
@@ -123,7 +125,8 @@
 	    quadlen++;
 	}
 
-	void while2()
+	// While Loop Condition
+	void While_loop_cond()
 	{
 	 	strcpy(temp,"T");
 	 	sprintf(tmp_i, "%d", temp_i);
@@ -151,7 +154,8 @@
 	 	temp_i++;
 	}
 
-	void while3()
+	// End While loop
+	void While_END()
 	{
 		printf("goto L%d \n",l_while);
 		q[quadlen].op = (char*)malloc(sizeof(char)*5);
@@ -179,8 +183,8 @@
 
 	// ICG - IF
 
-	// Handle Initial IF
-	void ifelse1()
+	// Handle Initial IF as well as else if
+	void IfElif()
 	{
 	    lnum++;
 	    strcpy(temp,"T");
@@ -211,39 +215,9 @@
 	    label[++ltop]=lnum;
 	}
 
-	// Handle Else IF
-	void ifelse2()
-	{
-	    int x;
-	    lnum++;
-	    x=label[ltop--];
-	    printf("goto L%d\n",lnum);
-	    q[quadlen].op = (char*)malloc(sizeof(char)*5);
-	    q[quadlen].arg1 = NULL;
-	    q[quadlen].arg2 = NULL;
-	    q[quadlen].res = (char*)malloc(sizeof(char)*(lnum+2));
-	    strcpy(q[quadlen].op,"goto");
-	    char jug[10];
-	    sprintf(jug,"%d",lnum);
-	    char l[]="L";
-	    strcpy(q[quadlen].res,strcat(l,jug));
-	    quadlen++;
-	    printf("L%d: \n",x);
-	    q[quadlen].op = (char*)malloc(sizeof(char)*6);
-	    q[quadlen].arg1 = NULL;
-	    q[quadlen].arg2 = NULL;
-	    q[quadlen].res = (char*)malloc(sizeof(char)*(x+2));
-	    strcpy(q[quadlen].op,"Label");
-	    char jug1[10];
-	    sprintf(jug1,"%d",x);
-	    char l1[]="L";
-	    strcpy(q[quadlen].res,strcat(l1,jug1));
-	    quadlen++;
-	    label[++ltop]=lnum;
-	}
 
 	// Handle else
-	void ifelse3()
+	void Else()
 	{
 		int y;
 		y=label[ltop--];
@@ -264,7 +238,7 @@
 	// ICG - For
 
 	//Define Label for "FOR"
-	void for1()
+	void FOR()
 	{
 	    l_for = lnum;
 	    printf("L%d: \n",lnum++);
@@ -281,7 +255,7 @@
 	}
 
 	// Handle Loop Condition
-	void for2()
+	void FOR_Condition()
 	{
 	    strcpy(temp,"T");
 	    sprintf(tmp_i, "%d", temp_i);
@@ -335,8 +309,8 @@
 	    quadlen++;
 	}
 
-	// 
-	void for3()
+	// Increment
+	void FOR_INC_Cond()
 	{
 	    int x;
 	    x=label[ltop--];
@@ -364,7 +338,8 @@
 	    quadlen++;
 	}
 
-	void for4()
+	// Ending of for
+	void FOR_End()
 	{
 	    int x;
 	    x=label[ltop--];
@@ -497,7 +472,7 @@ stmt : expr T_Semicolon					{$$ = $1;}
 
 //for_stmt : T_for T_openParenthesis expr_with_semicolon expr_with_semicolon expr_or_empty T_closedParanthesis block
 
-for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {for1();} expr_or_empty_with_semicolon_and_assignment {for2();} expr_or_empty_with_assignment_and_closed_parent {for3();} block	{{ 	for4();node* left;
+for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {FOR();} expr_or_empty_with_semicolon_and_assignment {FOR_Condition();} expr_or_empty_with_assignment_and_closed_parent {FOR_INC_Cond();} block	{{ 	FOR_End();node* left;
 																																	node* right;
 																																	left = Construct_AST($5, $7, "Cond_Loopstmts");
 																																	right = Construct_AST($3,$5,"Init_&_Increment");
@@ -508,13 +483,13 @@ for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {
 
 // Condition : 		{}
 
-while_stmt : T_while {while1();} T_openParenthesis expr T_closedParanthesis {while2();} block										{while3();$$ = Construct_AST($3, $5, "While"); /*printf("%s",LineBreaker);Display_tree($$);printf("%s",LineBreaker);*/}
+while_stmt : T_while {While_Loop();} T_openParenthesis expr T_closedParanthesis {While_loop_cond();} block										{While_END();$$ = Construct_AST($3, $5, "While"); /*printf("%s",LineBreaker);Display_tree($$);printf("%s",LineBreaker);*/}
 
-if_stmt : T_if T_openParenthesis expr T_closedParanthesis {ifelse1();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");/*Display_tree($$);*/ }
+if_stmt : T_if T_openParenthesis expr T_closedParanthesis {IfElif();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");/*Display_tree($$);*/ }
 
-elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis {lnum--;ifelse1();} block elseif_else_empty {$$ = Construct_AST($4, $7, "ELSEIF"); }
-					| T_else Multiple_stmts_not_if {ifelse3();$$ = $2;}
-					| T_else openflower block_end_flower {ifelse3();$$ = $3; }
+elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis {lnum--;IfElif();} block elseif_else_empty {$$ = Construct_AST($4, $7, "ELSEIF"); }
+					| T_else Multiple_stmts_not_if {Else();$$ = $2;}
+					| T_else openflower block_end_flower {Else();$$ = $3; }
 					| {$$ = Construct_AST(NULL, NULL, ";"); }
 					;
 
