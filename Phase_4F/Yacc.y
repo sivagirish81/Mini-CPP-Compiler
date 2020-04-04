@@ -26,6 +26,12 @@
 	int l_for=0;
 	int flag_set = 1;
 	int stop = -1;
+
+	int ftemp1;
+	int ftemp2;
+	int ftemp3;
+	int ftemp4;
+
 	typedef struct quadruples
   	{
   	  char *op;
@@ -517,9 +523,9 @@ stmt : expr T_Semicolon					{$$ = $1;}
 
 //for_stmt : T_for T_openParenthesis expr_with_semicolon expr_with_semicolon expr_or_empty T_closedParanthesis block
 
-for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment  {for1();} expr_or_empty_with_semicolon_and_assignment  {for2();}expr_or_empty_with_assignment_and_closed_parent  {for3();}block	{{ 	for4();node* left;
+for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {for1();} expr_or_empty_with_semicolon_and_assignment {for2();} expr_or_empty_with_assignment_and_closed_parent {for3();} block	{{ 	for4();node* left;
 																																	node* right;
-																																	left = Construct_AST($4, $6, "Cond_Loopstmts");
+																																	left = Construct_AST($5, $7, "Cond_Loopstmts");
 																																	right = Construct_AST($3,$5,"Init_&_Increment");
 																																	$$ = Construct_AST(left,right,"FOR");
 																																	/*Display_tree($$);*/ }}
