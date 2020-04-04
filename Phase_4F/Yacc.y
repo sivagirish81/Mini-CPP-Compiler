@@ -13,7 +13,7 @@
 	extern int count;
 	extern void display();
 	extern void insert_in_st(char*, char*, int, char*);
-	char symbols[100][100];
+	char st1[100][100];
 	char i_[2]="0";
 	int temp_i=0;
 	char tmp_i[3];
@@ -25,7 +25,7 @@
 	int l_while=0;
 	int l_for=0;
 	int flag_set = 1;
-
+	int stop;
 	typedef struct quadruples
   	{
   	  char *op;
@@ -38,7 +38,7 @@
 
 	void push(char *a)
 	{
-		strcpy(st1[++top],a);
+		strcpy(st1[++stop],a);
 	}
 
 	typedef struct ASTNode
@@ -178,15 +178,15 @@ stmt_without_if : expr T_Semicolon										{$$ = $1;}
 Assignment_stmt: 	idid T_AssignmentOperator expr																		{$$ = Construct_AST($1,$3,"=");Display_tree($$);}
 					| idid T_shortHand expr																				{$$ = Construct_AST($1,$3,"SE");Display_tree($$);}
 					| T_type idid T_AssignmentOperator {push("=");} expr_without_constants   {insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}	
-					| T_type idid T_AssignmentOperator {push("=");} sc   {push($4->token);insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
-					| T_type idid T_AssignmentOperator {push("=");} nc   {push($4->token);insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
+					| T_type idid T_AssignmentOperator {push("=");} sc   {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
+					| T_type idid T_AssignmentOperator {push("=");} nc   {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
 					| T_int idid T_AssignmentOperator {push("=");} expr_without_constants    {insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
-					| T_int idid T_AssignmentOperator {push("=");} nc    {push($4->token);"insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
+					| T_int idid T_AssignmentOperator {push("=");} nc    {insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");Display_tree($$);printf("\n");}
 				;
 
 
 
-expr_without_constants:  idid							{$$ = $1;}
+expr_without_constants:  idid											{$$ = $1;}
 		| expr T_plus {push("+");}	expr								{$$ = Construct_AST($1, $3, "+");}
 		| expr T_minus {push("-");} expr								{$$ = Construct_AST($1, $3, "-");}
 		| expr T_divide {push("/");}	expr							{$$ = Construct_AST($1, $3, "/");}
@@ -203,22 +203,22 @@ expr_without_constants:  idid							{$$ = $1;}
 		;
 
 
-expr: 	nc												{$$ = $1;}
-		| sc											{$$ = $1;}								
-		| idid											{$$ = $1;}
-		| expr T_plus expr								{$$ = Construct_AST($1, $3, "+");}
-		| expr T_minus expr								{$$ = Construct_AST($1, $3, "-");}
-		| expr T_divide expr							{$$ = Construct_AST($1, $3, "/");}
-		| expr T_multiply expr							{$$ = Construct_AST($1, $3, "*");}
-		| expr T_mod expr								{$$ = Construct_AST($1, $3, "%");}
-		| expr T_LogicalAnd expr						{$$ = Construct_AST($1, $3, "&");}
-		| expr T_LogicalOr expr							{$$ = Construct_AST($1, $3, "|");}
-		| expr T_less expr								{$$ = Construct_AST($1, $3, "<");}				
-		| expr T_less_equal expr						{$$ = Construct_AST($1, $3, "<=");}
-		| expr T_greater expr							{$$ = Construct_AST($1, $3, ">");}
-		| expr T_greater_equal expr						{$$ = Construct_AST($1, $3, ">=");}
-		| expr T_equal_equal expr						{$$ = Construct_AST($1, $3, "==");}
-		| expr T_not_equal expr							{$$ = Construct_AST($1, $3, "!=");}
+expr: 	nc																{$$ = $1;}
+		| sc															{$$ = $1;}								
+		| idid															{$$ = $1;}
+		| expr T_plus {push("+");}	expr								{$$ = Construct_AST($1, $3, "+");}
+		| expr T_minus {push("-");} expr								{$$ = Construct_AST($1, $3, "-");}
+		| expr T_divide {push("/");}	expr							{$$ = Construct_AST($1, $3, "/");}
+		| expr T_multiply {push("*");} expr								{$$ = Construct_AST($1, $3, "*");}
+		| expr T_mod {push("%");} expr									{$$ = Construct_AST($1, $3, "%");}
+		| expr T_LogicalAnd {push("&");} expr							{$$ = Construct_AST($1, $3, "&");}
+		| expr T_LogicalOr {push("|");} expr							{$$ = Construct_AST($1, $3, "|");}
+		| expr T_less {push("<");} expr									{$$ = Construct_AST($1, $3, "<");}				
+		| expr T_less_equal {push("<=");} expr							{$$ = Construct_AST($1, $3, "<=");}
+		| expr T_greater {push(">");} expr								{$$ = Construct_AST($1, $3, ">");}
+		| expr T_greater_equal {push(">=");} expr						{$$ = Construct_AST($1, $3, ">=");}
+		| expr T_equal_equal {push("==");} expr							{$$ = Construct_AST($1, $3, "==");}
+		| expr T_not_equal {push("!=");} expr							{$$ = Construct_AST($1, $3, "!=");}
 		;
 
 expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon			{$$ = $1;}
@@ -227,11 +227,11 @@ expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon			{$$ = $
 expr_or_empty_with_assignment_and_closed_parent: expr_or_empty T_closedParanthesis							{$$ = $1;}
 	| Assignment_stmt T_closedParanthesis																	{$$ = $1;}
 
-idid : T_identifier										{$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
+idid : T_identifier										{push((char*)yylval.str);$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
 		;
-sc 	 : T_stringLiteral									{$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
+sc 	 : T_stringLiteral									{push((char*)yylval.str);$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
 		;
-nc	 : T_numericConstants								{$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
+nc	 : T_numericConstants								{push((char*)yylval.str);$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
 		;
 
 expr_or_empty: expr										{$$ = $1;}
@@ -249,11 +249,19 @@ void yyerror(const char *str)
 	printf("Error | Line: %d\n%s\n",yylineno,str);
 } 
 
+void symboldisplay()
+{
+	for (int i = 0;i < top;i++)
+	{
+		printf("%s\n",st1[i]);
+	}
+}
 int main()
 {
 	yyparse();
 	printf("\n*************************************************************************************************\n");
 	display();
 	printf("\n*************************************************************************************************\n");
+	symboldisplay();
 	return 0;
 }
