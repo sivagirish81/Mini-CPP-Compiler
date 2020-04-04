@@ -537,7 +537,7 @@ for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {
 
 while_stmt : T_while {while1();} T_openParenthesis expr T_closedParanthesis {while2();} block										{while3();$$ = Construct_AST($3, $5, "While"); /*printf("%s",LineBreaker);Display_tree($$);printf("%s",LineBreaker);*/}
 
-if_stmt : T_if T_openParenthesis expr T_closedParanthesis {ifelse1();} block elseif_else_empty {$$ = Construct_AST($3, $5, "IF");/*Display_tree($$);*/ }
+if_stmt : T_if T_openParenthesis expr T_closedParanthesis {ifelse1();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");/*Display_tree($$);*/ }
 
 elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis block elseif_else_empty {ifelse2();$$ = Construct_AST($4, $6, "ELSEIF"); }
 					| T_else Multiple_stmts_not_if {ifelse3();$$ = $2;}
