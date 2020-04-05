@@ -179,7 +179,7 @@
 	// ICG - IF
 
 	// Handle Initial IF as well as else if
-	void IfElif()
+	void IFSTMT()
 	{
 	    lnum++;
 	    strcpy(temp,"T");
@@ -514,7 +514,7 @@ for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {
 
 while_stmt : T_while {While_Loop();} T_openParenthesis expr T_closedParanthesis {While_loop_cond();} block										{While_END();$$ = Construct_AST($3, $5, "While"); /*printf("%s",LineBreaker);Display_tree($$);printf("%s",LineBreaker);*/}
 
-if_stmt : T_if T_openParenthesis expr T_closedParanthesis {IfElif();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");/*Display_tree($$);*/ }
+if_stmt : T_if T_openParenthesis expr T_closedParanthesis {IFSTMT();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");/*Display_tree($$);*/ }
 
 elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis {lnum--;Elif();} block elseif_else_empty {$$ = Construct_AST($4, $7, "ELSEIF"); }
 					| T_else {Else();} Multiple_stmts_not_if {$$ = $3;}
