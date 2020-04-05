@@ -100,29 +100,6 @@
 	    strcpy(Q[quadindex].res,G_val);
 		quadindex++;
 	}
-
-	void TAC_assign_back1()
-	{
-	    strcpy(temp,"T");
-	    sprintf(tmp_i, "%d", temp_i);
-	    strcat(temp,tmp_i);
-	    printf("%s = %s %s %s\n",temp,st1[stop-2],st1[stop],st1[stop - 1]);
-		printf("temp = %s\n",temp);
-		printf("%s = %s\n",st1[stop - 3],temp);
-	    Q[quadindex].op = (char*)malloc(sizeof(char)*strlen(st1[stop]));
-	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop-2]));
-	    Q[quadindex].arg2 = (char*)malloc(sizeof(char)*strlen(st1[stop - 1]));
-	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(temp));
-	    strcpy(Q[quadindex].op,st1[stop]);
-	    strcpy(Q[quadindex].arg1,st1[stop-2]);
-	    strcpy(Q[quadindex].arg2,st1[stop - 1]);
-	    strcpy(Q[quadindex].res,temp);
-	    quadindex++;
-	    stop-=2;
-	    strcpy(st1[stop],temp);
-		temp_i++;
-	}
-
 	// ICG - While
 
 	// Create label for while
@@ -217,6 +194,40 @@
 	    strcpy(Q[quadindex].arg1,st1[stop]);
 	    strcpy(Q[quadindex].res,temp);
 	    quadindex++;
+	    printf("if %s goto L%d\n",temp,lnum);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*3);
+	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum+2));
+	    strcpy(Q[quadindex].op,"if");
+	    strcpy(Q[quadindex].arg1,temp);
+	    char x[10];
+	    sprintf(x,"%d",lnum);
+	    char l[]="L";
+	    strcpy(Q[quadindex].res,strcat(l,x));
+	    quadindex++;
+	    temp_i++;
+	    label[++ltop]=lnum;
+	}
+
+	void Elif()
+	{
+		printf("L%d: \n",label[ltop--]);
+	    lnum++;
+		label[++ltop]=lnum;
+	    strcpy(temp,"T");
+	    sprintf(tmp_i, "%d", temp_i);
+	    strcat(temp,tmp_i);
+	    printf("%s = not %s\n",temp,st1[stop]);
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*4);
+	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop]));
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(temp));
+	    strcpy(Q[quadindex].op,"not");
+	    strcpy(Q[quadindex].arg1,st1[stop]);
+	    strcpy(Q[quadindex].res,temp);
+	    quadindex++;
+		lnum++;
 	    printf("if %s goto L%d\n",temp,lnum);
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*3);
 	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
@@ -505,9 +516,9 @@ while_stmt : T_while {While_Loop();} T_openParenthesis expr T_closedParanthesis 
 
 if_stmt : T_if T_openParenthesis expr T_closedParanthesis {IfElif();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");/*Display_tree($$);*/ }
 
-elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis {lnum--;IfElif();} block elseif_else_empty {$$ = Construct_AST($4, $7, "ELSEIF"); }
-					| T_else Multiple_stmts_not_if {Else();$$ = $2;}
-					| T_else openflower block_end_flower {Else();$$ = $3; }
+elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis {lnum--;Elif();} block elseif_else_empty {$$ = Construct_AST($4, $7, "ELSEIF"); }
+					| T_else {Else();} Multiple_stmts_not_if {$$ = $3;}
+					| T_else {Else();} openflower block_end_flower {$$ = $4;}
 					| {$$ = Construct_AST(NULL, NULL, ";"); }
 					;
 

@@ -21,6 +21,7 @@ int main()
     else
     {
         int a = 4;
+        int a = a + 4;
     }
 	while (c)
 	{
