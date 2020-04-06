@@ -15,17 +15,17 @@
 	extern void insert_in_st(char*, char*, int, char*);
 	char st1[100][100];
 	char i_[2]="0";
-	int temp_i=0;
-	char tmp_i[3];
-	char temp[2]="t";
+	int temp_i = 0;				//current available temporary number
+	char tmp_i[10];				//an array to hold temporary variable number as string. We assume this is below 999999999				
+	char temp[10]="";			//an array to hold temporary varialbe name as string. We assume this is below T999999999	
 	int label[20];
-	int lnum=0;
-	int ltop=0;
-	int abcd=0;
+	int lnum = 0;				//current available label number.
+	int ltop = 0;
+	int abcd = 0;
 	int l_while=0;
 	int l_for=0;
 	int flag_set = 1;
-	int stop = -1;
+	int stop = -1;				//top of stack
 	char G_val[10];
 	int ftemp1;
 	int ftemp2;
@@ -39,16 +39,16 @@
   	  char *arg2;
   	  char *res;
   	}quad;
-  	int quadindex = 0;
+  	int quadindex = 0;			//current index of Q to store the quadruple in.
 	quad Q[100];
 
-	void push(char *a)
+	void push(char *a)			//push to top of stack
 	{
 		strcpy(st1[++stop],a);
 	}
 
 	// Statements -helper
-	void TAC()
+	void TAC()				//to be called after any expression. say expr is b*c -> pop top three , ti = b*c and insert ti.
 	{
 	    strcpy(temp,"T");
 	    sprintf(tmp_i, "%d", temp_i);
@@ -68,7 +68,7 @@
 		temp_i++;
 	}
 
-	// Assignment Operations
+	// Assignment Operations need a different TAC function as the operation performed is different
 	void TAC_assign()
 	{
 	    printf("%s = %s\n",st1[stop-2],st1[stop - 1]);
@@ -103,18 +103,18 @@
 	// ICG - While
 
 	// Create label for while
-	void While_Loop()
+	void While_Loop_Label()
 	{
 
-	    l_while = lnum;
-	    printf("L%d: \n",lnum++);
-	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);
+	    l_while = lnum;				
+	    printf("L%d: \n",lnum++);			// print label and increase label number for next use	
+	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);		//a label's quad 	
 	    Q[quadindex].arg1 = NULL;
 	    Q[quadindex].arg2 = NULL;
-	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum+2));
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum + 2));   //lum + 2 is a safe way to have enough space for L0, L1, ... etc. 
 	    strcpy(Q[quadindex].op,"Label");
 	    char x[10];
-	    sprintf(x,"%d",lnum-1);
+		x[0] = '0' + lnum - 1;
 	    char l[]="L";
 	    strcpy(Q[quadindex].res,strcat(l,x));
 	    quadindex++;
@@ -123,10 +123,12 @@
 	// While Loop Condition
 	void While_loop_cond()
 	{
-	 	strcpy(temp,"T");
-	 	sprintf(tmp_i, "%d", temp_i);
-	 	strcat(temp,tmp_i);
-	 	printf("%s = not %s\n",temp,st1[stop]);
+	 	strcpy(temp,"T");			
+	 	sprintf(tmp_i, "%d", temp_i);		//if temp_i = 0, tmp_i has "0"		
+	 	strcat(temp,tmp_i);					//temp has "T0"
+	 	printf("%s = not %s\n",temp,st1[stop]);		//T0 has not of condition
+
+		//since this is a unary operator, one of the operands is NULL
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*4);
 	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(st1[stop]));
 	    Q[quadindex].arg2 = NULL;
@@ -135,6 +137,9 @@
 	    strcpy(Q[quadindex].arg1,st1[stop]);
 	    strcpy(Q[quadindex].res,temp);
 	    quadindex++;
+
+		//if T0 goto label which will be placed after body
+		//in this case op -> if, arg1 -> T0 , res -> L1
 	    printf("if %s goto L%d\n",temp,lnum);
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*3);
 	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
@@ -150,7 +155,7 @@
 	}
 
 	// End While loop
-	void While_END()
+	void While_END()			// in the end insert goto label and also insert the label which should be branched to if condition fails
 	{
 		printf("goto L%d \n",l_while);
 		Q[quadindex].op = (char*)malloc(sizeof(char)*5);
@@ -464,16 +469,18 @@
 /*Flower brackets are mandatory for main*/
 
 
-Start : T_int T_main T_openParenthesis T_closedParanthesis openflower block_end_flower  	{$$ = $6;}
+Start : T_int T_main T_openParenthesis T_closedParanthesis openflower block_end_flower  	{$$ = $6;}	//openflower is T_openflowerBracket
 
 
 /* This production assumes flower bracket has been opened*/
-block_end_flower : stmt Multiple_stmts 							{$$ = $1;}
-				| closeflower {$$ = Construct_AST(NULL, NULL, ";"); }
+block_end_flower : stmt Multiple_stmts 							{$$ = $1;}		//Multiple_stmts closes the flower bracket. 
+				| closeflower 									{$$ = Construct_AST(NULL, NULL, ";"); }	//closeflower is T_closedFlowerBracket. 
+				//closeflower is only parsed here for an empty block 
+
 
 /*This takes care of statements like if(...);. Note that to include multiple statements, a block has to open with a flower bracket*/
-block :  openflower block_end_flower						{$$ = $2;}
-	    | stmt												{$$ = $1;}
+block :  openflower block_end_flower						{$$ = $2;}		//takes care of {}, {stmt, stmt, ...}
+	    | stmt												{$$ = $1;}		//takes care of just a single statement followed by semicolon
 	    | T_Semicolon										{$$ = Construct_AST(NULL, NULL, ";"); }
 		;
 
@@ -487,15 +494,19 @@ for(...){stmt, if/while/for{stmt, stmt.}} , this is achieved implicity because s
 
 
 Multiple_stmts : stmt Multiple_stmts						{$$ = $1;}
-		|closeflower {$$ = Construct_AST(NULL, NULL, ";"); }
+		|closeflower 										{$$ = Construct_AST(NULL, NULL, ";"); }
 		;
+
+/*
+A statement can be if, while, for, assignment or expression not assigned to anything in the scope of this project.
+*/
 
 stmt : expr T_Semicolon					{$$ = $1;}
 		| if_stmt						{$$ = $1;}
 		| while_stmt					{$$ = $1;}
 		| for_stmt						{$$ = $1;}
 		| Assignment_stmt T_Semicolon	{$$ = $1;}
-		| error T_Semicolon {$$ = Construct_AST(NULL, NULL, ";"); }
+		| error T_Semicolon 			{$$ = Construct_AST(NULL, NULL, ";"); }
 		;
 
 
@@ -512,7 +523,9 @@ for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {
 
 // Condition : 		{}
 
-while_stmt : T_while {While_Loop();} T_openParenthesis expr T_closedParanthesis {While_loop_cond();} block										{While_END();$$ = Construct_AST($3, $5, "While"); /*printf("%s",LineBreaker);Display_tree($$);printf("%s",LineBreaker);*/}
+while_stmt : T_while {While_Loop_Label();} T_openParenthesis expr T_closedParanthesis {While_loop_cond();} block			{While_END();$$ = Construct_AST($3, $5, "While"); /*printf("%s",LineBreaker);Display_tree($$);printf("%s",LineBreaker);*/}
+//While_Loop_Label() and While_loop_cond() are  embedded actions
+//while_end() adds goto label 
 
 if_stmt : T_if T_openParenthesis expr T_closedParanthesis {IFSTMT();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");/*Display_tree($$);*/ }
 
@@ -532,8 +545,8 @@ stmt_without_if : expr T_Semicolon										{$$ = $1;}
 					|for_stmt											{$$ = $1;}
 					;
 
-Assignment_stmt: 	idid T_AssignmentOperator expr																		{push("=");TAC_assign();$$ = Construct_AST($1,$3,"=");/*Display_tree($$);printf("\n");*/}
-					| idid T_shortHand expr																				{push("se");TAC_assign();$$ = Construct_AST($1,$3,"SE");/*Display_tree($$);printf("\n");*/ }
+Assignment_stmt: 	idid T_AssignmentOperator expr											{push("=");TAC_assign();$$ = Construct_AST($1,$3,"=");/*Display_tree($$);printf("\n");*/}
+					| idid T_shortHand expr													{push("se");TAC_assign();$$ = Construct_AST($1,$3,"SE");/*Display_tree($$);printf("\n");*/ }
 					| T_type idid T_AssignmentOperator expr_without_constants   {push("=");strcpy(G_val,$2->token);TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}	
 					| T_type idid T_AssignmentOperator sc   {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
 					| T_type idid T_AssignmentOperator nc   {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
@@ -559,11 +572,11 @@ expr_without_constants:  idid								{$$ = $1;}
 		| expr T_not_equal expr								{push("!=");TAC();$$ = Construct_AST($1, $3, "!=");}
 		;
 
-
+//an expression without semicolon at end.
 expr: 	nc													{$$ = $1;}
 		| sc												{$$ = $1;}								
 		| idid												{$$ = $1;}
-		| expr T_plus expr									{push("+");TAC();$$ = Construct_AST($1, $3, "+");}
+		| expr T_plus expr									{push("+");TAC();$$ = Construct_AST($1, $3, "+");}	//push into stack and call TAC which generates corresponding TAC. Also generate node for AST
 		| expr T_minus expr									{push("-");TAC();$$ = Construct_AST($1, $3, "-");}
 		| expr T_divide expr								{push("/");TAC();$$ = Construct_AST($1, $3, "/");}
 		| expr T_multiply expr								{push("*");TAC();$$ = Construct_AST($1, $3, "*");}
@@ -584,7 +597,7 @@ expr_or_empty_with_semicolon_and_assignment: expr_or_empty T_Semicolon			{$$ = $
 expr_or_empty_with_assignment_and_closed_parent: expr_or_empty T_closedParanthesis							{$$ = $1;}
 	| Assignment_stmt T_closedParanthesis																	{$$ = $1;}
 
-idid : T_identifier										{push((char*)yylval.str);$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
+idid : T_identifier										{push((char*)yylval.str);$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }	//push in stack. This will be used to generate ICG. Also, create leaf node for AST.
 		;
 sc 	 : T_stringLiteral									{push((char*)yylval.str);$$ = Construct_AST(NULL, NULL, (char*)yylval.str); }
 		;
@@ -614,6 +627,7 @@ void symboldisplay()
 	{
 		printf("%s\t",st1[i]);
 	}
+
 	// Display Quads
 	printf("%s",LineBreaker);
 	printf("Quadruplets\n");
@@ -625,10 +639,15 @@ void symboldisplay()
 }
 int main()
 {
-	yyparse();
+	yyparse();				//parse through the input. This step effectively also fills the symbol table, generates the AST and computes & prints ICG.
+	
+	printf("\n**************************************Symbol Table****************************************\n");
+	
+	display();				//display the symbol table. The function is defined in lex.l
+	
 	printf("\n*************************************************************************************************\n");
-	display();
-	printf("\n*************************************************************************************************\n");
+	
 	symboldisplay();
+	
 	return 0;
 }

@@ -1,7 +1,6 @@
-// Works
 int main()
 {
-    while (c)
+    while (b<4)
     {		
         a = b + c;
     }
