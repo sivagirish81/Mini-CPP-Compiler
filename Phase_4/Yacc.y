@@ -186,7 +186,7 @@
 	// Handle Initial IF as well as else if
 	void IFSTMT()
 	{
-	    lnum++;
+
 	    strcpy(temp,"T");
 	    sprintf(tmp_i, "%d", temp_i);
 	    strcat(temp,tmp_i);
@@ -199,6 +199,7 @@
 	    strcpy(Q[quadindex].arg1,st1[stop]);
 	    strcpy(Q[quadindex].res,temp);
 	    quadindex++;
+
 	    printf("if %s goto L%d\n",temp,lnum);
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*3);
 	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
@@ -212,14 +213,18 @@
 	    strcpy(Q[quadindex].res,strcat(l,x));
 	    quadindex++;
 	    temp_i++;
-	    label[++ltop]=lnum;
+		
+	    label[ltop++] = lnum;
+		++lnum;									//increase lnum for next needed label.
+		
 	}
 
 	void Elif()
 	{
-		printf("L%d: \n",label[ltop--]);
-	    lnum++;
-		label[++ltop]=lnum;
+		printf("L%d: \n",label[--ltop]);		//print the top in label stack as this is where runtime should come if cond is false
+	    										//increase lable for the next time										
+		
+
 	    strcpy(temp,"T");
 	    sprintf(tmp_i, "%d", temp_i);
 	    strcat(temp,tmp_i);
@@ -232,7 +237,8 @@
 	    strcpy(Q[quadindex].arg1,st1[stop]);
 	    strcpy(Q[quadindex].res,temp);
 	    quadindex++;
-		lnum++;
+		
+
 	    printf("if %s goto L%d\n",temp,lnum);
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*3);
 	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
@@ -246,7 +252,9 @@
 	    strcpy(Q[quadindex].res,strcat(l,x));
 	    quadindex++;
 	    temp_i++;
-	    label[++ltop]=lnum;
+
+	    label[ltop++]=lnum;							//store this as top of label stack and increase ltop
+		++lnum;										//increase lnum for next needed label.
 	}
 
 
@@ -254,7 +262,7 @@
 	void Else()
 	{
 		int y;
-		y=label[ltop--];
+		y=label[--ltop];
 		printf("L%d: \n",y);
 		Q[quadindex].op = (char*)malloc(sizeof(char)*6);
 	    Q[quadindex].arg1 = NULL;
@@ -266,9 +274,25 @@
 	    char l[]="L";
 	    strcpy(Q[quadindex].res,strcat(l,x));
 	    quadindex++;
-		lnum++;
 	}
 	
+	void if_else_cleanup()
+	{
+		int y;
+		y = label[--ltop];
+		printf("L%d: \n",y);
+		Q[quadindex].op = (char*)malloc(sizeof(char)*6);
+	    Q[quadindex].arg1 = NULL;
+	    Q[quadindex].arg2 = NULL;
+	    Q[quadindex].res = (char*)malloc(sizeof(char)*(y+2));
+	    strcpy(Q[quadindex].op,"Label");
+	    char x[10];
+	    sprintf(x,"%d",y);
+	    char l[]="L";
+	    strcpy(Q[quadindex].res,strcat(l,x));
+	    quadindex++;
+	}
+
 	// ICG - For
 
 	//Define Label for "FOR"
@@ -403,6 +427,8 @@
 	}
 
 	char LineBreaker[] = "\n_______________________________________________________________________________________________________\n";
+	
+	//node in AST
 	typedef struct ASTNode
 	{
 		struct ASTNode *left;
@@ -529,10 +555,10 @@ while_stmt : T_while {While_Loop_Label();} T_openParenthesis expr T_closedParant
 
 if_stmt : T_if T_openParenthesis expr T_closedParanthesis {IFSTMT();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");/*Display_tree($$);*/ }
 
-elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis {lnum--;Elif();} block elseif_else_empty {$$ = Construct_AST($4, $7, "ELSEIF"); }
+elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis {;Elif();} block elseif_else_empty {$$ = Construct_AST($4, $7, "ELSEIF"); }
 					| T_else {Else();} Multiple_stmts_not_if {$$ = $3;}
 					| T_else {Else();} openflower block_end_flower {$$ = $4;}
-					| {$$ = Construct_AST(NULL, NULL, ";"); }
+					| {if_else_cleanup(); $$ = Construct_AST(NULL, NULL, ";"); }
 					;
 
 Multiple_stmts_not_if : stmt_without_if Multiple_stmts {$$ = $1;}

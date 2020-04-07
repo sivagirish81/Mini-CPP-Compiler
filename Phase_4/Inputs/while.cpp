@@ -1,7 +1,19 @@
-int main()
-{
-    while (b<4)
-    {		
-        a = b + c;
+int main(){
+  // i = 1;
+    if(a > b)
+    {
+        if(c > d)
+        {
+            e = g;
+        }
+        h = i;
     }
+    else
+    {
+        e = g;
+    }
+    
+
+
+
 }
