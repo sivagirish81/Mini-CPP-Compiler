@@ -105,16 +105,16 @@
 	// Create label for while
 	void While_Loop_Label()
 	{
-
-	    l_while = lnum;				
-	    printf("L%d: \n",lnum++);			// print label and increase label number for next use	
+	
+	    label[ltop++] = lnum++;			
+	    printf("L%d: \n", label[ltop - 1]);			// print label and increase label number for next use	
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);		//a label's quad 	
 	    Q[quadindex].arg1 = NULL;
 	    Q[quadindex].arg2 = NULL;
 	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum + 2));   //lum + 2 is a safe way to have enough space for L0, L1, ... etc. 
 	    strcpy(Q[quadindex].op,"Label");
 	    char x[10];
-		x[0] = '0' + lnum - 1;
+		x[0] = '0' + label[ltop - 1];
 	    char l[]="L";
 	    strcpy(Q[quadindex].res,strcat(l,x));
 	    quadindex++;
@@ -152,33 +152,38 @@
 	    strcpy(Q[quadindex].res,strcat(l,x));
 	    quadindex++;
 	 	temp_i++;
+		
+		label[ltop++] = lnum;
+		lnum++;
 	}
 
 	// End While loop
 	void While_END()			// in the end insert goto label and also insert the label which should be branched to if condition fails
 	{
-		printf("goto L%d \n",l_while);
+		printf("goto L%d \n",label[ltop - 2]);	//ltop - 2 contains the label to be branched if true
 		Q[quadindex].op = (char*)malloc(sizeof(char)*5);
 	    Q[quadindex].arg1 = NULL;
 	    Q[quadindex].arg2 = NULL;
 	    Q[quadindex].res = (char*)malloc(sizeof(char)*(l_while+2));
 	    strcpy(Q[quadindex].op,"goto");
 	    char x[10];
-	    sprintf(x,"%d",l_while);
+	    sprintf(x,"%d",label[ltop]);
 	    char l[]="L";
 	    strcpy(Q[quadindex].res,strcat(l,x));
 	    quadindex++;
-	    printf("L%d: \n",lnum++);
+
+	    printf("L%d: \n", label[ltop - 1]);		//ltop - 1 contains the label to be branched if false
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);
 	    Q[quadindex].arg1 = NULL;
 	    Q[quadindex].arg2 = NULL;
 	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum+2));
 	    strcpy(Q[quadindex].op,"Label");
 	    char x1[10];
-	    sprintf(x1,"%d",lnum-1);
+	    sprintf(x1,"%d", label[ltop - 1]);
 	    char l1[]="L";
 	    strcpy(Q[quadindex].res,strcat(l1,x1));
 	    quadindex++;
+		ltop -= 2;							//since these labels have been used, decrease ltop by two 
 	}
 
 	// ICG - IF
@@ -253,29 +258,13 @@
 	    quadindex++;
 	    temp_i++;
 
-	    label[ltop++]=lnum;							//store this as top of label stack and increase ltop
+	    label[ltop++] = lnum;							//store this as top of label stack and increase ltop
 		++lnum;										//increase lnum for next needed label.
 	}
 
 
-	// Handle else
-	void Else()
-	{
-		int y;
-		y=label[--ltop];
-		printf("L%d: \n",y);
-		Q[quadindex].op = (char*)malloc(sizeof(char)*6);
-	    Q[quadindex].arg1 = NULL;
-	    Q[quadindex].arg2 = NULL;
-	    Q[quadindex].res = (char*)malloc(sizeof(char)*(y+2));
-	    strcpy(Q[quadindex].op,"Label");
-	    char x[10];
-	    sprintf(x,"%d",y);
-	    char l[]="L";
-	    strcpy(Q[quadindex].res,strcat(l,x));
-	    quadindex++;
-	}
-	
+	// Handle cleanup
+
 	void if_else_cleanup()
 	{
 		int y;
@@ -296,17 +285,18 @@
 	// ICG - For
 
 	//Define Label for "FOR"
-	void FOR()
+	void FOR_label()
 	{
-	    l_for = lnum;
-	    printf("L%d: \n",lnum++);
+		label[ltop++] = lnum++;						//label stack is used for nested loops. Increase lnum for next label use
+	    // l_for = lnum;
+	    printf("L%d: \n", label[ltop - 1]);
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);
 	    Q[quadindex].arg1 = NULL;
 	    Q[quadindex].arg2 = NULL;
 	    Q[quadindex].res = (char*)malloc(sizeof(char)*(lnum+2));
 	    strcpy(Q[quadindex].op,"Label");
 	    char x[10];
-	    sprintf(x,"%d",lnum-1);
+	    sprintf(x,"%d", label[ltop - 1]);
 	    char l[]="L";
 	    strcpy(Q[quadindex].res,strcat(l,x));
 	    quadindex++;
@@ -315,7 +305,8 @@
 	// Handle Loop Condition
 	void FOR_Condition()
 	{
-	    strcpy(temp,"T");
+
+	    strcpy(temp,"T");						//lets take condition as b < 4. This effectively says T1 = not T0. Note that expr would have made T0 = b < 4
 	    sprintf(tmp_i, "%d", temp_i);
 	    strcat(temp,tmp_i);
 	    printf("%s = not %s\n",temp,st1[stop]);
@@ -327,7 +318,8 @@
 	    strcpy(Q[quadindex].arg1,st1[stop]);
 	    strcpy(Q[quadindex].res,temp);
 	    quadindex++;
-	    printf("if %s goto L%d\n",temp,lnum);
+
+	    printf("if %s goto L%d\n",temp,lnum);				// if T1 goto L1. Increase labele
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*3);
 	    Q[quadindex].arg1 = (char*)malloc(sizeof(char)*strlen(temp));
 	    Q[quadindex].arg2 = NULL;
@@ -340,9 +332,10 @@
 	    strcpy(Q[quadindex].res,strcat(l,x));
 	    quadindex++;
 	    temp_i++;
-	    label[++ltop]=lnum;
+	    label[ltop++] = lnum;								//store label in stack and increase lnum.
 	    lnum++;
-	    printf("goto L%d\n",lnum);
+
+	    printf("goto L%d\n",lnum);							//goto body part. goto L2
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*5);
 	    Q[quadindex].arg1 = NULL;
 	    Q[quadindex].arg2 = NULL;
@@ -353,8 +346,11 @@
 	    char l1[]="L";
 	    strcpy(Q[quadindex].res,strcat(l1,x1));
 	    quadindex++;
-	    label[++ltop]=lnum;
-	    printf("L%d: \n",++lnum);
+	    label[ltop++] = lnum++;							//store label in stack and increase lnum.
+
+
+	
+	    printf("L%d: \n",lnum);							//L3:
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);
 	    Q[quadindex].arg1 = NULL;
 	    Q[quadindex].arg2 = NULL;
@@ -365,32 +361,34 @@
 	    char l2[]="L";
 	    strcpy(Q[quadindex].res,strcat(l2,x2));
 	    quadindex++;
+		label[ltop++] = lnum++;
 	}
 
 	// Increment
 	void FOR_INC_Cond()
 	{
 	    int x;
-	    x=label[ltop--];
-	    printf("goto L%d \n",l_for);
+	    x = label[ltop - 4];							//after processing increment, should go and evaluate condition again. goto L0
+	    printf("goto L%d \n",x);
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*5);
 	    Q[quadindex].arg1 = NULL;
 	    Q[quadindex].arg2 = NULL;
 	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(temp));
 	    strcpy(Q[quadindex].op,"goto");
 	    char jug[10];
-	    sprintf(jug,"%d",l_for);
+	    sprintf(jug,"%d",x);
 	    char l[]="L";
 	    strcpy(Q[quadindex].res,strcat(l,jug));
 	    quadindex++;
-	    printf("L%d: \n",x);
+
+	    printf("L%d: \n",label[ltop - 2]);							//this is where after processing condition you should come to . L2:
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);
 	    Q[quadindex].arg1 = NULL;
 	    Q[quadindex].arg2 = NULL;
 	    Q[quadindex].res = (char*)malloc(sizeof(char)*(x+2));
 	    strcpy(Q[quadindex].op,"Label");
 	    char jug1[10];
-	    sprintf(jug1,"%d",x);
+	    sprintf(jug1,"%d", label[ltop - 2]);
 	    char l1[]="L";
 	    strcpy(Q[quadindex].res,strcat(l1,jug1));
 	    quadindex++;
@@ -400,8 +398,8 @@
 	void FOR_End()
 	{
 	    int x;
-	    x=label[ltop--];
-	    printf("goto L%d \n",lnum);
+	    x = label[ltop - 1];								//goto L3 (increment condition)
+	    printf("goto L%d \n",x);
 
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*5);
 	    Q[quadindex].arg1 = NULL;
@@ -409,18 +407,19 @@
 	    Q[quadindex].res = (char*)malloc(sizeof(char)*strlen(temp));
 	    strcpy(Q[quadindex].op,"goto");
 	    char jug[10];
-	    sprintf(jug,"%d",lnum);
+	    sprintf(jug,"%d",x);
 	    char l[]="L";
 	    strcpy(Q[quadindex].res,strcat(l,jug));
 	    quadindex++;
-	    printf("L%d: \n",x);
+
+	    printf("L%d: \n",label[ltop - 3]);							//L1:
 	    Q[quadindex].op = (char*)malloc(sizeof(char)*6);
 	    Q[quadindex].arg1 = NULL;
 	    Q[quadindex].arg2 = NULL;
 	    Q[quadindex].res = (char*)malloc(sizeof(char)*(x+2));
 	    strcpy(Q[quadindex].op,"Label");
 	    char jug1[10];
-	    sprintf(jug1,"%d",x);
+	    sprintf(jug1,"%d", label[ltop - 3]);
 	    char l1[]="L";
 	    strcpy(Q[quadindex].res,strcat(l1,jug1));
 	    quadindex++;
@@ -538,7 +537,7 @@ stmt : expr T_Semicolon					{$$ = $1;}
 
 //for_stmt : T_for T_openParenthesis expr_with_semicolon expr_with_semicolon expr_or_empty T_closedParanthesis block
 
-for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {FOR();} expr_or_empty_with_semicolon_and_assignment {FOR_Condition();} expr_or_empty_with_assignment_and_closed_parent {FOR_INC_Cond();} block	{{ 	FOR_End();node* left;
+for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {FOR_label();} expr_or_empty_with_semicolon_and_assignment {FOR_Condition();} expr_or_empty_with_assignment_and_closed_parent {FOR_INC_Cond();} block	{{ 	FOR_End();node* left;
 																																	node* right;
 																																	left = Construct_AST($5, $7, "Cond_Loopstmts");
 																																	right = Construct_AST($3,$5,"Init_&_Increment");
@@ -556,8 +555,8 @@ while_stmt : T_while {While_Loop_Label();} T_openParenthesis expr T_closedParant
 if_stmt : T_if T_openParenthesis expr T_closedParanthesis {IFSTMT();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");/*Display_tree($$);*/ }
 
 elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis {;Elif();} block elseif_else_empty {$$ = Construct_AST($4, $7, "ELSEIF"); }
-					| T_else {Else();} Multiple_stmts_not_if {$$ = $3;}
-					| T_else {Else();} openflower block_end_flower {$$ = $4;}
+					| T_else {if_else_cleanup();} Multiple_stmts_not_if {$$ = $3;}
+					| T_else {if_else_cleanup();} openflower block_end_flower {$$ = $4;}
 					| {if_else_cleanup(); $$ = Construct_AST(NULL, NULL, ";"); }
 					;
 
@@ -573,10 +572,10 @@ stmt_without_if : expr T_Semicolon										{$$ = $1;}
 
 Assignment_stmt: 	idid T_AssignmentOperator expr											{push("=");TAC_assign();$$ = Construct_AST($1,$3,"=");/*Display_tree($$);printf("\n");*/}
 					| idid T_shortHand expr													{push("se");TAC_assign();$$ = Construct_AST($1,$3,"SE");/*Display_tree($$);printf("\n");*/ }
-					| T_type idid T_AssignmentOperator expr_without_constants   {push("=");strcpy(G_val,$2->token);TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}	
+					| T_type idid T_AssignmentOperator expr_without_constants   			{push("=");strcpy(G_val,$2->token);TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}	
 					| T_type idid T_AssignmentOperator sc   {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
 					| T_type idid T_AssignmentOperator nc   {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
-					| T_int idid T_AssignmentOperator expr_without_constants    {push("=");strcpy(G_val,$2->token);TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+					| T_int idid T_AssignmentOperator expr_without_constants    			{push("=");strcpy(G_val,$2->token);TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
 					| T_int idid T_AssignmentOperator nc    {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
 				;
 
@@ -673,7 +672,7 @@ int main()
 	
 	printf("\n*************************************************************************************************\n");
 	
-	symboldisplay();
+	//symboldisplay();
 	
 	return 0;
 }
