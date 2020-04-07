@@ -27,10 +27,8 @@
 	int flag_set = 1;
 	int stop = -1;				//top of stack
 	char G_val[10];
-	int ftemp1;
-	int ftemp2;
-	int ftemp3;
-	int ftemp4;
+	FILE* ast_tree_output;
+
 
 	typedef struct quadruples
   	{
@@ -450,14 +448,14 @@
 	void Display_tree(node *tree)
 	{
 		if (tree->left || tree->right)
-			printf("(");
-		printf(" %s ", tree->token);
+			fprintf(ast_tree_output, "%s", "(");
+		fprintf(ast_tree_output, " %s ", tree->token);
 		if (tree->left)
 			Display_tree(tree->left);
 		if (tree->right)
 			Display_tree(tree->right);
 		if (tree->left || tree->right)
-			printf(")"); 
+			fprintf(ast_tree_output, "%s", ")");
 	}
 %}
 
@@ -527,11 +525,11 @@ Multiple_stmts : stmt Multiple_stmts						{$$ = $1;}
 A statement can be if, while, for, assignment or expression not assigned to anything in the scope of this project.
 */
 
-stmt : expr T_Semicolon					{$$ = $1;}
-		| if_stmt						{$$ = $1;}
-		| while_stmt					{$$ = $1;}
-		| for_stmt						{$$ = $1;}
-		| Assignment_stmt T_Semicolon	{$$ = $1;}
+stmt : expr T_Semicolon					{$$ = $1; Display_tree($$); fprintf(ast_tree_output, "\n");}
+		| if_stmt						{$$ = $1; Display_tree($$); fprintf(ast_tree_output, "\n");}
+		| while_stmt					{$$ = $1; Display_tree($$);fprintf(ast_tree_output, "\n");}
+		| for_stmt						{$$ = $1; Display_tree($$); fprintf(ast_tree_output, "\n");}
+		| Assignment_stmt T_Semicolon	{$$ = $1; Display_tree($$); fprintf(ast_tree_output, "\n");}
 		| error T_Semicolon 			{$$ = Construct_AST(NULL, NULL, ";"); }
 		;
 
@@ -543,17 +541,17 @@ for_stmt : T_for T_openParenthesis expr_or_empty_with_semicolon_and_assignment {
 																																	left = Construct_AST($5, $7, "Cond_Loopstmts");
 																																	right = Construct_AST($3,$5,"Init_&_Increment");
 																																	$$ = Construct_AST(left,right,"FOR");
-																																	/*Display_tree($$);*/ }}
+																																	}}
 
 
 
 // Condition : 		{}
 
-while_stmt : T_while {While_Loop_Label();} T_openParenthesis expr T_closedParanthesis {While_loop_cond();} block			{While_END();$$ = Construct_AST($3, $5, "While"); /*printf("%s",LineBreaker);Display_tree($$);printf("%s",LineBreaker);*/}
+while_stmt : T_while {While_Loop_Label();} T_openParenthesis expr T_closedParanthesis {While_loop_cond();} block			{While_END();$$ = Construct_AST($3, $5, "While"); }
 //While_Loop_Label() and While_loop_cond() are  embedded actions
 //while_end() adds goto label 
 
-if_stmt : T_if T_openParenthesis expr T_closedParanthesis {IFSTMT();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");/*Display_tree($$);*/ }
+if_stmt : T_if T_openParenthesis expr T_closedParanthesis {IFSTMT();} block elseif_else_empty {$$ = Construct_AST($3, $6, "IF");}
 
 elseif_else_empty : T_else T_if T_openParenthesis expr T_closedParanthesis {;Elif();} block elseif_else_empty {$$ = Construct_AST($4, $7, "ELSEIF"); }
 					| T_else {if_else_cleanup();} Multiple_stmts_not_if {$$ = $3;}
@@ -566,18 +564,18 @@ Multiple_stmts_not_if : stmt_without_if Multiple_stmts {$$ = $1;}
 					;
 
 stmt_without_if : expr T_Semicolon										{$$ = $1;}
-					| Assignment_stmt T_Semicolon						{$$ = $1;/*Display_tree($$);*/}
+					| Assignment_stmt T_Semicolon						{$$ = $1;Display_tree($$);fprintf(ast_tree_output, "\n");}
 					| while_stmt										{$$ = $1;}
 					|for_stmt											{$$ = $1;}
 					;
 
-Assignment_stmt: 	idid T_AssignmentOperator expr											{push("=");TAC_assign();$$ = Construct_AST($1,$3,"=");/*Display_tree($$);printf("\n");*/}
-					| idid T_shortHand expr													{push("se");TAC_assign();$$ = Construct_AST($1,$3,"SE");/*Display_tree($$);printf("\n");*/ }
-					| T_type idid T_AssignmentOperator expr_without_constants   			{push("=");strcpy(G_val,$2->token);TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}	
-					| T_type idid T_AssignmentOperator sc   {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
-					| T_type idid T_AssignmentOperator nc   {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
-					| T_int idid T_AssignmentOperator expr_without_constants    			{push("=");strcpy(G_val,$2->token);TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
-					| T_int idid T_AssignmentOperator nc    {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");/*Display_tree($$);printf("\n");*/}
+Assignment_stmt: 	idid T_AssignmentOperator expr											{push("=");TAC_assign();$$ = Construct_AST($1,$3,"=");}
+					| idid T_shortHand expr													{push("se");TAC_assign();$$ = Construct_AST($1,$3,"SE"); }
+					| T_type idid T_AssignmentOperator expr_without_constants   			{push("=");strcpy(G_val,$2->token);TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");}	
+					| T_type idid T_AssignmentOperator sc   {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");}
+					| T_type idid T_AssignmentOperator nc   {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");}
+					| T_int idid T_AssignmentOperator expr_without_constants    			{push("=");strcpy(G_val,$2->token);TAC_assign_back();insert_in_st($1, $2->token, st[top], "j");$$ = Construct_AST($2,$4,"=");}
+					| T_int idid T_AssignmentOperator nc    {push("=");TAC_assign();insert_in_st($1, $2->token, st[top], $4->token);$$ = Construct_AST($2,$4,"=");}
 				;
 
 
@@ -665,6 +663,12 @@ void symboldisplay()
 }
 int main()
 {
+ 	ast_tree_output = fopen("ast_tree_output.txt", "w");
+	if(ast_tree_output == NULL)
+	{
+		printf("Could not open output file, aborting\n");
+		exit(1);
+	}
 	yyparse();				//parse through the input. This step effectively also fills the symbol table, generates the AST and computes & prints ICG.
 	
 	printf("\n**************************************Symbol Table****************************************\n");
@@ -674,6 +678,6 @@ int main()
 	printf("\n*************************************************************************************************\n");
 	
 	//symboldisplay();
-	
+	fclose(ast_tree_output);
 	return 0;
 }
