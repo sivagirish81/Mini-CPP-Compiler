@@ -4,13 +4,11 @@ int main()
     for(int i = 1; i < 10; i = i + 1)
     {
         int b = 6;
-        while(b < 6)
+        while(b < 7)
         {
-            int c = 4;
-            if( c < 5)
-            {
-               int e = 7;
-            }
+            int c = 7;
+            if(c == 6)
+                long d = 4*8;
         }
     }
 }

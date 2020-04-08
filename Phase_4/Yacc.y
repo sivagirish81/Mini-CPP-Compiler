@@ -449,15 +449,15 @@
 	
 	void Display_tree(node *tree)
 	{
-		if (tree->left || tree->right)
-			fprintf(ast_tree_output, "%s", "(");
-		fprintf(ast_tree_output, " %s ", tree->token);
-		if (tree->left)
-			Display_tree(tree->left);
-		if (tree->right)
-			Display_tree(tree->right);
-		if (tree->left || tree->right)
-			fprintf(ast_tree_output, "%s", ")");
+		// if (tree->left || tree->right)
+		// 	fprintf(ast_tree_output, "%s", "(");
+		// fprintf(ast_tree_output, " %s ", tree->token);
+		// if (tree->left)
+		// 	Display_tree(tree->left);
+		// if (tree->right)
+		// 	Display_tree(tree->right);
+		// if (tree->left || tree->right)
+		// 	fprintf(ast_tree_output, "%s", ")");
 	}
 %}
 
