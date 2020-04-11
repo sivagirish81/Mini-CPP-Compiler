@@ -4,11 +4,9 @@ int main()
     for(int i = 1; i < 10; i = i + 1)
     {
         int b = 6;
-        while(b < 7)
+        for(int j = 2; j < 4; j = j + 2)
         {
-            int c = 7;
-            if(c == 6)
-                long d = 4*8;
+            int c = 4;
         }
     }
 }
