@@ -684,7 +684,7 @@ void icg_optimize()
 		{
 			
 			int res;
-			if(strcmp(Q[i].op, "+") == 0)
+			if(strcmp(Q[i].op, "+" ) == 0)
 				res = atoi(Q[i].arg1) + atoi(Q[i].arg2);
 			else if(strcmp(Q[i].op, "-") == 0)
 				res = atoi(Q[i].arg1) - atoi(Q[i].arg2);
