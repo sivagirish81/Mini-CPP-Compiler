@@ -24,26 +24,31 @@ def remove_ifs_and_nots(instructions):
 	for index in to_be_removed:		#deleting from behind so that index doesnt change
 		del instructions[index]
 
+def LRU_Free_Register(value):
+	global source_variable_lines_mapping
+	global common_variable_lines_mapping
+	if(len(common_variable_lines_mapping[value]) == 0 and not value.isnumeric()):
+		reg = variable_register_mapping[value]
+		if(value[0] != 'T'):
+			if(len(common_variable_lines_mapping[value]) >= len(source_variable_lines_mapping[value])):
+				print("ST", value, "R" + str(reg))
+		variable_register_mapping.pop(value)
+		available_registers.insert(0, reg)
+		available_registers.sort()
+	source_variable_lines_mapping.pop(value)
+	common_variable_lines_mapping.pop(value)
+	
+	
 def getRegister(value, to_be_loaded):	# remember to load when returned. Also rtv code and 0 index
 	global available_registers
 	global variable_register_mapping
-<<<<<<< HEAD
-	# print(variable_register_mapping.keys())
-	if (len(available_registers) == 0):
-		print("Freeing Registers")
-		release_registers()
-		if (len(available_registers) == 0):
-			global swap_space
-			# swap_space.append(variable_register_mapping[0])
-			print("Stack limit Reached")
-=======
-
+	global used_registers
 	if(len(available_registers) == 0):
-		reg = available_registers.pop(0)
-		
+		reg = used_registers.pop(0)
+		for i in variable_register_mapping.keys():
+			if (variable_register_mapping[i] == reg):
+				LRU_Free_Register(i)
 
-
->>>>>>> f0ba2a02efeccb94db351381e21d8ca1dd8b470a
 	if(value.isnumeric()):
 		return "#" + value
 	else:
@@ -57,7 +62,7 @@ def getRegister(value, to_be_loaded):	# remember to load when returned. Also rtv
 				print("LD", "R" + str(available_registers[0]), value)
 			to_return = "R" + str(available_registers[0])
 			available_registers.pop(0)
-			used_registers.append(to_return)
+			used_registers.append(variable_register_mapping[value])
 			return to_return
 
 def add_variable_to_line_mapping(variable, line, mapping):
@@ -216,19 +221,14 @@ def assembly_gen(instructions):
 			check_source(instructions[i][1], i)
 			check_destination(instructions[i][3], i)		
 
-instructions = read_quadruples("Quadruples.txt")
+instructions = read_quadruples("D:\\College\\PES\\Semester-6\\Compiler Design\\Mini-CPP-Compiler\\Phase_4\\threeAddressCode.txt")
 
 number_of_registers = 16
 available_registers = initialize_register_list()
 variable_register_mapping = {}	
 # Which register is variable stored in. Useful to avoid redundant registers
 
-<<<<<<< HEAD
-swap_space = {}
-
-=======
 source_variable_lines_mapping = {}	# source variables and corresponding line number
 common_variable_lines_mapping = {}	# source and destination variables and corresponding line numbers
 used_registers = []
->>>>>>> f0ba2a02efeccb94db351381e21d8ca1dd8b470a
 assembly_gen(instructions)
