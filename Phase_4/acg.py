@@ -230,7 +230,7 @@ def assembly_gen(instructions):
 
 instructions = read_quadruples("threeAddressCode.txt")
 
-number_of_registers = 3
+number_of_registers = 16
 available_registers = initialize_register_list()
 variable_register_mapping = {}	
 # Which register is variable stored in. Useful to avoid redundant registers
