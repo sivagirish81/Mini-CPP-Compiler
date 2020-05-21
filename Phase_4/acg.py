@@ -28,10 +28,13 @@ def remove_ifs_and_nots(instructions):
 def getRegister(value, to_be_loaded):	# remember to load when returned. Also rtv code and 0 index
 	global available_registers
 	global variable_register_mapping
+	# print(variable_register_mapping.keys())
 	if (len(available_registers) == 0):
 		print("Freeing Registers")
 		release_registers()
 		if (len(available_registers) == 0):
+			global swap_space
+			# swap_space.append(variable_register_mapping[0])
 			print("Stack limit Reached")
 	if(value.isnumeric()):
 		return "#" + value
@@ -91,7 +94,7 @@ def release_registers():
 	global variable_register_mapping
 	global available_registers
 
-
+	# print(variable_register_mapping)
 
 	variables_used = [i for i in variable_register_mapping if not i.isnumeric()]
 	for i in variables_used:
@@ -208,5 +211,7 @@ variable_register_mapping = {}
 
 source_variable_lines_mapping = {}
 common_variable_lines_mapping = {}
+
+swap_space = {}
 
 assembly_gen(instructions)
