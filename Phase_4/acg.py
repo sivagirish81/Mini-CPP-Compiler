@@ -5,7 +5,7 @@ def initialize_register_list():
 
 
 def read_quadruples(file):
-	f = open("threeAddressCode.txt", "r")
+	f = open("D:\\College\\PES\\Semester-6\\Compiler Design\\Mini-CPP-Compiler\\Phase_4\\threeAddressCode.txt", "r")
 	instructions = list()
 	for i in f.readlines():
 		instructions.append(i.split())
@@ -28,8 +28,11 @@ def remove_ifs_and_nots(instructions):
 def getRegister(value, to_be_loaded):	# remember to load when returned. Also rtv code and 0 index
 	global available_registers
 	global variable_register_mapping
-
-
+	if (len(available_registers) == 0):
+		print("Freeing Registers")
+		release_registers()
+		if (len(available_registers) == 0):
+			print("Stack limit Reached")
 	if(value.isnumeric()):
 		return "#" + value
 	else:
@@ -197,7 +200,7 @@ def assembly_gen(instructions):
 			check_source(instructions[i][1], i)
 			check_destination(instructions[i][3], i)		
 
-instructions = read_quadruples("threeAddressCode.txt")
+instructions = read_quadruples("D:\\College\\PES\\Semester-6\\Compiler Design\\Mini-CPP-Compiler\\Phase_4\\threeAddressCode.txt")
 
 number_of_registers = 16
 available_registers = initialize_register_list()
