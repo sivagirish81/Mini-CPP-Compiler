@@ -45,7 +45,8 @@ def getRegister(value, to_be_loaded):	# remember to load when returned. Also rtv
 	global used_registers
 	if(len(available_registers) == 0):
 		reg = used_registers.pop(0)
-		for i in variable_register_mapping.keys():
+		l = list(variable_register_mapping.keys())
+		for i in l:
 			if (variable_register_mapping[i] == reg):
 				LRU_Free_Register(i)
 
@@ -223,7 +224,7 @@ def assembly_gen(instructions):
 
 instructions = read_quadruples("D:\\College\\PES\\Semester-6\\Compiler Design\\Mini-CPP-Compiler\\Phase_4\\threeAddressCode.txt")
 
-number_of_registers = 16
+number_of_registers = 3
 available_registers = initialize_register_list()
 variable_register_mapping = {}	
 # Which register is variable stored in. Useful to avoid redundant registers
