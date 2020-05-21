@@ -27,15 +27,19 @@ def remove_ifs_and_nots(instructions):
 def LRU_Free_Register(value):
 	global source_variable_lines_mapping
 	global common_variable_lines_mapping
-	if(len(common_variable_lines_mapping[value]) == 0 and not value.isnumeric()):
-		reg = variable_register_mapping[value]
-		if(value[0] != 'T'):
-			if(len(common_variable_lines_mapping[value]) >= len(source_variable_lines_mapping[value])):
-				print("ST", value, "R" + str(reg))
-		variable_register_mapping.pop(value)
-		available_registers.insert(0, reg)
-		available_registers.sort()
-	source_variable_lines_mapping.pop(value)
+
+	
+
+	reg = variable_register_mapping[value]
+	if((value in common_variable_lines_mapping and value not in source_variable_lines_mapping) or (len(common_variable_lines_mapping[value]) >= len(source_variable_lines_mapping[value]))):
+		print("ST", value, "R" + str(reg))
+
+	variable_register_mapping.pop(value)
+	available_registers.insert(0, reg)
+	available_registers.sort()
+	
+	if(value in source_variable_lines_mapping):
+		source_variable_lines_mapping.pop(value)
 	common_variable_lines_mapping.pop(value)
 	
 	
@@ -124,6 +128,7 @@ def release_registers():
 
 def check_source(value, line):
 	
+	
 	source_variable_lines_mapping[value].remove(line)
 	common_variable_lines_mapping[value].remove(line)
 	if(len(common_variable_lines_mapping[value]) == 0 and not value.isnumeric()):
@@ -138,14 +143,15 @@ def check_source(value, line):
 
 def check_destination(value, line):
 
-	common_variable_lines_mapping[value].remove(line)
-	if(len(common_variable_lines_mapping[value]) == 0 and not value.isnumeric()):
-		reg = variable_register_mapping[value]
-		if(value[0] != 'T'):
-				print("ST", value, "R" + str(reg))
-		variable_register_mapping.pop(value)
-		available_registers.insert(0, reg)
-		available_registers.sort()
+	if(value in common_variable_lines_mapping):
+		common_variable_lines_mapping[value].remove(line)
+		if(len(common_variable_lines_mapping[value]) == 0 and not value.isnumeric()):
+			reg = variable_register_mapping[value]
+			if(value[0] != 'T'):
+					print("ST", value, "R" + str(reg))
+			variable_register_mapping.pop(value)
+			available_registers.insert(0, reg)
+			available_registers.sort()
 
 
 def assembly_gen(instructions):
@@ -222,7 +228,7 @@ def assembly_gen(instructions):
 			check_source(instructions[i][1], i)
 			check_destination(instructions[i][3], i)		
 
-instructions = read_quadruples("D:\\College\\PES\\Semester-6\\Compiler Design\\Mini-CPP-Compiler\\Phase_4\\threeAddressCode.txt")
+instructions = read_quadruples("threeAddressCode.txt")
 
 number_of_registers = 3
 available_registers = initialize_register_list()
