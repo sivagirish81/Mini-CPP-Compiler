@@ -235,7 +235,7 @@ def assembly_gen(instructions):
 			check_source(instructions[i][1], i)
 			check_destination(instructions[i][3], i)		
 
-instructions = read_quadruples("threeAddress_for.txt")
+instructions = read_quadruples("mix.txt")
 
 number_of_registers = 16
 available_registers = initialize_register_list()
