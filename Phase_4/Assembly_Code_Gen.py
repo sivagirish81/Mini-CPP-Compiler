@@ -51,12 +51,12 @@ def reg_alloc(value, to_be_loaded):	# remember to load when returned. Also rtv c
 	global variable_register_mapping
 	global used_registers
 	if(len(available_registers) == 0):
-		# print(used_registers)
-		reg = used_registers.pop(0)
-		l = list(variable_register_mapping.keys())
-		for i in l:
-			if (variable_register_mapping[i] == reg):
-				LRU_Free_Register(i)
+		if(value[0] != 'T'):
+			reg = used_registers.pop(0)
+			l = list(variable_register_mapping.keys())
+			for i in l:
+				if (variable_register_mapping[i] == reg):
+					LRU_Free_Register(i)
 
 	if(value.isnumeric()):
 		return "#" + value
@@ -235,7 +235,7 @@ def assembly_gen(instructions):
 			check_source(instructions[i][1], i)
 			check_destination(instructions[i][3], i)		
 
-instructions = read_quadruples("threeAddress_for.txt")
+instructions = read_quadruples("mix.txt")
 
 number_of_registers = 16
 available_registers = initialize_register_list()
