@@ -12,14 +12,22 @@ def read_quadruples(file):
 
 
 def remove_ifs_and_nots(instructions):
+
 	to_be_removed = list()
-	for i in range(len(instructions)):
+	i = 0;
+	n = len(instructions)
+	while(i < n):
+		if (instructions[i][0] in ["+", "-", "*", "/", "&&", "||"]) and (i+2  < len(instructions)) and (instructions[i+2][0] == 'if'): 
+			to_be_removed.append(i+1)
+			i += 3
+			continue
 		try:
 			if instructions[i][0] == "not":
 				instructions[i-1][3] = instructions[i+1][3]
 				to_be_removed.append(i)
 			elif instructions[i][0] == "if":
 				to_be_removed.append(i)
+			i += 1
 		except:
 			continue
 
@@ -51,12 +59,12 @@ def reg_alloc(value, to_be_loaded):	# remember to load when returned. Also rtv c
 	global variable_register_mapping
 	global used_registers
 	if(len(available_registers) == 0):
-		# print(used_registers)
-		reg = used_registers.pop(0)
-		l = list(variable_register_mapping.keys())
-		for i in l:
-			if (variable_register_mapping[i] == reg):
-				LRU_Free_Register(i)
+		if(value[0] != 'T'):
+			reg = used_registers.pop(0)
+			l = list(variable_register_mapping.keys())
+			for i in l:
+				if (variable_register_mapping[i] == reg):
+					LRU_Free_Register(i)
 
 	if(value.isnumeric()):
 		return "#" + value
@@ -175,6 +183,9 @@ def assembly_gen(instructions):
 
 	for i in range(len(instructions)):
 		
+		if(instructions[i][0] == 'if'):
+			continue
+
 		if(instructions[i][0] == "Label"):
 			reg_dealloc()		
 			print(instructions[i][3] + ":")
@@ -202,6 +213,25 @@ def assembly_gen(instructions):
 			source_variable_lines_mapping[instructions[i][2]].remove(i)
 			common_variable_lines_mapping[instructions[i][1]].remove(i)
 			common_variable_lines_mapping[instructions[i][2]].remove(i)
+
+		elif instructions[i][0] in ["+", "-", "*", "/", "&&", "||"] and (i+1  < len(instructions)) and (instructions[i+1][0] == 'if'):
+			reg1 = reg_alloc(instructions[i][1], 1)
+			reg2 = reg_alloc(instructions[i][2], 1)
+			reg3 = reg_alloc(instructions[i][3], 0)
+			if instructions[i][0] == "+":
+				print("ADD", reg3, reg1, reg2)
+			elif instructions[i][0] == "-":
+				print("SUB", reg3, reg1, reg2)
+			elif instructions[i][0] == "*":
+				print("MUL", reg3, reg1, reg2)
+			elif instructions[i][0] == "/":
+				print("DIV", reg3, reg1, reg2)
+			elif instructions[i][0] == "&&":
+				print("AND", reg3, reg1, reg2)
+			elif instructions[i][0] == "||":
+				print("OR", reg3, reg1, reg2)					
+
+			print("BGZ", instructions[i+1][3])
 
 		elif instructions[i][0] in ["+", "-", "*", "/", "&&", "||"]: 
 			reg1 = reg_alloc(instructions[i][1], 1)

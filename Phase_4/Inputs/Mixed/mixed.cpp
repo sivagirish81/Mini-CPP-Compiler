@@ -7,8 +7,8 @@ int main()
         while(b < 7)
         {
             int c = 7;
-            if(c == 6)
-                long d = 4*8;
+            if(c && a)
+                long d = 4;
         }
     }
 }
