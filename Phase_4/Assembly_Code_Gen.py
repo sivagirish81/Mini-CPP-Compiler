@@ -197,17 +197,17 @@ def assembly_gen(instructions):
 			reg2 = reg_alloc(instructions[i][2], 1)
 			print("CMP", reg1, reg2)
 			if instructions[i][0] == "<":
-				print("BLT", instructions[i][3])
-			elif instructions[i][0] == "<=":
-				print("BLE", instructions[i][3])
-			elif instructions[i][0] == ">":
 				print("BGT", instructions[i][3])
-			elif instructions[i][0] == ">=":
+			elif instructions[i][0] == "<=":
 				print("BGE", instructions[i][3])
+			elif instructions[i][0] == ">":
+				print("BLT", instructions[i][3])
+			elif instructions[i][0] == ">=":
+				print("BLE", instructions[i][3])
 			elif instructions[i][0] == "==":
-				print("BEQ", instructions[i][3])
-			elif instructions[i][0] == "!=":
 				print("BNE", instructions[i][3])
+			elif instructions[i][0] == "!=":
+				print("BEQ", instructions[i][3])
 
 			source_variable_lines_mapping[instructions[i][1]].remove(i)
 			source_variable_lines_mapping[instructions[i][2]].remove(i)
