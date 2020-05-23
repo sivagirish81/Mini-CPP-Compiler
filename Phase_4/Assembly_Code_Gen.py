@@ -14,7 +14,7 @@ def read_quadruples(file):
 def remove_ifs_and_nots(instructions):
 
 	to_be_removed = list()
-	i = 0;
+	i = 0
 	n = len(instructions)
 	while(i < n):
 		if (instructions[i][0] in ["+", "-", "*", "/", "&&", "||"]) and (i+2  < len(instructions)) and (instructions[i+2][0] == 'if'): 
